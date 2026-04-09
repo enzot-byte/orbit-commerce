@@ -29,14 +29,9 @@ export default function Hero() {
       {/* Animated gradient mesh background */}
       <GradientMesh intensity="medium" />
 
-      {/* Orbital decoration — right side, blurred */}
-      <div className="absolute right-[-120px] top-1/2 -translate-y-1/2 pointer-events-none blur-sm opacity-25 hidden lg:block">
-        <OrbitalAnimation size={620} opacity={1} />
-      </div>
-
-      {/* Smaller orbital top-left accent */}
-      <div className="absolute left-[-80px] top-[-60px] pointer-events-none blur-md opacity-15 hidden xl:block">
-        <OrbitalAnimation size={320} opacity={1} />
+      {/* Orbital decoration — right side (no blur, cheap) */}
+      <div className="absolute right-[-120px] top-1/2 -translate-y-1/2 pointer-events-none opacity-20 hidden lg:block">
+        <OrbitalAnimation size={540} opacity={1} />
       </div>
 
       {/* Content */}
