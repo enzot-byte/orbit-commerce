@@ -1,6 +1,7 @@
 "use client";
 
-import { motion, AnimatePresence, Variants } from "framer-motion";
+import { useRef } from "react";
+import { motion, AnimatePresence, Variants, useScroll, useTransform } from "framer-motion";
 import { ArrowDown } from "lucide-react";
 import GradientMesh from "@/components/shared/GradientMesh";
 import OrbitalAnimation from "@/components/shared/OrbitalAnimation";
@@ -21,21 +22,44 @@ const fadeUp: Variants = {
 };
 
 export default function Hero() {
+  const ref = useRef<HTMLElement>(null);
+  const { scrollYProgress } = useScroll({
+    target: ref,
+    offset: ["start start", "end start"],
+  });
+
+  // Parallax layers — orbital decoration drifts slower than content,
+  // content itself glides up and fades as user scrolls past.
+  const orbitalY = useTransform(scrollYProgress, [0, 1], [0, 180]);
+  const orbitalOpacity = useTransform(scrollYProgress, [0, 1], [0.22, 0]);
+  const contentY = useTransform(scrollYProgress, [0, 1], [0, -120]);
+  const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
+  const meshY = useTransform(scrollYProgress, [0, 1], [0, 80]);
+
   return (
     <section
+      ref={ref}
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
       style={{ backgroundColor: "#1A1A2E" }}
     >
-      {/* Animated gradient mesh background */}
-      <GradientMesh intensity="medium" />
+      {/* Animated gradient mesh background (parallax) */}
+      <motion.div style={{ y: meshY, willChange: "transform" }} className="absolute inset-0">
+        <GradientMesh intensity="medium" />
+      </motion.div>
 
-      {/* Orbital decoration — right side (no blur, cheap) */}
-      <div className="absolute right-[-120px] top-1/2 -translate-y-1/2 pointer-events-none opacity-20 hidden lg:block">
+      {/* Orbital decoration — right side, parallax */}
+      <motion.div
+        style={{ y: orbitalY, opacity: orbitalOpacity, willChange: "transform" }}
+        className="absolute right-[-120px] top-1/2 -translate-y-1/2 pointer-events-none hidden lg:block"
+      >
         <OrbitalAnimation size={540} opacity={1} />
-      </div>
+      </motion.div>
 
-      {/* Content */}
-      <div className="relative z-10 container-orbit flex flex-col items-center text-center px-4">
+      {/* Content (parallax glide + fade) */}
+      <motion.div
+        style={{ y: contentY, opacity: contentOpacity, willChange: "transform" }}
+        className="relative z-10 container-orbit flex flex-col items-center text-center px-4"
+      >
         <AnimatePresence>
           {/* Badge */}
           <motion.div
@@ -122,7 +146,7 @@ export default function Hero() {
             )}
           </motion.div>
         </AnimatePresence>
-      </div>
+      </motion.div>
 
       {/* Scroll indicator */}
       <motion.div

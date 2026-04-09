@@ -45,14 +45,21 @@ function OrbitIcon({ size }: { size: number }) {
   const s = size;
   const cx = s / 2;
   const cy = s / 2;
-  const rx1 = s * 0.42;
-  const ry1 = s * 0.16;
-  const centralR = s * 0.11;
-  const satelliteR = s * 0.055;
-  const satAngleDeg = -25;
-  const satAngleRad = (satAngleDeg * Math.PI) / 180;
-  const satX = cx + rx1 * Math.cos(satAngleRad);
-  const satY = cy + ry1 * Math.sin(satAngleRad);
+  const rx = s * 0.46;
+  const ry = s * 0.17;
+  const nucleusR = s * 0.11;
+  const electronR = s * 0.055;
+
+  // Three orbital rings at different tilts, each carrying one electron.
+  // Rotation angle of each ring is driven by CSS keyframes (logo-atom-ring-*)
+  // — see globals.css. Because the electron lives inside the rotating <g>,
+  // it automatically travels the orbit, giving the scene an authentic
+  // atom-like asymmetry (different speeds + directions per ring).
+  const rings = [
+    { tilt: -25, cls: "logo-atom-ring-a", dot: "#9B7BFF", strokeOpacity: 0.85 },
+    { tilt: 28, cls: "logo-atom-ring-b", dot: "#C4B5FD", strokeOpacity: 0.55 },
+    { tilt: 78, cls: "logo-atom-ring-c", dot: "#5B3FD8", strokeOpacity: 0.4 },
+  ];
 
   return (
     <svg
@@ -62,44 +69,49 @@ function OrbitIcon({ size }: { size: number }) {
       fill="none"
       xmlns="http://www.w3.org/2000/svg"
       aria-hidden="true"
+      style={{ overflow: "visible" }}
     >
-      {/* Background rounded rect */}
-      <rect x="0" y="0" width={s} height={s} rx={s * 0.25} fill="#185FA5" />
+      {/* Soft nucleus glow */}
+      <defs>
+        <radialGradient id="sv-nuc-glow" cx="50%" cy="50%" r="50%">
+          <stop offset="0%" stopColor="rgba(155,123,255,0.9)" />
+          <stop offset="60%" stopColor="rgba(91,63,216,0.25)" />
+          <stop offset="100%" stopColor="rgba(91,63,216,0)" />
+        </radialGradient>
+      </defs>
+      <circle cx={cx} cy={cy} r={s * 0.32} fill="url(#sv-nuc-glow)" />
 
-      {/* Rotating orbital group — CSS animation, GPU transforms only */}
-      <g className="logo-atom-spin" style={{ transformOrigin: `${cx}px ${cy}px` }}>
-        {/* First orbital ellipse — rotated -25° */}
-        <g transform={`rotate(-25, ${cx}, ${cy})`}>
-          <ellipse
-            cx={cx}
-            cy={cy}
-            rx={rx1}
-            ry={ry1}
-            stroke="rgba(255,255,255,0.75)"
-            strokeWidth={s * 0.03}
-            fill="none"
-          />
+      {/* Orbital rings — each rotates independently via CSS keyframes */}
+      {rings.map((r, i) => (
+        <g
+          key={i}
+          className={r.cls}
+          style={{ transformOrigin: `${cx}px ${cy}px` }}
+        >
+          <g transform={`rotate(${r.tilt}, ${cx}, ${cy})`}>
+            <ellipse
+              cx={cx}
+              cy={cy}
+              rx={rx}
+              ry={ry}
+              stroke={`rgba(196,181,253,${r.strokeOpacity})`}
+              strokeWidth={s * 0.024}
+              fill="none"
+            />
+            {/* Electron sits on the right vertex of the untilted ellipse.
+                The parent <g> rotation + tilt produces the orbit. */}
+            <circle
+              cx={cx + rx}
+              cy={cy}
+              r={electronR}
+              fill={r.dot}
+            />
+          </g>
         </g>
+      ))}
 
-        {/* Second orbital ellipse — rotated +25° */}
-        <g transform={`rotate(25, ${cx}, ${cy})`}>
-          <ellipse
-            cx={cx}
-            cy={cy}
-            rx={rx1}
-            ry={ry1}
-            stroke="rgba(255,255,255,0.45)"
-            strokeWidth={s * 0.022}
-            fill="none"
-          />
-        </g>
-
-        {/* Satellite dot on the first orbital — now purple to match brand */}
-        <circle cx={satX} cy={satY} r={satelliteR} fill="#9B7BFF" />
-      </g>
-
-      {/* Central solid circle — static */}
-      <circle cx={cx} cy={cy} r={centralR} fill="white" />
+      {/* Central nucleus — white core */}
+      <circle cx={cx} cy={cy} r={nucleusR} fill="#ffffff" />
     </svg>
   );
 }

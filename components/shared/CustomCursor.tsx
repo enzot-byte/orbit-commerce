@@ -28,13 +28,14 @@ export default function CustomCursor() {
     setEnabled(true);
 
     const glow = document.getElementById("cursor-glow");
+    const ring = document.getElementById("cursor-ring");
     const sat1 = document.getElementById("cursor-sat-1");
     const sat2 = document.getElementById("cursor-sat-2");
-    if (!glow || !sat1 || !sat2) return;
+    const sat3 = document.getElementById("cursor-sat-3");
+    if (!glow || !ring || !sat1 || !sat2 || !sat3) return;
 
     let targetX = window.innerWidth / 2;
     let targetY = window.innerHeight / 2;
-    // Smoothed position (eases toward target)
     let x = targetX;
     let y = targetY;
     let raf = 0;
@@ -46,24 +47,24 @@ export default function CustomCursor() {
     };
 
     const loop = (t: number) => {
-      // Smooth easing (lerp ~0.18 for buttery follow)
-      x += (targetX - x) * 0.18;
-      y += (targetY - y) * 0.18;
+      // Buttery lerp follow
+      x += (targetX - x) * 0.2;
+      y += (targetY - y) * 0.2;
 
-      // Big soft glow (offset by half its size: 250)
+      // Soft halo (offset by half its size: 250)
       glow.style.transform = `translate3d(${x - 250}px, ${y - 250}px, 0)`;
+      // Thin orbit ring centered on cursor — 60px radius
+      ring.style.transform = `translate3d(${x - 60}px, ${y - 60}px, 0) rotate(${t * 0.06}deg)`;
 
-      // Orbiting satellites
+      // Three satellites orbiting at different speeds
       const elapsed = (t - start) / 1000;
-      const r = 34;
-      const a1 = elapsed * 1.6;
-      const a2 = elapsed * 1.6 + Math.PI;
-      const s1x = x + Math.cos(a1) * r - 4;
-      const s1y = y + Math.sin(a1) * r * 0.55 - 4;
-      const s2x = x + Math.cos(a2) * r - 3;
-      const s2y = y + Math.sin(a2) * r * 0.55 - 3;
-      sat1.style.transform = `translate3d(${s1x}px, ${s1y}px, 0)`;
-      sat2.style.transform = `translate3d(${s2x}px, ${s2y}px, 0)`;
+      const R = 60;
+      const a1 = elapsed * 1.8;
+      const a2 = elapsed * 1.4 + (Math.PI * 2) / 3;
+      const a3 = elapsed * 2.2 + (Math.PI * 4) / 3;
+      sat1.style.transform = `translate3d(${x + Math.cos(a1) * R - 5}px, ${y + Math.sin(a1) * R * 0.6 - 5}px, 0)`;
+      sat2.style.transform = `translate3d(${x + Math.cos(a2) * R - 4}px, ${y + Math.sin(a2) * R * 0.6 - 4}px, 0)`;
+      sat3.style.transform = `translate3d(${x + Math.cos(a3) * (R * 0.78) - 3}px, ${y + Math.sin(a3) * (R * 0.78) * 0.55 - 3}px, 0)`;
 
       raf = requestAnimationFrame(loop);
     };
@@ -78,6 +79,16 @@ export default function CustomCursor() {
   }, []);
 
   if (!enabled) return null;
+
+  const dotBase: React.CSSProperties = {
+    position: "fixed",
+    top: 0,
+    left: 0,
+    borderRadius: "50%",
+    pointerEvents: "none",
+    zIndex: 31,
+    willChange: "transform",
+  };
 
   return (
     <>
@@ -94,45 +105,59 @@ export default function CustomCursor() {
           pointerEvents: "none",
           zIndex: 30,
           background:
-            "radial-gradient(circle, rgba(91,63,216,0.16) 0%, rgba(155,123,255,0.08) 35%, transparent 70%)",
+            "radial-gradient(circle, rgba(91,63,216,0.22) 0%, rgba(155,123,255,0.10) 35%, transparent 70%)",
           mixBlendMode: "screen",
           willChange: "transform",
         }}
       />
-      {/* Satellite 1 — purple */}
+      {/* Orbit ring around cursor */}
       <div
-        id="cursor-sat-1"
+        id="cursor-ring"
         aria-hidden="true"
         style={{
           position: "fixed",
           top: 0,
           left: 0,
-          width: 8,
-          height: 8,
+          width: 120,
+          height: 120,
           borderRadius: "50%",
-          backgroundColor: "#9B7BFF",
-          boxShadow: "0 0 12px rgba(155,123,255,0.8)",
+          border: "1px dashed rgba(155,123,255,0.45)",
           pointerEvents: "none",
           zIndex: 31,
           willChange: "transform",
         }}
       />
-      {/* Satellite 2 — lighter purple */}
+      <div
+        id="cursor-sat-1"
+        aria-hidden="true"
+        style={{
+          ...dotBase,
+          width: 10,
+          height: 10,
+          backgroundColor: "#9B7BFF",
+          boxShadow: "0 0 14px rgba(155,123,255,0.9)",
+        }}
+      />
       <div
         id="cursor-sat-2"
         aria-hidden="true"
         style={{
-          position: "fixed",
-          top: 0,
-          left: 0,
+          ...dotBase,
+          width: 8,
+          height: 8,
+          backgroundColor: "#C4B5FD",
+          boxShadow: "0 0 10px rgba(196,181,253,0.85)",
+        }}
+      />
+      <div
+        id="cursor-sat-3"
+        aria-hidden="true"
+        style={{
+          ...dotBase,
           width: 6,
           height: 6,
-          borderRadius: "50%",
-          backgroundColor: "#C4B5FD",
-          boxShadow: "0 0 8px rgba(196,181,253,0.7)",
-          pointerEvents: "none",
-          zIndex: 31,
-          willChange: "transform",
+          backgroundColor: "#5B3FD8",
+          boxShadow: "0 0 8px rgba(91,63,216,0.9)",
         }}
       />
     </>
