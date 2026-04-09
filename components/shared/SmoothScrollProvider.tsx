@@ -1,38 +1,16 @@
 "use client";
 
-import { useEffect } from "react";
-import Lenis from "lenis";
-
+/**
+ * SmoothScrollProvider — previously wrapped Lenis, which caused janky scroll
+ * behavior on some pages (especially with absolutely positioned sections and
+ * fixed headers). Native CSS `scroll-behavior: smooth` on <html> is applied
+ * via globals.css and works buttery on modern browsers. This component is
+ * now a pass-through kept for layout back-compat.
+ */
 interface SmoothScrollProviderProps {
   children: React.ReactNode;
 }
 
 export default function SmoothScrollProvider({ children }: SmoothScrollProviderProps) {
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t: number) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      orientation: "vertical",
-      gestureOrientation: "vertical",
-      smoothWheel: true,
-      wheelMultiplier: 1,
-      touchMultiplier: 2,
-    });
-
-    let rafId: number;
-
-    function raf(time: number) {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    }
-
-    rafId = requestAnimationFrame(raf);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      lenis.destroy();
-    };
-  }, []);
-
   return <>{children}</>;
 }

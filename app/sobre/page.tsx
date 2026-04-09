@@ -384,7 +384,7 @@ export default function SobrePage() {
                   marginBottom: "16px",
                 }}
               >
-                Orbit em números
+                Sellerverse em números
               </h2>
             </ScrollReveal>
 
@@ -447,7 +447,7 @@ export default function SobrePage() {
                   marginBottom: "16px",
                 }}
               >
-                Quem está por trás do Orbit
+                Quem está por trás do Sellerverse
               </h2>
               <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.5)", maxWidth: "480px", margin: "0 auto" }}>
                 Um time pequeno, experiente e completamente focado nos resultados dos nossos membros.
@@ -563,7 +563,7 @@ export default function SobrePage() {
                   lineHeight: 1.7,
                 }}
               >
-                Junte-se a +2.500 sellers que estão construindo negócios mais lucrativos com o Orbit.
+                Junte-se a +2.500 sellers que estão construindo negócios mais lucrativos com o Sellerverse.
               </p>
               <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
                 <a

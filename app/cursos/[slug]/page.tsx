@@ -106,7 +106,7 @@ const COURSES: Record<string, {
         title: "Módulo 4 — Automação e ferramentas",
         lessons: [
           { title: "Ferramentas de monitoramento gratuitas", duration: "12:30" },
-          { title: "Como usar o monitor de preços do Orbit", duration: "20:00" },
+          { title: "Como usar o monitor de preços do Sellerverse", duration: "20:00" },
           { title: "Configurando alertas e regras automáticas", duration: "24:10" },
         ],
       },
@@ -143,7 +143,7 @@ const DEFAULT_COURSE = {
   enrollmentCount: 1240,
   lastUpdate: "Abril 2025",
   instructor: {
-    name: "Equipe Orbit",
+    name: "Equipe Sellerverse",
     role: "Especialistas em e-commerce brasileiro",
     bio: "Nossa equipe reúne sellers com experiência real em Mercado Livre, Shopee, Amazon e outros marketplaces brasileiros.",
     avatar: "O",

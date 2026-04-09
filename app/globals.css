@@ -140,6 +140,29 @@
   }
 }
 
+/* Base scroll behavior — native smooth scroll (replaces Lenis) */
+html {
+  scroll-behavior: smooth;
+}
+@media (prefers-reduced-motion: reduce) {
+  html { scroll-behavior: auto; }
+}
+
+/* Logo atom spin — slow by default, fast on hover */
+.logo-atom-spin {
+  transform-origin: 50% 50%;
+  animation: logo-atom-rotate 18s linear infinite;
+  will-change: transform;
+}
+.group\/logo:hover .logo-atom-spin,
+.logo-atom-spin:hover {
+  animation-duration: 4s;
+}
+@keyframes logo-atom-rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
 /* Component styles */
 @layer components {
   /* Noise texture overlay */

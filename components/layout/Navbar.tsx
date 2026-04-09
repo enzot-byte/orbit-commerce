@@ -190,10 +190,8 @@ export function Navbar() {
     : "rgba(255,255,255,0.92)";
   const bgDefault = isHome ? "rgba(0,0,0,0)" : "rgba(255,255,255,0)";
   const linkColor = isHome
-    ? scrolled
-      ? "text-white/80 hover:text-white"
-      : "text-white/80 hover:text-white"
-    : "text-gray-600 hover:text-gray-900 dark:text-white/70 dark:hover:text-white";
+    ? "text-white hover:text-white"
+    : "text-gray-800 hover:text-gray-900 dark:text-white/95 dark:hover:text-white";
 
   return (
     <>
@@ -211,10 +209,10 @@ export function Navbar() {
         }}
       >
         <div className="container-orbit">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-20">
             {/* Logo */}
-            <Link href="/" aria-label="Sellerverse — página inicial">
-              <Logo size="sm" variant="full" />
+            <Link href="/" aria-label="Sellerverse — página inicial" className="shrink-0">
+              <Logo size="md" variant="full" />
             </Link>
 
             {/* Desktop nav */}
@@ -226,9 +224,11 @@ export function Navbar() {
                     key={link.href}
                     href={link.href}
                     className={cn(
-                      "relative px-3 py-1.5 rounded-lg text-sm font-medium transition-colors",
+                      "relative px-4 py-2 rounded-lg text-[15px] font-semibold transition-colors",
                       isActive
-                        ? "text-orbit-600 dark:text-orbit-400"
+                        ? isHome
+                          ? "text-white"
+                          : "text-[#5B3FD8] dark:text-[#9B7BFF]"
                         : linkColor
                     )}
                   >
@@ -236,7 +236,10 @@ export function Navbar() {
                     {isActive && (
                       <motion.span
                         layoutId="nav-active-pill"
-                        className="absolute inset-0 rounded-lg bg-orbit-50 dark:bg-orbit-900/40 -z-10"
+                        className={cn(
+                          "absolute inset-0 rounded-lg -z-10",
+                          isHome ? "bg-white/15" : "bg-[#5B3FD8]/10 dark:bg-[#9B7BFF]/15"
+                        )}
                         transition={{ type: "spring", stiffness: 400, damping: 35 }}
                       />
                     )}
@@ -261,7 +264,10 @@ export function Navbar() {
               </Link>
               <Link
                 href="/cadastro"
-                className="inline-flex items-center h-8 px-4 rounded-lg text-sm font-semibold bg-accent-400 text-dark hover:bg-accent-600 transition-all hover:shadow-[0_0_20px_4px_rgba(239,159,39,0.35)]"
+                className="inline-flex items-center h-10 px-5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] hover:shadow-[0_0_24px_4px_rgba(91,63,216,0.45)]"
+                style={{
+                  background: "linear-gradient(135deg, #5B3FD8 0%, #9B7BFF 100%)",
+                }}
               >
                 Começar grátis
               </Link>

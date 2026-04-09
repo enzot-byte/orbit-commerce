@@ -154,7 +154,7 @@ export default async function CheckoutPage({
                       className="text-xl font-bold text-white font-display"
                       style={{ fontFamily: "var(--font-display)" }}
                     >
-                      Orbit {plan.name}
+                      Sellerverse {plan.name}
                     </h2>
                     <p className="text-sm text-white/50 font-body mt-1">{plan.description}</p>
                   </div>

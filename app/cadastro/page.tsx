@@ -255,12 +255,12 @@ export default function CadastroPage() {
                 +2.500 sellers
               </div>
               <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.45)" }}>
-                já fazem parte do Orbit
+                já fazem parte do Sellerverse
               </div>
             </div>
           </div>
           <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.55)", lineHeight: 1.6, fontStyle: "italic" }}>
-            "Em 60 dias usando o Orbit, meu faturamento no Mercado Livre cresceu 340%."
+            "Em 60 dias usando o Sellerverse, meu faturamento no Mercado Livre cresceu 340%."
           </p>
           <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.3)", marginTop: "6px" }}>— Ana Silva, seller desde 2022</p>
         </div>

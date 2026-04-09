@@ -90,6 +90,10 @@ function Toggle({
 
 export default function Pricing() {
   const [isAnnual, setIsAnnual] = useState(false);
+  const [selectedId, setSelectedId] = useState<string>("pro");
+  const [hoveredId, setHoveredId] = useState<string | null>(null);
+
+  const activeId = hoveredId ?? selectedId;
 
   return (
     <section
@@ -130,26 +134,34 @@ export default function Pricing() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-start">
           {plans.map((plan, i) => {
             const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
+            const isActive = activeId === plan.id;
 
             return (
               <ScrollReveal key={plan.id} direction="up" index={i} delay={0.1}>
                 <motion.div
-                  className={`relative flex flex-col rounded-2xl p-8 border transition-all duration-300 ${
-                    plan.highlighted
-                      ? "bg-dark-card border-accent-400/50 scale-105 shadow-glow-accent"
-                      : "bg-dark-card border-white/10"
-                  }`}
-                  whileHover={{
-                    boxShadow: plan.highlighted
-                      ? "0 0 50px rgba(239,159,39,0.2)"
-                      : "0 8px 32px rgba(0,0,0,0.3)",
+                  onClick={() => setSelectedId(plan.id)}
+                  onHoverStart={() => setHoveredId(plan.id)}
+                  onHoverEnd={() => setHoveredId(null)}
+                  animate={{
+                    scale: isActive ? 1.05 : 1,
+                    borderColor: isActive
+                      ? "rgba(155,123,255,0.6)"
+                      : "rgba(255,255,255,0.1)",
+                    boxShadow: isActive
+                      ? "0 0 50px rgba(91,63,216,0.35)"
+                      : "0 8px 24px rgba(0,0,0,0.25)",
                   }}
+                  transition={{ type: "spring", stiffness: 260, damping: 26 }}
+                  className="relative flex flex-col rounded-2xl p-8 border bg-dark-card cursor-pointer"
                 >
                   {/* Popular badge */}
                   {plan.badge && (
                     <div className="absolute -top-3.5 left-1/2 -translate-x-1/2">
                       <motion.span
-                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold bg-accent-400 text-dark"
+                        className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-bold text-white"
+                        style={{
+                          background: "linear-gradient(135deg, #5B3FD8 0%, #9B7BFF 100%)",
+                        }}
                         animate={{ scale: [1, 1.05, 1] }}
                         transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
                       >
@@ -202,12 +214,22 @@ export default function Pricing() {
 
                   {/* CTA */}
                   <a
-                    href="#"
-                    className={`w-full flex items-center justify-center py-3.5 rounded-xl font-semibold text-sm mb-8 transition-all duration-300 ${
-                      plan.ctaStyle === "accent"
-                        ? "bg-accent-400 text-dark hover:bg-accent-200 hover:scale-105"
-                        : "border border-white/20 text-white hover:border-white/40 hover:bg-white/8"
-                    }`}
+                    href="/cadastro"
+                    onClick={(e) => e.stopPropagation()}
+                    className="w-full flex items-center justify-center py-3.5 rounded-xl font-semibold text-sm mb-8 transition-all duration-300"
+                    style={
+                      isActive
+                        ? {
+                            background:
+                              "linear-gradient(135deg, #5B3FD8 0%, #9B7BFF 100%)",
+                            color: "#ffffff",
+                            boxShadow: "0 0 20px rgba(91,63,216,0.4)",
+                          }
+                        : {
+                            border: "1px solid rgba(255,255,255,0.2)",
+                            color: "#ffffff",
+                          }
+                    }
                   >
                     {plan.ctaLabel}
                   </a>
@@ -218,7 +240,7 @@ export default function Pricing() {
                       <li key={feature} className="flex items-start gap-3">
                         <Check
                           className="w-4 h-4 mt-0.5 flex-shrink-0"
-                          style={{ color: plan.highlighted ? "#EF9F27" : "#185FA5" }}
+                          style={{ color: isActive ? "#9B7BFF" : "#185FA5" }}
                         />
                         <span className="text-sm text-white/65">{feature}</span>
                       </li>

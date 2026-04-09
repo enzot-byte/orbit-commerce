@@ -15,22 +15,36 @@ export default function EbookCapture() {
   const [form, setForm] = useState({ name: "", email: "" });
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
     setForm((prev) => ({ ...prev, [e.target.name]: e.target.value }));
+    if (error) setError(null);
   }
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     if (!form.name || !form.email) return;
     setLoading(true);
-
-    // Simulate network delay
-    await new Promise((r) => setTimeout(r, 800));
-    console.log("Ebook capture form submitted:", form);
-
-    setLoading(false);
-    setSubmitted(true);
+    setError(null);
+    try {
+      const res = await fetch("/api/newsletter", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(form),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Falha ao inscrever.");
+        setLoading(false);
+        return;
+      }
+      setSubmitted(true);
+    } catch {
+      setError("Sem conexão. Tente novamente.");
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -203,13 +217,18 @@ export default function EbookCapture() {
                       className="w-full px-4 py-3.5 rounded-xl bg-white/10 border border-white/20 text-white placeholder-white/35 text-sm focus:outline-none focus:ring-2 focus:ring-accent-400/50 focus:border-accent-400/60 transition-all duration-200"
                     />
                   </div>
+                  {error && (
+                    <div className="px-4 py-3 rounded-xl bg-red-500/15 border border-red-400/30 text-red-200 text-sm">
+                      {error}
+                    </div>
+                  )}
                   <motion.button
                     type="submit"
                     disabled={loading}
                     className="w-full flex items-center justify-center gap-2 py-4 rounded-xl text-base font-bold transition-all duration-300 disabled:opacity-70"
                     style={{
-                      background: "linear-gradient(135deg, #EF9F27 0%, #FAC775 100%)",
-                      color: "#0A0A0F",
+                      background: "linear-gradient(135deg, #5B3FD8 0%, #9B7BFF 100%)",
+                      color: "#ffffff",
                     }}
                     whileHover={{ scale: 1.02 }}
                     whileTap={{ scale: 0.98 }}
@@ -217,7 +236,7 @@ export default function EbookCapture() {
                     {loading ? (
                       <span className="flex items-center gap-2">
                         <motion.div
-                          className="w-4 h-4 border-2 border-dark/30 border-t-dark rounded-full"
+                          className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full"
                           animate={{ rotate: 360 }}
                           transition={{ duration: 0.8, repeat: Infinity, ease: "linear" }}
                         />

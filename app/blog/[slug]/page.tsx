@@ -67,7 +67,7 @@ const ARTICLES: Record<string, {
 const DEFAULT_ARTICLE = {
   title: "Guia completo de precificação para sellers de marketplace",
   category: "Estratégia",
-  author: "Equipe Orbit",
+  author: "Equipe Sellerverse",
   authorRole: "Time editorial",
   authorBio:
     "O time editorial do Sellerverse é formado por sellers experientes e especialistas em e-commerce brasileiro com mais de 10 anos de mercado.",

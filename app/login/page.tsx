@@ -116,7 +116,7 @@ export default function LoginPage() {
             }}
           >
             <span style={{ fontSize: "12px", color: "#EF9F27", fontWeight: 600 }}>
-              +2.500 sellers confiam no Orbit
+              +2.500 sellers confiam no Sellerverse
             </span>
           </div>
           <h2

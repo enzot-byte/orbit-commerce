@@ -14,23 +14,23 @@ export interface LogoProps {
 
 const sizeConfig = {
   sm: {
-    iconSize: 28,
-    textSeller: "text-base",
-    textVerse: "text-base",
+    iconSize: 34,
+    textSeller: "text-lg",
+    textVerse: "text-lg",
     taglineClass: "text-[8px]",
-    gap: "gap-2",
+    gap: "gap-2.5",
   },
   md: {
-    iconSize: 40,
-    textSeller: "text-xl",
-    textVerse: "text-xl",
-    taglineClass: "text-[9px]",
+    iconSize: 48,
+    textSeller: "text-2xl",
+    textVerse: "text-2xl",
+    taglineClass: "text-[10px]",
     gap: "gap-3",
   },
   lg: {
-    iconSize: 56,
-    textSeller: "text-3xl",
-    textVerse: "text-3xl",
+    iconSize: 64,
+    textSeller: "text-4xl",
+    textVerse: "text-4xl",
     taglineClass: "text-[11px]",
     gap: "gap-4",
   },
@@ -45,11 +45,10 @@ function OrbitIcon({ size }: { size: number }) {
   const s = size;
   const cx = s / 2;
   const cy = s / 2;
-  const rx1 = s * 0.42; // outer ellipse x-radius
-  const ry1 = s * 0.16; // outer ellipse y-radius
+  const rx1 = s * 0.42;
+  const ry1 = s * 0.16;
   const centralR = s * 0.11;
   const satelliteR = s * 0.055;
-  // Satellite is on the outer ellipse's right vertex (rotated -25°)
   const satAngleDeg = -25;
   const satAngleRad = (satAngleDeg * Math.PI) / 180;
   const satX = cx + rx1 * Math.cos(satAngleRad);
@@ -65,51 +64,42 @@ function OrbitIcon({ size }: { size: number }) {
       aria-hidden="true"
     >
       {/* Background rounded rect */}
-      <rect
-        x="0"
-        y="0"
-        width={s}
-        height={s}
-        rx={s * 0.25}
-        fill="#185FA5"
-      />
+      <rect x="0" y="0" width={s} height={s} rx={s * 0.25} fill="#185FA5" />
 
-      {/* First orbital ellipse — rotated -25° */}
-      <g transform={`rotate(-25, ${cx}, ${cy})`}>
-        <ellipse
-          cx={cx}
-          cy={cy}
-          rx={rx1}
-          ry={ry1}
-          stroke="rgba(255,255,255,0.7)"
-          strokeWidth={s * 0.028}
-          fill="none"
-        />
+      {/* Rotating orbital group — CSS animation, GPU transforms only */}
+      <g className="logo-atom-spin" style={{ transformOrigin: `${cx}px ${cy}px` }}>
+        {/* First orbital ellipse — rotated -25° */}
+        <g transform={`rotate(-25, ${cx}, ${cy})`}>
+          <ellipse
+            cx={cx}
+            cy={cy}
+            rx={rx1}
+            ry={ry1}
+            stroke="rgba(255,255,255,0.75)"
+            strokeWidth={s * 0.03}
+            fill="none"
+          />
+        </g>
+
+        {/* Second orbital ellipse — rotated +25° */}
+        <g transform={`rotate(25, ${cx}, ${cy})`}>
+          <ellipse
+            cx={cx}
+            cy={cy}
+            rx={rx1}
+            ry={ry1}
+            stroke="rgba(255,255,255,0.45)"
+            strokeWidth={s * 0.022}
+            fill="none"
+          />
+        </g>
+
+        {/* Satellite dot on the first orbital — now purple to match brand */}
+        <circle cx={satX} cy={satY} r={satelliteR} fill="#9B7BFF" />
       </g>
 
-      {/* Second orbital ellipse — rotated +25° */}
-      <g transform={`rotate(25, ${cx}, ${cy})`}>
-        <ellipse
-          cx={cx}
-          cy={cy}
-          rx={rx1}
-          ry={ry1}
-          stroke="rgba(255,255,255,0.45)"
-          strokeWidth={s * 0.022}
-          fill="none"
-        />
-      </g>
-
-      {/* Central solid circle */}
+      {/* Central solid circle — static */}
       <circle cx={cx} cy={cy} r={centralR} fill="white" />
-
-      {/* Satellite dot on the first orbital */}
-      <circle
-        cx={satX}
-        cy={satY}
-        r={satelliteR}
-        fill="#EF9F27"
-      />
     </svg>
   );
 }
@@ -183,7 +173,7 @@ export function Logo({
   return (
     <span
       className={cn(
-        "inline-flex items-center",
+        "group/logo inline-flex items-center",
         cfg.gap,
         className
       )}
