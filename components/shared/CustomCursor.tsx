@@ -1,23 +1,30 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef } from "react";
 
 /**
- * Cursor orbit — a soft radial glow following the pointer, with two small
- * satellites orbiting around it. Everything is driven by a single rAF loop
- * and direct style.transform updates (no React re-renders, no framer-motion).
+ * Cursor orbit — a dashed ring and 3 satellites orbiting the pointer,
+ * locked 1:1 to the mouse position (zero delay). Driven by a single rAF
+ * loop writing directly to element refs, no React state, no re-renders.
  *
- * Perf rules:
- * - Single rAF loop — one loop handles mouse + orbit time
- * - GPU transforms only (translate3d + rotate)
- * - pointer-events: none — never blocks clicks
- * - Auto-disabled on touch / coarse pointer / reduced-motion
+ * IMPORTANT implementation note:
+ *   Previously we gated mounting behind `useState(enabled)`. That introduced
+ *   a race: the effect ran once before the DOM nodes existed, found them
+ *   `null`, and bailed out — leaving a stale ring in the top-left corner.
+ *   Now elements are ALWAYS mounted via refs, and the effect just attaches
+ *   the rAF loop.
  */
 export default function CustomCursor() {
-  const [enabled, setEnabled] = useState(false);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const glowRef = useRef<HTMLDivElement>(null);
+  const ringRef = useRef<HTMLDivElement>(null);
+  const sat1Ref = useRef<HTMLDivElement>(null);
+  const sat2Ref = useRef<HTMLDivElement>(null);
+  const sat3Ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (typeof window === "undefined") return;
+
     const isTouch =
       "ontouchstart" in window ||
       navigator.maxTouchPoints > 0 ||
@@ -25,40 +32,45 @@ export default function CustomCursor() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (isTouch || reduced) return;
 
-    setEnabled(true);
+    const root = rootRef.current;
+    const glow = glowRef.current;
+    const ring = ringRef.current;
+    const sat1 = sat1Ref.current;
+    const sat2 = sat2Ref.current;
+    const sat3 = sat3Ref.current;
+    if (!root || !glow || !ring || !sat1 || !sat2 || !sat3) return;
 
-    const glow = document.getElementById("cursor-glow");
-    const ring = document.getElementById("cursor-ring");
-    const sat1 = document.getElementById("cursor-sat-1");
-    const sat2 = document.getElementById("cursor-sat-2");
-    const sat3 = document.getElementById("cursor-sat-3");
-    if (!glow || !ring || !sat1 || !sat2 || !sat3) return;
+    // Reveal — elements are hidden until the pointer actually moves so
+    // we don't flash anything at (0,0) on initial paint.
+    let revealed = false;
 
-    let targetX = window.innerWidth / 2;
-    let targetY = window.innerHeight / 2;
-    let x = targetX;
-    let y = targetY;
+    let mx = -9999;
+    let my = -9999;
     let raf = 0;
     const start = performance.now();
 
     const onMove = (e: MouseEvent) => {
-      targetX = e.clientX;
-      targetY = e.clientY;
+      mx = e.clientX;
+      my = e.clientY;
+      if (!revealed) {
+        revealed = true;
+        root.style.opacity = "1";
+      }
     };
 
     const loop = (t: number) => {
-      // Buttery lerp follow
-      x += (targetX - x) * 0.2;
-      y += (targetY - y) * 0.2;
+      // 1:1 follow — zero delay
+      const x = mx;
+      const y = my;
 
-      // Soft halo (offset by half its size: 250)
+      // Soft halo (offset by half its 500px box)
       glow.style.transform = `translate3d(${x - 250}px, ${y - 250}px, 0)`;
-      // Thin orbit ring centered on cursor — 60px radius
+      // Dashed orbit ring centered on cursor (120px box, radius 60)
       ring.style.transform = `translate3d(${x - 60}px, ${y - 60}px, 0) rotate(${t * 0.06}deg)`;
 
-      // Three satellites orbiting at different speeds
+      // Three satellites at different speeds + phase offsets
       const elapsed = (t - start) / 1000;
-      const R = 60;
+      const R = 56;
       const a1 = elapsed * 1.8;
       const a2 = elapsed * 1.4 + (Math.PI * 2) / 3;
       const a3 = elapsed * 2.2 + (Math.PI * 4) / 3;
@@ -78,8 +90,6 @@ export default function CustomCursor() {
     };
   }, []);
 
-  if (!enabled) return null;
-
   const dotBase: React.CSSProperties = {
     position: "fixed",
     top: 0,
@@ -88,14 +98,17 @@ export default function CustomCursor() {
     pointerEvents: "none",
     zIndex: 31,
     willChange: "transform",
+    transform: "translate3d(-9999px, -9999px, 0)",
   };
 
   return (
-    <>
-      {/* Soft halo */}
+    <div
+      ref={rootRef}
+      aria-hidden="true"
+      style={{ opacity: 0, transition: "opacity 0.25s ease" }}
+    >
       <div
-        id="cursor-glow"
-        aria-hidden="true"
+        ref={glowRef}
         style={{
           position: "fixed",
           top: 0,
@@ -108,12 +121,11 @@ export default function CustomCursor() {
             "radial-gradient(circle, rgba(91,63,216,0.22) 0%, rgba(155,123,255,0.10) 35%, transparent 70%)",
           mixBlendMode: "screen",
           willChange: "transform",
+          transform: "translate3d(-9999px, -9999px, 0)",
         }}
       />
-      {/* Orbit ring around cursor */}
       <div
-        id="cursor-ring"
-        aria-hidden="true"
+        ref={ringRef}
         style={{
           position: "fixed",
           top: 0,
@@ -125,11 +137,11 @@ export default function CustomCursor() {
           pointerEvents: "none",
           zIndex: 31,
           willChange: "transform",
+          transform: "translate3d(-9999px, -9999px, 0)",
         }}
       />
       <div
-        id="cursor-sat-1"
-        aria-hidden="true"
+        ref={sat1Ref}
         style={{
           ...dotBase,
           width: 10,
@@ -139,8 +151,7 @@ export default function CustomCursor() {
         }}
       />
       <div
-        id="cursor-sat-2"
-        aria-hidden="true"
+        ref={sat2Ref}
         style={{
           ...dotBase,
           width: 8,
@@ -150,8 +161,7 @@ export default function CustomCursor() {
         }}
       />
       <div
-        id="cursor-sat-3"
-        aria-hidden="true"
+        ref={sat3Ref}
         style={{
           ...dotBase,
           width: 6,
@@ -160,6 +170,6 @@ export default function CustomCursor() {
           boxShadow: "0 0 8px rgba(91,63,216,0.9)",
         }}
       />
-    </>
+    </div>
   );
 }

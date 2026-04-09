@@ -173,6 +173,7 @@ export function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const pathname = usePathname();
+  const { theme } = useTheme();
 
   useEffect(() => {
     const handler = () => setScrolled(window.scrollY > 16);
@@ -183,29 +184,43 @@ export function Navbar() {
 
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
-  // Transparent on dark hero pages (home), solid on others
-  const isHome = pathname === "/";
-  const bgScrolled = isHome
-    ? "rgba(10,10,15,0.85)"
-    : "rgba(255,255,255,0.92)";
-  const bgDefault = isHome ? "rgba(0,0,0,0)" : "rgba(255,255,255,0)";
-  const linkColor = isHome
-    ? "text-white hover:text-white"
-    : "text-gray-800 hover:text-gray-900 dark:text-white/95 dark:hover:text-white";
+  // ── Automatic theme-aware chrome ────────────────────────────────────────
+  // Rule: the navbar ALWAYS has a soft backdrop so text is legible over any
+  // page background (dark hero, white panels, half-and-half layouts).
+  // It just gets slightly more opaque once the user scrolls. Color follows
+  // the active theme, not the pathname — this avoids the "invisible header"
+  // flash during dark/light transitions.
+  const isDark = theme === "dark";
+  const bgColor = isDark
+    ? scrolled
+      ? "rgba(10,10,15,0.88)"
+      : "rgba(10,10,15,0.55)"
+    : scrolled
+    ? "rgba(255,255,255,0.92)"
+    : "rgba(255,255,255,0.7)";
+
+  const borderColor = isDark
+    ? scrolled
+      ? "rgba(255,255,255,0.08)"
+      : "rgba(255,255,255,0.04)"
+    : scrolled
+    ? "rgba(15,23,42,0.08)"
+    : "rgba(15,23,42,0.04)";
+
+  const linkColor = isDark
+    ? "text-white/90 hover:text-white"
+    : "text-gray-800 hover:text-gray-950";
 
   return (
     <>
       <motion.header
         className="fixed top-0 left-0 right-0 z-30"
-        animate={{ backdropFilter: scrolled ? "blur(16px)" : "blur(0px)" }}
         style={{
-          backgroundColor: scrolled ? bgScrolled : bgDefault,
-          borderBottom: scrolled
-            ? isHome
-              ? "1px solid rgba(255,255,255,0.08)"
-              : "1px solid rgba(0,0,0,0.07)"
-            : "1px solid transparent",
-          transition: "background-color 0.3s, border-color 0.3s",
+          backgroundColor: bgColor,
+          borderBottom: `1px solid ${borderColor}`,
+          backdropFilter: "blur(14px)",
+          WebkitBackdropFilter: "blur(14px)",
+          transition: "background-color 0.35s ease, border-color 0.35s ease",
         }}
       >
         <div className="container-orbit">
@@ -226,9 +241,9 @@ export function Navbar() {
                     className={cn(
                       "relative px-4 py-2 rounded-lg text-[15px] font-semibold transition-colors",
                       isActive
-                        ? isHome
+                        ? isDark
                           ? "text-white"
-                          : "text-[#5B3FD8] dark:text-[#9B7BFF]"
+                          : "text-[#5B3FD8]"
                         : linkColor
                     )}
                   >
@@ -238,7 +253,7 @@ export function Navbar() {
                         layoutId="nav-active-pill"
                         className={cn(
                           "absolute inset-0 rounded-lg -z-10",
-                          isHome ? "bg-white/15" : "bg-[#5B3FD8]/10 dark:bg-[#9B7BFF]/15"
+                          isDark ? "bg-white/12" : "bg-[#5B3FD8]/12"
                         )}
                         transition={{ type: "spring", stiffness: 400, damping: 35 }}
                       />
@@ -254,10 +269,10 @@ export function Navbar() {
               <Link
                 href="/login"
                 className={cn(
-                  "inline-flex items-center h-8 px-3 rounded-lg text-sm font-medium transition-colors",
-                  isHome
-                    ? "text-white/80 hover:text-white hover:bg-white/10"
-                    : "text-orbit-600 hover:bg-orbit-50 dark:text-orbit-400 dark:hover:bg-orbit-900/30"
+                  "inline-flex items-center h-9 px-4 rounded-lg text-sm font-semibold transition-colors",
+                  isDark
+                    ? "text-white/90 hover:text-white hover:bg-white/10"
+                    : "text-[#5B3FD8] hover:bg-[#5B3FD8]/10"
                 )}
               >
                 Entrar
@@ -278,10 +293,10 @@ export function Navbar() {
               type="button"
               className={cn(
                 "md:hidden flex items-center justify-center w-9 h-9 rounded-xl transition-colors",
-                isHome
-                  ? "text-white/80 hover:text-white hover:bg-white/10"
-                  : "text-gray-700 dark:text-white/80 hover:bg-gray-100 dark:hover:bg-white/10",
-                "focus:outline-none focus-visible:ring-2 focus-visible:ring-orbit-400"
+                isDark
+                  ? "text-white/90 hover:text-white hover:bg-white/10"
+                  : "text-gray-800 hover:bg-gray-100",
+                "focus:outline-none focus-visible:ring-2 focus-visible:ring-[#5B3FD8]"
               )}
               onClick={() => setDrawerOpen(true)}
               aria-label="Abrir menu de navegação"
