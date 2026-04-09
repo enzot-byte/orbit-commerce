@@ -89,15 +89,6 @@ export function ThemeProvider({
     setThemeState((prev) => (prev === "dark" ? "light" : "dark"));
   }, []);
 
-  // Prevent flash of wrong theme by rendering nothing until mounted
-  if (!mounted) {
-    return (
-      <ThemeContext.Provider value={{ theme: defaultTheme, toggleTheme, setTheme }}>
-        <div style={{ visibility: "hidden" }}>{children}</div>
-      </ThemeContext.Provider>
-    );
-  }
-
   return (
     <ThemeContext.Provider value={{ theme, toggleTheme, setTheme }}>
       {children}
