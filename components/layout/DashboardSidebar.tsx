@@ -17,6 +17,16 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
+import { supabase } from "@/lib/supabase";
+
+async function handleSignOut() {
+  try {
+    if (supabase) await supabase.auth.signOut();
+  } catch (e) {
+    console.warn("[signOut] error:", e);
+  }
+  window.location.href = "/login";
+}
 
 const mockUser = {
   name: "Pedro Alves",
@@ -186,6 +196,8 @@ export function DashboardSidebar() {
       {/* Logout */}
       <div className={cn("px-2 py-3 border-t border-white/10")}>
         <button
+          onClick={handleSignOut}
+          type="button"
           className={cn(
             "flex items-center gap-3 px-3 py-2.5 rounded-xl w-full text-white/50 hover:bg-white/10 hover:text-red-400 transition-all duration-200",
             collapsed && "justify-center px-2"
