@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -33,14 +34,53 @@ export default function LoginForm() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleGoogle = async () => {
+    setError(null);
+    if (!isSupabaseConfigured || !supabase) {
+      setError(
+        "OAuth Google ainda não configurado. Defina NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY no Vercel."
+      );
+      return;
+    }
+    setGoogleLoading(true);
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/api/auth/callback?next=/dashboard`,
+      },
+    });
+    if (oauthError) {
+      setError(oauthError.message);
+      setGoogleLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
     setIsLoading(true);
-    // Simulate API call
-    await new Promise((r) => setTimeout(r, 1500));
-    setIsLoading(false);
+
+    if (!isSupabaseConfigured || !supabase) {
+      // Dev mode fallback — lets you test the UI without a backend
+      await new Promise((r) => setTimeout(r, 800));
+      window.location.href = "/dashboard";
+      return;
+    }
+
+    const { error: loginError } = await supabase.auth.signInWithPassword({
+      email,
+      password,
+    });
+    if (loginError) {
+      setError(loginError.message);
+      setIsLoading(false);
+      return;
+    }
+    window.location.href = "/dashboard";
   };
 
   const inputStyle = {
@@ -104,6 +144,8 @@ export default function LoginForm() {
       {/* Google OAuth */}
       <button
         type="button"
+        onClick={handleGoogle}
+        disabled={googleLoading}
         style={{
           width: "100%",
           display: "flex",
@@ -125,8 +167,26 @@ export default function LoginForm() {
         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "white")}
       >
         <GoogleIcon />
-        Continuar com Google
+        {googleLoading ? "Conectando..." : "Continuar com Google"}
       </button>
+
+      {error && (
+        <div
+          role="alert"
+          style={{
+            marginBottom: "16px",
+            padding: "12px 14px",
+            borderRadius: "10px",
+            background: "rgba(220,38,38,0.08)",
+            border: "1px solid rgba(220,38,38,0.25)",
+            color: "#991B1B",
+            fontSize: "13px",
+            lineHeight: 1.5,
+          }}
+        >
+          {error}
+        </div>
+      )}
 
       {/* Divider */}
       <div

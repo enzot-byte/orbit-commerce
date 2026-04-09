@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -36,19 +37,103 @@ export default function SignupForm() {
   });
   const [termsAccepted, setTermsAccepted] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [success, setSuccess] = useState<string | null>(null);
 
   const handleChange = (field: string) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setForm((prev) => ({ ...prev, [field]: e.target.value }));
+    if (error) setError(null);
+  };
+
+  const handleGoogle = async () => {
+    setError(null);
+    if (!isSupabaseConfigured || !supabase) {
+      setError(
+        "OAuth Google ainda não configurado. Defina NEXT_PUBLIC_SUPABASE_URL e NEXT_PUBLIC_SUPABASE_ANON_KEY no Vercel."
+      );
+      return;
+    }
+    setGoogleLoading(true);
+    const { error: oauthError } = await supabase.auth.signInWithOAuth({
+      provider: "google",
+      options: {
+        redirectTo: `${window.location.origin}/api/auth/callback?next=/dashboard`,
+      },
+    });
+    if (oauthError) {
+      setError(oauthError.message);
+      setGoogleLoading(false);
+    }
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setError(null);
+    setSuccess(null);
     if (!termsAccepted) return;
+    if (form.password !== form.confirmPassword) {
+      setError("As senhas não coincidem.");
+      return;
+    }
+    if (form.password.length < 8) {
+      setError("Senha precisa ter no mínimo 8 caracteres.");
+      return;
+    }
     setIsLoading(true);
-    await new Promise((r) => setTimeout(r, 1600));
-    setIsLoading(false);
+
+    try {
+      // 1. Create account in Supabase (if configured)
+      if (isSupabaseConfigured && supabase) {
+        const { error: signupError } = await supabase.auth.signUp({
+          email: form.email,
+          password: form.password,
+          options: {
+            data: {
+              name: form.name,
+              marketplace: form.marketplace,
+            },
+            emailRedirectTo: `${window.location.origin}/api/auth/callback?next=/dashboard`,
+          },
+        });
+        if (signupError) {
+          setError(signupError.message);
+          setIsLoading(false);
+          return;
+        }
+      }
+
+      // 2. Send welcome email via Resend
+      const res = await fetch("/api/signup", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          name: form.name,
+          email: form.email,
+          marketplace: form.marketplace,
+        }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || "Falha ao criar conta.");
+        setIsLoading(false);
+        return;
+      }
+
+      setSuccess(
+        data.emailSent
+          ? "Conta criada! Verifique seu e-mail de boas-vindas."
+          : "Conta criada com sucesso!"
+      );
+      setTimeout(() => {
+        window.location.href = "/dashboard";
+      }, 1500);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Erro inesperado.");
+      setIsLoading(false);
+    }
   };
 
   const inputStyle: React.CSSProperties = {
@@ -109,6 +194,8 @@ export default function SignupForm() {
       {/* Google OAuth */}
       <button
         type="button"
+        onClick={handleGoogle}
+        disabled={googleLoading}
         style={{
           width: "100%",
           display: "flex",
@@ -130,8 +217,44 @@ export default function SignupForm() {
         onMouseLeave={(e) => (e.currentTarget.style.backgroundColor = "white")}
       >
         <GoogleIcon />
-        Cadastrar com Google
+        {googleLoading ? "Conectando..." : "Cadastrar com Google"}
       </button>
+
+      {/* Error / success banner */}
+      {error && (
+        <div
+          role="alert"
+          style={{
+            marginBottom: "16px",
+            padding: "12px 14px",
+            borderRadius: "10px",
+            background: "rgba(220,38,38,0.08)",
+            border: "1px solid rgba(220,38,38,0.25)",
+            color: "#991B1B",
+            fontSize: "13px",
+            lineHeight: 1.5,
+          }}
+        >
+          {error}
+        </div>
+      )}
+      {success && (
+        <div
+          role="status"
+          style={{
+            marginBottom: "16px",
+            padding: "12px 14px",
+            borderRadius: "10px",
+            background: "rgba(16,185,129,0.08)",
+            border: "1px solid rgba(16,185,129,0.3)",
+            color: "#065F46",
+            fontSize: "13px",
+            lineHeight: 1.5,
+          }}
+        >
+          {success}
+        </div>
+      )}
 
       {/* Divider */}
       <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "20px" }}>
