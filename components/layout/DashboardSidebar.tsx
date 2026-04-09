@@ -172,7 +172,7 @@ export function DashboardSidebar() {
               transition={{ duration: 0.2 }}
               className="text-white font-bold text-base whitespace-nowrap overflow-hidden"
             >
-              Orbit Commerce
+              Sellerverse
             </motion.span>
           )}
         </AnimatePresence>

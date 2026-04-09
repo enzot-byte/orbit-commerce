@@ -67,7 +67,7 @@ const faqs = [
   {
     question: "Como funciona a garantia de 7 dias?",
     answer:
-      "Se por qualquer motivo você não ficar satisfeito nos primeiros 7 dias após a assinatura de qualquer plano pago, devolvemos 100% do valor. Basta enviar um e-mail para suporte@orbitcommerce.com.br.",
+      "Se por qualquer motivo você não ficar satisfeito nos primeiros 7 dias após a assinatura de qualquer plano pago, devolvemos 100% do valor. Basta enviar um e-mail para suporte@sellerverse.com.br.",
   },
   {
     question: "Posso fazer upgrade ou downgrade do meu plano?",

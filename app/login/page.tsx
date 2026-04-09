@@ -5,7 +5,7 @@ import OrbitalAnimation from "@/components/shared/OrbitalAnimation";
 
 export const metadata: Metadata = {
   title: "Entrar",
-  description: "Acesse sua conta no Orbit Commerce.",
+  description: "Acesse sua conta no Sellerverse.",
 };
 
 const testimonialChips = [
@@ -97,7 +97,7 @@ export default function LoginPage() {
               color: "white",
             }}
           >
-            orbit<span style={{ color: "#378ADD" }}>commerce</span>
+            Seller<span style={{ color: "#5B3FD8" }}>verse</span>
           </span>
         </Link>
 

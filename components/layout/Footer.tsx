@@ -281,7 +281,7 @@ export function Footer() {
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             {/* Copyright */}
             <p className="text-xs text-gray-400 dark:text-white/30 text-center sm:text-left">
-              &copy; {year} Orbit Commerce. Todos os direitos reservados.
+              &copy; {year} Sellerverse. Todos os direitos reservados.
             </p>
 
             {/* Legal links */}

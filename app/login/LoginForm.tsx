@@ -120,7 +120,7 @@ export default function LoginForm() {
             color: "#185FA5",
           }}
         >
-          orbit<span style={{ color: "#111827" }}>commerce</span>
+          Seller<span style={{ color: "#5B3FD8" }}>verse</span>
         </span>
       </div>
 

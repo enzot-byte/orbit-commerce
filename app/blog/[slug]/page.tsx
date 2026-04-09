@@ -26,7 +26,7 @@ const ARTICLES: Record<string, {
     author: "Rafael Mendes",
     authorRole: "Co-fundador, ex-seller ML",
     authorBio:
-      "Rafael vendeu mais de R$4 milhões no Mercado Livre antes de co-fundar o Orbit Commerce. Especialista em pricing, rentabilidade e crescimento de lojas em marketplaces brasileiros.",
+      "Rafael vendeu mais de R$4 milhões no Mercado Livre antes de co-fundar o Sellerverse. Especialista em pricing, rentabilidade e crescimento de lojas em marketplaces brasileiros.",
     date: "07 abr 2025",
     readTime: "14 min",
     gradient: "linear-gradient(135deg, #0C447C 0%, #185FA5 60%, #378ADD 100%)",
@@ -49,7 +49,7 @@ const ARTICLES: Record<string, {
         {
           heading: "Estratégias de precificação dinâmica",
           content:
-            "O mercado muda diariamente. Concorrentes entram e saem, custos de frete sobem, o Mercado Livre altera regras de comissão. Por isso, sellers profissionais não precificam uma vez e esquecem — eles monitoram e ajustam de forma sistemática. Existem três estratégias principais para precificação dinâmica. A primeira é o seguimento de preço: você define uma faixa de preço-alvo (exemplo: sempre 3% abaixo do segundo colocado) e ajusta automaticamente quando alguém altera o preço. A segunda é a precificação por posição: você define a posição que deseja ocupar no ranking e aceita o preço necessário para mantê-la, desde que a margem mínima seja respeitada. A terceira é a precificação por demanda: em períodos de alta demanda (Natal, Black Friday, Dia das Mães), você eleva o preço ligeiramente acima do mercado e aproveita o volume para melhorar a margem; em períodos fracos, você compensa com volume via preço competitivo. Ferramentas como o monitor de concorrentes do Orbit Commerce tornam esse processo automatizado para quem está no plano Premium.",
+            "O mercado muda diariamente. Concorrentes entram e saem, custos de frete sobem, o Mercado Livre altera regras de comissão. Por isso, sellers profissionais não precificam uma vez e esquecem — eles monitoram e ajustam de forma sistemática. Existem três estratégias principais para precificação dinâmica. A primeira é o seguimento de preço: você define uma faixa de preço-alvo (exemplo: sempre 3% abaixo do segundo colocado) e ajusta automaticamente quando alguém altera o preço. A segunda é a precificação por posição: você define a posição que deseja ocupar no ranking e aceita o preço necessário para mantê-la, desde que a margem mínima seja respeitada. A terceira é a precificação por demanda: em períodos de alta demanda (Natal, Black Friday, Dia das Mães), você eleva o preço ligeiramente acima do mercado e aproveita o volume para melhorar a margem; em períodos fracos, você compensa com volume via preço competitivo. Ferramentas como o monitor de concorrentes do Sellerverse tornam esse processo automatizado para quem está no plano Premium.",
           quote:
             "Quem precifica manualmente uma vez por semana está sempre correndo atrás. Sellers de elite monitoram em tempo real.",
         },
@@ -70,7 +70,7 @@ const DEFAULT_ARTICLE = {
   author: "Equipe Orbit",
   authorRole: "Time editorial",
   authorBio:
-    "O time editorial do Orbit Commerce é formado por sellers experientes e especialistas em e-commerce brasileiro com mais de 10 anos de mercado.",
+    "O time editorial do Sellerverse é formado por sellers experientes e especialistas em e-commerce brasileiro com mais de 10 anos de mercado.",
   date: "07 abr 2025",
   readTime: "12 min",
   gradient: "linear-gradient(135deg, #185FA5 0%, #378ADD 100%)",
@@ -86,7 +86,7 @@ const DEFAULT_ARTICLE = {
       {
         heading: "Como aplicar na prática",
         content:
-          "Use ferramentas de análise para acompanhar o mercado em tempo real. O Orbit Commerce oferece dashboards completos para monitorar preços da concorrência e sua própria margem por produto.",
+          "Use ferramentas de análise para acompanhar o mercado em tempo real. O Sellerverse oferece dashboards completos para monitorar preços da concorrência e sua própria margem por produto.",
       },
     ],
   },
@@ -155,7 +155,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const article = getArticle(slug);
   return {
-    title: `${article.title} | Blog Orbit Commerce`,
+    title: `${article.title} | Blog Sellerverse`,
     description: article.body.intro.slice(0, 160),
   };
 }

@@ -178,7 +178,7 @@ export default function SignupForm() {
       {/* Logo on mobile */}
       <div className="lg:hidden mb-8 flex items-center justify-center">
         <span style={{ fontFamily: "var(--font-display)", fontSize: "1.5rem", fontWeight: 800, color: "#185FA5" }}>
-          orbit<span style={{ color: "#111827" }}>commerce</span>
+          Seller<span style={{ color: "#5B3FD8" }}>verse</span>
         </span>
       </div>
 

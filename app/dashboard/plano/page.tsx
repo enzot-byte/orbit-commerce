@@ -75,9 +75,9 @@ const plans = [
 ];
 
 const paymentHistory = [
-  { date: "01/04/2025", desc: "Orbit Commerce — Plano Pro", value: "R$ 97,00", status: "Pago" },
-  { date: "01/03/2025", desc: "Orbit Commerce — Plano Pro", value: "R$ 97,00", status: "Pago" },
-  { date: "01/02/2025", desc: "Orbit Commerce — Plano Pro", value: "R$ 97,00", status: "Pago" },
+  { date: "01/04/2025", desc: "Sellerverse — Plano Pro", value: "R$ 97,00", status: "Pago" },
+  { date: "01/03/2025", desc: "Sellerverse — Plano Pro", value: "R$ 97,00", status: "Pago" },
+  { date: "01/02/2025", desc: "Sellerverse — Plano Pro", value: "R$ 97,00", status: "Pago" },
 ];
 
 export default function PlanoPage() {

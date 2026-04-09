@@ -5,7 +5,7 @@ import OrbitalAnimation from "@/components/shared/OrbitalAnimation";
 
 export const metadata: Metadata = {
   title: "Criar Conta",
-  description: "Crie sua conta grátis no Orbit Commerce e comece a vender mais hoje mesmo.",
+  description: "Crie sua conta grátis no Sellerverse e comece a vender mais hoje mesmo.",
 };
 
 const benefits = [
@@ -129,7 +129,7 @@ export default function CadastroPage() {
               color: "white",
             }}
           >
-            orbit<span style={{ color: "#378ADD" }}>commerce</span>
+            Seller<span style={{ color: "#5B3FD8" }}>verse</span>
           </span>
         </Link>
 

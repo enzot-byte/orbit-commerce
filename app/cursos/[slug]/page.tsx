@@ -52,8 +52,8 @@ const COURSES: Record<string, {
     lastUpdate: "Março 2025",
     instructor: {
       name: "Rafael Mendes",
-      role: "Co-fundador Orbit Commerce · 5+ anos vendendo em ML",
-      bio: "Rafael acumulou mais de R$4M em vendas no Mercado Livre antes de fundar o Orbit Commerce. É especialista em pricing, rentabilidade e escala de operações.",
+      role: "Co-fundador Sellerverse · 5+ anos vendendo em ML",
+      bio: "Rafael acumulou mais de R$4M em vendas no Mercado Livre antes de fundar o Sellerverse. É especialista em pricing, rentabilidade e escala de operações.",
       avatar: "R",
     },
     price: null, // null = included in Pro
@@ -209,7 +209,7 @@ export async function generateMetadata({
   const { slug } = await params;
   const course = getCourse(slug);
   return {
-    title: `${course.title} | Orbit Commerce Cursos`,
+    title: `${course.title} | Sellerverse Cursos`,
     description: course.description,
   };
 }

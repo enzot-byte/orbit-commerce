@@ -52,7 +52,7 @@ export async function POST(req: Request) {
     const { data, error } = await resend.emails.send({
       from: FROM_EMAIL,
       to: [email],
-      subject: "Bem-vindo à Orbit Commerce! 🚀",
+      subject: "Bem-vindo à Sellerverse! 🚀",
       html: renderWelcomeEmail({ name, marketplace }),
     });
 
@@ -95,7 +95,7 @@ function renderWelcomeEmail({
           <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="560" style="max-width:560px;background:#ffffff;border-radius:16px;overflow:hidden;box-shadow:0 4px 24px rgba(0,0,0,0.06);">
             <tr>
               <td style="background:linear-gradient(135deg,#0C447C 0%,#185FA5 60%,#EF9F27 100%);padding:40px 32px;text-align:center;">
-                <div style="font-size:28px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">orbit<span style="color:#FAC775;">commerce</span></div>
+                <div style="font-size:28px;font-weight:800;color:#ffffff;letter-spacing:-0.5px;">Seller<span style="color:#C4B5FD;">verse</span></div>
                 <div style="margin-top:8px;font-size:14px;color:rgba(255,255,255,0.85);">O ecossistema completo para sellers</div>
               </td>
             </tr>
@@ -103,7 +103,7 @@ function renderWelcomeEmail({
               <td style="padding:40px 32px 24px 32px;">
                 <h1 style="margin:0 0 16px 0;font-size:24px;font-weight:700;color:#111827;">Bem-vindo(a), ${escapeHtml(firstName)}! 🚀</h1>
                 <p style="margin:0 0 16px 0;font-size:15px;line-height:1.6;color:#374151;">
-                  Sua conta na Orbit Commerce foi criada com sucesso. A partir de agora você tem acesso à comunidade, cursos, ferramentas e mentorias que vão te ajudar a escalar no e-commerce.
+                  Sua conta na Sellerverse foi criada com sucesso. A partir de agora você tem acesso à comunidade, cursos, ferramentas e mentorias que vão te ajudar a escalar no e-commerce.
                 </p>
                 ${
                   marketplace
@@ -118,12 +118,12 @@ function renderWelcomeEmail({
                 <p style="margin:24px 0 0 0;font-size:14px;line-height:1.6;color:#6B7280;">
                   Qualquer dúvida, é só responder esse e-mail. Estamos juntos nessa.
                 </p>
-                <p style="margin:16px 0 0 0;font-size:14px;color:#6B7280;">— Equipe Orbit Commerce</p>
+                <p style="margin:16px 0 0 0;font-size:14px;color:#6B7280;">— Equipe Sellerverse</p>
               </td>
             </tr>
             <tr>
               <td style="padding:20px 32px;border-top:1px solid #E5E7EB;text-align:center;font-size:12px;color:#9CA3AF;">
-                © ${new Date().getFullYear()} Orbit Commerce — Brasil
+                © ${new Date().getFullYear()} Sellerverse — Brasil
               </td>
             </tr>
           </table>

@@ -12,7 +12,7 @@ interface ErrorPageProps {
 export default function Error({ error, reset }: ErrorPageProps) {
   useEffect(() => {
     // Log the error to monitoring
-    console.error("Orbit Commerce — page error:", error);
+    console.error("Sellerverse — page error:", error);
   }, [error]);
 
   return (
@@ -173,10 +173,10 @@ export default function Error({ error, reset }: ErrorPageProps) {
         >
           Se o problema persistir, entre em contato:{" "}
           <a
-            href="mailto:suporte@orbitcommerce.com.br"
+            href="mailto:suporte@sellerverse.com.br"
             style={{ color: "#378ADD", textDecoration: "none" }}
           >
-            suporte@orbitcommerce.com.br
+            suporte@sellerverse.com.br
           </a>
         </p>
       </div>

@@ -7,7 +7,7 @@ import AnimatedCounter from "@/components/shared/AnimatedCounter";
 export const metadata: Metadata = {
   title: "Sobre Nós",
   description:
-    "Conheça a missão, história e o time por trás do Orbit Commerce — o ecossistema criado por sellers, para sellers.",
+    "Conheça a missão, história e o time por trás do Sellerverse — o ecossistema criado por sellers, para sellers.",
 };
 
 // ─── Data ─────────────────────────────────────────────────────────────────────
@@ -66,7 +66,7 @@ const team = [
   {
     name: "Rafael Mendes",
     role: "Co-fundador & CEO",
-    bio: "Ex-seller do Mercado Livre com mais de R$5M em vendas. Criou o Orbit Commerce após perceber a falta de suporte de qualidade para pequenos e médios sellers.",
+    bio: "Ex-seller do Mercado Livre com mais de R$5M em vendas. Criou o Sellerverse após perceber a falta de suporte de qualidade para pequenos e médios sellers.",
     gradient: "linear-gradient(135deg, #0C447C 0%, #378ADD 100%)",
     initials: "RM",
   },
@@ -80,7 +80,7 @@ const team = [
   {
     name: "Lucas Ferreira",
     role: "CTO",
-    bio: "Engenheiro de software com 10 anos de experiência em SaaS. Construiu toda a infraestrutura do Orbit Commerce do zero com foco em performance e escalabilidade.",
+    bio: "Engenheiro de software com 10 anos de experiência em SaaS. Construiu toda a infraestrutura do Sellerverse do zero com foco em performance e escalabilidade.",
     gradient: "linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%)",
     initials: "LF",
   },
@@ -253,7 +253,7 @@ export default function SobrePage() {
                         maxWidth: "200px",
                       }}
                     >
-                      Orbit Commerce HQ<br />São Paulo · 2023
+                      Sellerverse HQ<br />São Paulo · 2023
                     </p>
                   </div>
                 </div>
@@ -290,7 +290,7 @@ export default function SobrePage() {
                     {[
                       "Em 2021, Rafael Mendes vendia no Mercado Livre e não encontrava recursos sérios para sellers brasileiros. Os cursos eram genéricos, as ferramentas caríssimas ou em inglês, e a comunidade, dispersa.",
                       "Junto com Carla, criou um grupo no WhatsApp que explodiu para 800 pessoas em 3 meses. Ficou claro que a demanda era real — e que o mercado estava desatendido.",
-                      "Em 2023, com Lucas como CTO, nasceu o Orbit Commerce. Uma plataforma construída por quem já vendeu, para quem quer vender mais e melhor.",
+                      "Em 2023, com Lucas como CTO, nasceu o Sellerverse. Uma plataforma construída por quem já vendeu, para quem quer vender mais e melhor.",
                     ].map((paragraph, i) => (
                       <p key={i} style={{ fontSize: "15px", color: "rgba(255,255,255,0.6)", lineHeight: 1.8 }}>
                         {paragraph}

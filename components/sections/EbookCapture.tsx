@@ -117,7 +117,7 @@ export default function EbookCapture() {
                         ))}
                       </div>
                       <div className="border-t border-white/10 pt-4">
-                        <p className="text-white/50 text-xs">Orbit Commerce · 2025</p>
+                        <p className="text-white/50 text-xs">Sellerverse · 2025</p>
                       </div>
                     </div>
                   </div>

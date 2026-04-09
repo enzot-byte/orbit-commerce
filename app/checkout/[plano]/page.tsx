@@ -56,7 +56,7 @@ export async function generateMetadata({
   const plan = PLANS[plano as PlanSlug];
   if (!plan) return { title: "Plano não encontrado" };
   return {
-    title: `Checkout — Plano ${plan.name} | Orbit Commerce`,
+    title: `Checkout — Plano ${plan.name} | Sellerverse`,
     description: plan.description,
   };
 }

@@ -15,26 +15,29 @@ export interface LogoProps {
 const sizeConfig = {
   sm: {
     iconSize: 28,
-    textOrbit: "text-base",
-    textCommerce: "text-base",
+    textSeller: "text-base",
+    textVerse: "text-base",
     taglineClass: "text-[8px]",
     gap: "gap-2",
   },
   md: {
     iconSize: 40,
-    textOrbit: "text-xl",
-    textCommerce: "text-xl",
+    textSeller: "text-xl",
+    textVerse: "text-xl",
     taglineClass: "text-[9px]",
     gap: "gap-3",
   },
   lg: {
     iconSize: 56,
-    textOrbit: "text-3xl",
-    textCommerce: "text-3xl",
+    textSeller: "text-3xl",
+    textVerse: "text-3xl",
     taglineClass: "text-[11px]",
     gap: "gap-4",
   },
 };
+
+// Brand purple used for the "verse" half of the wordmark.
+export const BRAND_PURPLE = "#5B3FD8";
 
 // ─── SVG Icon ─────────────────────────────────────────────────────────────────
 
@@ -128,20 +131,20 @@ export function Logo({
       <span className="flex items-baseline gap-0">
         <span
           className={cn(
-            cfg.textOrbit,
-            "font-display font-medium text-gray-900 dark:text-white tracking-tight"
+            cfg.textSeller,
+            "font-display font-bold text-gray-900 dark:text-white tracking-tight"
           )}
         >
-          orbit
+          Seller
         </span>
         <span
           className={cn(
-            cfg.textCommerce,
-            "font-display font-medium tracking-tight"
+            cfg.textVerse,
+            "font-display font-bold tracking-tight"
           )}
-          style={{ color: "#185FA5" }}
+          style={{ color: BRAND_PURPLE }}
         >
-          commerce
+          verse
         </span>
       </span>
       {tagline && (
@@ -151,7 +154,7 @@ export function Logo({
             "font-body font-medium text-gray-400 dark:text-white/40 uppercase tracking-[3px] mt-0.5"
           )}
         >
-          YOUR ECOMMERCE UNIVERSE
+          SEU UNIVERSO DE VENDAS
         </span>
       )}
     </span>
@@ -161,7 +164,7 @@ export function Logo({
     return (
       <span
         className={cn("inline-flex items-center", className)}
-        aria-label="Orbit Commerce"
+        aria-label="Sellerverse"
       >
         {iconEl}
       </span>
@@ -184,7 +187,7 @@ export function Logo({
         cfg.gap,
         className
       )}
-      aria-label="Orbit Commerce"
+      aria-label="Sellerverse"
     >
       {iconEl}
       {textEl}

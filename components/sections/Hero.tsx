@@ -87,8 +87,8 @@ export default function Hero() {
               href="/cadastro"
               className="group relative inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-semibold overflow-hidden transition-all duration-300 hover:scale-105 hover:shadow-glow-accent"
               style={{
-                background: "linear-gradient(135deg, #EF9F27 0%, #FAC775 100%)",
-                color: "#0A0A0F",
+                background: "linear-gradient(135deg, #5B3FD8 0%, #9B7BFF 100%)",
+                color: "#ffffff",
               }}
             >
               <span className="relative z-10">Começar gratuitamente</span>

@@ -213,7 +213,7 @@ export function Navbar() {
         <div className="container-orbit">
           <div className="flex items-center justify-between h-16">
             {/* Logo */}
-            <Link href="/" aria-label="Orbit Commerce — página inicial">
+            <Link href="/" aria-label="Sellerverse — página inicial">
               <Logo size="sm" variant="full" />
             </Link>
 

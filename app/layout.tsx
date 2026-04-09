@@ -28,8 +28,8 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "Orbit Commerce — O ecossistema completo para sellers",
-    template: "%s | Orbit Commerce",
+    default: "Sellerverse — O ecossistema completo para sellers",
+    template: "%s | Sellerverse",
   },
   description:
     "Comunidade, cursos, ferramentas e mentoria para sellers brasileiros escalar no e-commerce. Mercado Livre, Shopee, Amazon e muito mais.",
@@ -47,9 +47,9 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "pt_BR",
-    url: "https://orbitcommerce.com.br",
-    siteName: "Orbit Commerce",
-    title: "Orbit Commerce — O ecossistema completo para sellers",
+    url: "https://sellerverse.com.br",
+    siteName: "Sellerverse",
+    title: "Sellerverse — O ecossistema completo para sellers",
     description:
       "Comunidade, cursos, ferramentas e mentoria para sellers brasileiros escalar no e-commerce.",
     images: [
@@ -57,13 +57,13 @@ export const metadata: Metadata = {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Orbit Commerce",
+        alt: "Sellerverse",
       },
     ],
   },
   twitter: {
     card: "summary_large_image",
-    title: "Orbit Commerce",
+    title: "Sellerverse",
     description: "O ecossistema completo para sellers de ecommerce.",
   },
   robots: {

@@ -51,7 +51,7 @@ export default function Loading() {
             marginBottom: "8px",
           }}
         >
-          Orbit Commerce
+          Sellerverse
         </p>
 
         {/* Animated dots */}

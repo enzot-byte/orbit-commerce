@@ -11,7 +11,7 @@ const testimonials = [
     name: "Fernanda Oliveira",
     store: "FerShop — Moda Feminina",
     quote:
-      "Antes do Orbit Commerce eu passava horas tentando calcular minha margem na planilha. Agora levo 30 segundos. Triplicar o faturamento em 6 meses foi consequência de ter as ferramentas certas.",
+      "Antes do Sellerverse eu passava horas tentando calcular minha margem na planilha. Agora levo 30 segundos. Triplicar o faturamento em 6 meses foi consequência de ter as ferramentas certas.",
     avatarColor: "from-orbit-600 to-orbit-800",
     initials: "FO",
     revenue: "+R$120k em 6 meses",

@@ -15,4 +15,4 @@ export function getResend(): Resend | null {
 }
 
 export const FROM_EMAIL =
-  process.env.RESEND_FROM_EMAIL || "Orbit Commerce <onboarding@resend.dev>";
+  process.env.RESEND_FROM_EMAIL || "Sellerverse <onboarding@resend.dev>";
