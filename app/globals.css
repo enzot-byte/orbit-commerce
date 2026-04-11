@@ -150,10 +150,15 @@ html {
 
 /* Logo atom — three rings rotating at different speeds/directions, giving
    an authentic atom-like asymmetry. Pure CSS, GPU transforms, zero JS. */
+/* Each ring wrapper gets a smooth transition so hover speed-up/slow-down
+   feels organic rather than snapping instantly. We can't transition
+   animation-duration, so instead we wrap the keyframe layer in a
+   container that smoothly interpolates its own rotation on hover. */
 .logo-atom-ring-a,
 .logo-atom-ring-b,
 .logo-atom-ring-c {
   will-change: transform;
+  /* Constant base spin */
 }
 .logo-atom-ring-a {
   animation: logo-atom-rot-a 6s linear infinite;
@@ -164,9 +169,18 @@ html {
 .logo-atom-ring-c {
   animation: logo-atom-rot-c 4.5s linear infinite;
 }
-.group\/logo:hover .logo-atom-ring-a { animation-duration: 1.6s; }
-.group\/logo:hover .logo-atom-ring-b { animation-duration: 2.2s; }
-.group\/logo:hover .logo-atom-ring-c { animation-duration: 1.2s; }
+
+/* Smooth speed ramp: wrap each ring in a container (<g class="logo-atom-boost-*">)
+   that adds an extra rotation over ~1s on hover via CSS transition. The keyframe
+   continues at its base speed; the wrapper adds perceived acceleration. */
+.logo-atom-boost-a,
+.logo-atom-boost-b,
+.logo-atom-boost-c {
+  transition: transform 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.group\/logo:hover .logo-atom-boost-a { transform: rotate(120deg); }
+.group\/logo:hover .logo-atom-boost-b { transform: rotate(-90deg); }
+.group\/logo:hover .logo-atom-boost-c { transform: rotate(150deg); }
 
 /* Slightly non-uniform rotation gives the electron a jittery, quasi-random
    orbit feel instead of a metronomic spin. */

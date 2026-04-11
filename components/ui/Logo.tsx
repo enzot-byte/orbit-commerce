@@ -56,9 +56,9 @@ function OrbitIcon({ size }: { size: number }) {
   // it automatically travels the orbit, giving the scene an authentic
   // atom-like asymmetry (different speeds + directions per ring).
   const rings = [
-    { tilt: -25, cls: "logo-atom-ring-a", dot: "#9B7BFF", strokeOpacity: 0.85 },
-    { tilt: 28, cls: "logo-atom-ring-b", dot: "#C4B5FD", strokeOpacity: 0.55 },
-    { tilt: 78, cls: "logo-atom-ring-c", dot: "#5B3FD8", strokeOpacity: 0.4 },
+    { tilt: -25, cls: "logo-atom-ring-a", boost: "logo-atom-boost-a", dot: "#9B7BFF", strokeOpacity: 0.85 },
+    { tilt: 28, cls: "logo-atom-ring-b", boost: "logo-atom-boost-b", dot: "#C4B5FD", strokeOpacity: 0.55 },
+    { tilt: 78, cls: "logo-atom-ring-c", boost: "logo-atom-boost-c", dot: "#5B3FD8", strokeOpacity: 0.4 },
   ];
 
   return (
@@ -85,27 +85,30 @@ function OrbitIcon({ size }: { size: number }) {
       {rings.map((r, i) => (
         <g
           key={i}
-          className={r.cls}
+          className={r.boost}
           style={{ transformOrigin: `${cx}px ${cy}px` }}
         >
-          <g transform={`rotate(${r.tilt}, ${cx}, ${cy})`}>
-            <ellipse
-              cx={cx}
-              cy={cy}
-              rx={rx}
-              ry={ry}
-              stroke={`rgba(196,181,253,${r.strokeOpacity})`}
-              strokeWidth={s * 0.024}
-              fill="none"
-            />
-            {/* Electron sits on the right vertex of the untilted ellipse.
-                The parent <g> rotation + tilt produces the orbit. */}
-            <circle
-              cx={cx + rx}
-              cy={cy}
-              r={electronR}
-              fill={r.dot}
-            />
+          <g
+            className={r.cls}
+            style={{ transformOrigin: `${cx}px ${cy}px` }}
+          >
+            <g transform={`rotate(${r.tilt}, ${cx}, ${cy})`}>
+              <ellipse
+                cx={cx}
+                cy={cy}
+                rx={rx}
+                ry={ry}
+                stroke={`rgba(196,181,253,${r.strokeOpacity})`}
+                strokeWidth={s * 0.024}
+                fill="none"
+              />
+              <circle
+                cx={cx + rx}
+                cy={cy}
+                r={electronR}
+                fill={r.dot}
+              />
+            </g>
           </g>
         </g>
       ))}
