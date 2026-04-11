@@ -358,3 +358,8 @@ html {
   .animation-delay-1000 { animation-delay: 1000ms; }
   .animation-fill-both { animation-fill-mode: both; }
 }
+
+/* Spin animation for border gradients */
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}

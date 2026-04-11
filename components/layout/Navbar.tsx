@@ -17,6 +17,7 @@ const NAV_LINKS = [
   { label: "Ferramentas", href: "/ferramentas" },
   { label: "Cursos", href: "/cursos" },
   { label: "Blog", href: "/blog" },
+  { label: "Redes", href: "/redes" },
 ] as const;
 
 // ─── Theme Toggle ─────────────────────────────────────────────────────────────

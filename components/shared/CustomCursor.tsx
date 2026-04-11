@@ -63,20 +63,20 @@ export default function CustomCursor() {
       const x = mx;
       const y = my;
 
-      // Soft halo (offset by half its 500px box)
-      glow.style.transform = `translate3d(${x - 250}px, ${y - 250}px, 0)`;
-      // Dashed orbit ring centered on cursor (120px box, radius 60)
-      ring.style.transform = `translate3d(${x - 60}px, ${y - 60}px, 0) rotate(${t * 0.06}deg)`;
+      // Soft halo (offset by half its 300px box)
+      glow.style.transform = `translate3d(${x - 150}px, ${y - 150}px, 0)`;
+      // Dashed orbit ring centered on cursor (60px box, radius 30)
+      ring.style.transform = `translate3d(${x - 30}px, ${y - 30}px, 0) rotate(${t * 0.08}deg)`;
 
       // Three satellites at different speeds + phase offsets
       const elapsed = (t - start) / 1000;
-      const R = 56;
-      const a1 = elapsed * 1.8;
-      const a2 = elapsed * 1.4 + (Math.PI * 2) / 3;
-      const a3 = elapsed * 2.2 + (Math.PI * 4) / 3;
-      sat1.style.transform = `translate3d(${x + Math.cos(a1) * R - 5}px, ${y + Math.sin(a1) * R * 0.6 - 5}px, 0)`;
-      sat2.style.transform = `translate3d(${x + Math.cos(a2) * R - 4}px, ${y + Math.sin(a2) * R * 0.6 - 4}px, 0)`;
-      sat3.style.transform = `translate3d(${x + Math.cos(a3) * (R * 0.78) - 3}px, ${y + Math.sin(a3) * (R * 0.78) * 0.55 - 3}px, 0)`;
+      const R = 26;
+      const a1 = elapsed * 2.0;
+      const a2 = elapsed * 1.6 + (Math.PI * 2) / 3;
+      const a3 = elapsed * 2.4 + (Math.PI * 4) / 3;
+      sat1.style.transform = `translate3d(${x + Math.cos(a1) * R - 3}px, ${y + Math.sin(a1) * R * 0.65 - 3}px, 0)`;
+      sat2.style.transform = `translate3d(${x + Math.cos(a2) * R - 2.5}px, ${y + Math.sin(a2) * R * 0.65 - 2.5}px, 0)`;
+      sat3.style.transform = `translate3d(${x + Math.cos(a3) * (R * 0.8) - 2}px, ${y + Math.sin(a3) * (R * 0.8) * 0.6 - 2}px, 0)`;
 
       raf = requestAnimationFrame(loop);
     };
@@ -113,12 +113,12 @@ export default function CustomCursor() {
           position: "fixed",
           top: 0,
           left: 0,
-          width: 500,
-          height: 500,
+          width: 300,
+          height: 300,
           pointerEvents: "none",
           zIndex: 30,
           background:
-            "radial-gradient(circle, rgba(91,63,216,0.22) 0%, rgba(155,123,255,0.10) 35%, transparent 70%)",
+            "radial-gradient(circle, rgba(91,63,216,0.18) 0%, rgba(155,123,255,0.08) 35%, transparent 70%)",
           mixBlendMode: "screen",
           willChange: "transform",
           transform: "translate3d(-9999px, -9999px, 0)",
@@ -130,10 +130,10 @@ export default function CustomCursor() {
           position: "fixed",
           top: 0,
           left: 0,
-          width: 120,
-          height: 120,
+          width: 60,
+          height: 60,
           borderRadius: "50%",
-          border: "1px dashed rgba(155,123,255,0.45)",
+          border: "1px dashed rgba(155,123,255,0.35)",
           pointerEvents: "none",
           zIndex: 31,
           willChange: "transform",
@@ -144,30 +144,30 @@ export default function CustomCursor() {
         ref={sat1Ref}
         style={{
           ...dotBase,
-          width: 10,
-          height: 10,
+          width: 6,
+          height: 6,
           backgroundColor: "#9B7BFF",
-          boxShadow: "0 0 14px rgba(155,123,255,0.9)",
+          boxShadow: "0 0 10px rgba(155,123,255,0.9)",
         }}
       />
       <div
         ref={sat2Ref}
         style={{
           ...dotBase,
-          width: 8,
-          height: 8,
+          width: 5,
+          height: 5,
           backgroundColor: "#C4B5FD",
-          boxShadow: "0 0 10px rgba(196,181,253,0.85)",
+          boxShadow: "0 0 8px rgba(196,181,253,0.85)",
         }}
       />
       <div
         ref={sat3Ref}
         style={{
           ...dotBase,
-          width: 6,
-          height: 6,
+          width: 4,
+          height: 4,
           backgroundColor: "#5B3FD8",
-          boxShadow: "0 0 8px rgba(91,63,216,0.9)",
+          boxShadow: "0 0 6px rgba(91,63,216,0.9)",
         }}
       />
     </div>
