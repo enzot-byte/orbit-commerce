@@ -468,7 +468,7 @@ export default function SobrePage() {
               </p>
             </ScrollReveal>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <div className="flex flex-wrap justify-center gap-8">
               {team.map((member, i) => (
                 <ScrollReveal key={member.name} direction="up" index={i} delay={0.1}>
                   <div
@@ -478,6 +478,8 @@ export default function SobrePage() {
                       border: "1px solid rgba(255,255,255,0.08)",
                       padding: "40px 32px",
                       textAlign: "center",
+                      width: "100%",
+                      maxWidth: "380px",
                     }}
                   >
                     {/* Avatar */}
