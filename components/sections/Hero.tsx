@@ -181,11 +181,15 @@ export default function Hero() {
           <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#0A0A0F] to-transparent z-10 pointer-events-none" />
 
           <div className="marquee-track">
-            {/* Duplicate pills for seamless loop */}
             {[...featurePills, ...featurePills].map((pill, i) => (
               <span
                 key={`pill-${i}`}
-                className="flex-shrink-0 px-4 py-2 rounded-full text-sm text-white/60 bg-white/[0.04] border border-white/[0.08] whitespace-nowrap hover:bg-white/[0.08] hover:text-white/80 transition-colors duration-200"
+                className="flex-shrink-0 px-5 py-2.5 rounded-full text-sm font-medium text-white/90 whitespace-nowrap transition-all duration-200 hover:scale-105"
+                style={{
+                  background: "linear-gradient(135deg, rgba(91,63,216,0.15), rgba(155,123,255,0.08))",
+                  border: "1px solid rgba(155,123,255,0.25)",
+                  boxShadow: "0 0 12px rgba(91,63,216,0.1)",
+                }}
               >
                 {pill}
               </span>
