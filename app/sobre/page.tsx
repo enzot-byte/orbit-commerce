@@ -14,9 +14,9 @@ export const metadata: Metadata = {
 
 const stats = [
   { value: 2500, suffix: "+", label: "Sellers ativos", prefix: "" },
-  { value: 48, suffix: "M+", label: "Em vendas geradas", prefix: "R$" },
+  { value: 50, suffix: "M+", label: "Em vendas geradas", prefix: "R$" },
   { value: 95, suffix: "%", label: "Taxa de satisfação", prefix: "" },
-  { value: 12, suffix: "+", label: "Marketplaces cobertos", prefix: "" },
+  { value: 5, suffix: "+", label: "Marketplaces cobertos", prefix: "" },
 ];
 
 const values = [
