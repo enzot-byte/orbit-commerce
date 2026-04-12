@@ -97,9 +97,9 @@ export default function SocialProof() {
           className="grid grid-cols-1 sm:grid-cols-3 gap-12 sm:gap-8 mb-16"
         >
           {stats.map((stat) => (
-            <div key={stat.label} className="text-center overflow-hidden">
+            <div key={stat.label} className="text-center">
               <div
-                className="text-4xl md:text-5xl lg:text-6xl font-display font-black mb-3 leading-none"
+                className="text-3xl sm:text-4xl md:text-5xl font-display font-black mb-3 leading-tight"
                 style={{
                   background:
                     "linear-gradient(135deg, #ffffff 0%, #C4B5FD 60%, #9B7BFF 100%)",
