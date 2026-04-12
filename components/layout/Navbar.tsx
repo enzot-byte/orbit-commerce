@@ -194,16 +194,16 @@ export function Navbar() {
   const isDark = theme === "dark";
   const bgColor = isDark
     ? scrolled
-      ? "rgba(10,10,15,0.88)"
-      : "rgba(10,10,15,0.55)"
+      ? "rgba(10,10,15,0.92)"
+      : "rgba(10,10,15,0.40)"
     : scrolled
     ? "rgba(255,255,255,0.92)"
     : "rgba(255,255,255,0.7)";
 
   const borderColor = isDark
     ? scrolled
-      ? "rgba(255,255,255,0.08)"
-      : "rgba(255,255,255,0.04)"
+      ? "rgba(255,255,255,0.06)"
+      : "rgba(255,255,255,0.02)"
     : scrolled
     ? "rgba(15,23,42,0.08)"
     : "rgba(15,23,42,0.04)";
@@ -219,8 +219,8 @@ export function Navbar() {
         style={{
           backgroundColor: bgColor,
           borderBottom: `1px solid ${borderColor}`,
-          backdropFilter: "blur(14px)",
-          WebkitBackdropFilter: "blur(14px)",
+          backdropFilter: scrolled ? "blur(20px) saturate(1.2)" : "blur(10px)",
+          WebkitBackdropFilter: scrolled ? "blur(20px) saturate(1.2)" : "blur(10px)",
           transition: "background-color 0.35s ease, border-color 0.35s ease",
         }}
       >
@@ -280,12 +280,13 @@ export function Navbar() {
               </Link>
               <Link
                 href="/cadastro"
-                className="inline-flex items-center h-10 px-5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] hover:shadow-[0_0_24px_4px_rgba(91,63,216,0.45)]"
+                className="relative inline-flex items-center h-10 px-5 rounded-xl text-sm font-bold text-white transition-all hover:scale-[1.03] overflow-hidden"
                 style={{
                   background: "linear-gradient(135deg, #5B3FD8 0%, #9B7BFF 100%)",
+                  boxShadow: "0 0 20px rgba(91,63,216,0.3)",
                 }}
               >
-                Começar grátis
+                <span className="relative z-10">Começar grátis</span>
               </Link>
             </div>
 

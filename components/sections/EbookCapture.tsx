@@ -49,9 +49,10 @@ export default function EbookCapture() {
 
   return (
     <section
-      className="section-pad relative overflow-hidden"
+      className="relative overflow-hidden ambient-light"
       style={{
         background: "linear-gradient(135deg, #0F0F1A 0%, #1A1A2E 50%, #252547 100%)",
+        padding: "128px 0 160px",
       }}
     >
       {/* Background decorations */}
@@ -164,8 +165,11 @@ export default function EbookCapture() {
               <p className="text-accent-400 text-sm font-bold tracking-widest uppercase mb-4">
                 E-book gratuito
               </p>
-              <h2 className="text-3xl md:text-4xl font-display font-black leading-tight mb-4">
-                Baixe grátis: Os 7 erros que quebram 90% dos sellers
+              <h2
+                className="text-3xl md:text-4xl font-display font-black leading-tight mb-4"
+                style={{ letterSpacing: "-0.02em" }}
+              >
+                Baixe gr&aacute;tis: Os 7 erros que quebram 90% dos sellers
               </h2>
               <p className="text-white/60 text-base leading-relaxed mb-8">
                 Descubra o que está sabotando seu faturamento e como corrigir cada
