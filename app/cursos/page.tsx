@@ -111,7 +111,7 @@ export default function CursosPage() {
               }}
             >
               {[
-                { label: "Cursos disponíveis", value: "8+" },
+                { label: "Cursos disponíveis", value: "10+" },
                 { label: "Horas de conteúdo", value: "45h+" },
                 { label: "Alunos satisfeitos", value: "4.200+" },
               ].map((stat) => (

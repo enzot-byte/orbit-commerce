@@ -7,7 +7,7 @@ import Link from "next/link";
 // ─── Types ─────────────────────────────────────────────────────────────────────
 
 type Level = "Todos" | "Iniciante" | "Intermediário" | "Avançado";
-type Marketplace = "Todos" | "ML" | "Shopee" | "Amazon" | "Geral";
+type Marketplace = "Todos" | "ML" | "Shopee" | "Amazon" | "Magalu" | "Shein" | "Geral";
 
 interface Course {
   id: number;
@@ -139,10 +139,38 @@ const courses: Course[] = [
     price: "Grátis",
     emoji: "✍️",
   },
+  {
+    id: 9,
+    title: "Magalu Marketplace: Do Cadastro à Primeira Venda",
+    instructor: "Bruno Almeida",
+    hours: "5h",
+    modules: 8,
+    level: "Iniciante",
+    marketplace: "Magalu",
+    rating: 4.7,
+    reviews: 189,
+    gradient: "linear-gradient(135deg, #1e40af 0%, #3b82f6 100%)",
+    price: "Grátis",
+    emoji: "🏪",
+  },
+  {
+    id: 10,
+    title: "Shein: Como Vender Moda no Maior Marketplace do Mundo",
+    instructor: "Juliana Costa",
+    hours: "6h",
+    modules: 10,
+    level: "Intermediário",
+    marketplace: "Shein",
+    rating: 4.8,
+    reviews: 274,
+    gradient: "linear-gradient(135deg, #171717 0%, #404040 100%)",
+    price: "Incluso no Pro",
+    emoji: "👗",
+  },
 ];
 
 const levels: Level[] = ["Todos", "Iniciante", "Intermediário", "Avançado"];
-const marketplaces: Marketplace[] = ["Todos", "ML", "Shopee", "Amazon", "Geral"];
+const marketplaces: Marketplace[] = ["Todos", "ML", "Shopee", "Amazon", "Magalu", "Shein", "Geral"];
 
 const levelColors: Record<Exclude<Level, "Todos">, { color: string; bg: string }> = {
   Iniciante: { color: "#10b981", bg: "rgba(16,185,129,0.15)" },
@@ -154,6 +182,8 @@ const marketplaceColors: Record<Exclude<Marketplace, "Todos">, { color: string; 
   ML: { color: "#60a5fa", bg: "rgba(96,165,250,0.12)" },
   Shopee: { color: "#fb923c", bg: "rgba(251,146,60,0.12)" },
   Amazon: { color: "#facc15", bg: "rgba(250,204,21,0.12)" },
+  Magalu: { color: "#3b82f6", bg: "rgba(59,130,246,0.12)" },
+  Shein: { color: "#e5e5e5", bg: "rgba(229,229,229,0.1)" },
   Geral: { color: "#a78bfa", bg: "rgba(167,139,250,0.12)" },
 };
 
