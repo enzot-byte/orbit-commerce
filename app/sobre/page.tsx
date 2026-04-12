@@ -84,6 +84,20 @@ const team = [
     gradient: "linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%)",
     initials: "LF",
   },
+  {
+    name: "Juliana Costa",
+    role: "Head de Comunidade",
+    bio: "Formada em Marketing Digital com foco em growth. Gerencia a comunidade de +2.500 sellers e lidera as iniciativas de engajamento e retenção de membros.",
+    gradient: "linear-gradient(135deg, #065f46 0%, #10b981 100%)",
+    initials: "JC",
+  },
+  {
+    name: "Bruno Almeida",
+    role: "Head de Produto",
+    bio: "Product Manager com 8 anos de experiência em startups B2B. Responsável pelo roadmap de ferramentas e pela experiência do usuário na plataforma.",
+    gradient: "linear-gradient(135deg, #9f1239 0%, #f43f5e 100%)",
+    initials: "BA",
+  },
 ];
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
