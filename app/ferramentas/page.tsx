@@ -98,7 +98,7 @@ export default function FerramentasPage() {
                 lineHeight: 1.7,
               }}
             >
-              12+ ferramentas desenvolvidas especialmente para sellers brasileiros. Algumas grátis para sempre, outras disponíveis nos planos Pro e Premium.
+              15+ ferramentas desenvolvidas especialmente para sellers brasileiros. Algumas grátis para sempre, outras disponíveis nos planos Pro e Premium.
             </p>
 
             {/* Quick stats */}
@@ -111,7 +111,7 @@ export default function FerramentasPage() {
               }}
             >
               {[
-                { label: "Ferramentas disponíveis", value: "12+" },
+                { label: "Ferramentas disponíveis", value: "15+" },
                 { label: "Sempre grátis", value: "4" },
                 { label: "Usuários ativos", value: "2.5k+" },
               ].map((stat) => (
@@ -204,7 +204,7 @@ export default function FerramentasPage() {
                     Faça upgrade para desbloquear todas as ferramentas
                   </h2>
                   <p style={{ fontSize: "15px", color: "rgba(255,255,255,0.55)", lineHeight: 1.7 }}>
-                    Acesse mais de 8 ferramentas avançadas por apenas R$97/mês. Garantia de 7 dias.
+                    Acesse mais de 15 ferramentas avançadas por apenas R$97/mês. Garantia de 7 dias.
                   </p>
                 </div>
                 <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
