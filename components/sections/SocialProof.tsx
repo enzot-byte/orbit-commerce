@@ -18,7 +18,7 @@ const stats = [
     label: "Pelos nossos membros",
   },
   {
-    value: 150,
+    value: 15,
     prefix: "+",
     suffix: " ferramentas",
     label: "Disponíveis na plataforma",
@@ -30,7 +30,6 @@ const marketplaces = [
   "Mercado Livre",
   "Shopee",
   "Magalu",
-  "Americanas",
   "Shein",
 ];
 
@@ -98,9 +97,9 @@ export default function SocialProof() {
           className="grid grid-cols-1 sm:grid-cols-3 gap-12 sm:gap-8 mb-16"
         >
           {stats.map((stat) => (
-            <div key={stat.label} className="text-center">
+            <div key={stat.label} className="text-center overflow-hidden">
               <div
-                className="text-5xl md:text-6xl lg:text-7xl font-display font-black mb-3 leading-none"
+                className="text-4xl md:text-5xl lg:text-6xl font-display font-black mb-3 leading-none"
                 style={{
                   background:
                     "linear-gradient(135deg, #ffffff 0%, #C4B5FD 60%, #9B7BFF 100%)",

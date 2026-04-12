@@ -12,7 +12,7 @@ const testimonials = [
     store: "FerShop — Moda Feminina",
     quote:
       "Antes do Sellerverse eu passava horas tentando calcular minha margem na planilha. Agora levo 30 segundos. Triplicar o faturamento em 6 meses foi consequência de ter as ferramentas certas.",
-    avatarColor: "from-orbit-600 to-orbit-800",
+    avatarColor: "from-[#5B3FD8] to-[#9B7BFF]",
     initials: "FO",
     revenue: "+R$120k em 6 meses",
   },
@@ -22,7 +22,7 @@ const testimonials = [
     store: "TechParts Brasil — Eletrônicos",
     quote:
       "A comunidade foi o que mais me surpreendeu. Sempre tem alguém com a resposta certa quando eu preciso. Já evitei pelo menos umas 3 suspensões de conta só com o que aprendi aqui.",
-    avatarColor: "from-accent-600 to-accent-400",
+    avatarColor: "from-[#EF9F27] to-[#FAC775]",
     initials: "RM",
     revenue: "Saiu do vermelho em 90 dias",
   },
@@ -111,16 +111,28 @@ export default function Testimonials() {
   const t = testimonials[current];
 
   return (
-    <section className="section-pad bg-white overflow-hidden">
-      <div className="container-orbit">
+    <section
+      className="section-pad overflow-hidden relative"
+      style={{ backgroundColor: "#12121F" }}
+    >
+      {/* Background glow */}
+      <div
+        className="absolute top-0 right-0 w-[500px] h-[500px] pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(circle, rgba(91,63,216,0.08) 0%, transparent 70%)",
+        }}
+      />
+
+      <div className="container-orbit relative z-10">
         {/* Section title */}
         <ScrollReveal direction="up" className="text-center mb-14">
-          <p className="text-sm font-semibold tracking-widest uppercase text-orbit-600 mb-3">
+          <p className="text-sm font-semibold tracking-widest uppercase mb-3" style={{ color: "#9B7BFF" }}>
             Depoimentos
           </p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-dark leading-tight">
+          <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white leading-tight">
             O que nossos sellers{" "}
-            <span className="gradient-text">estão falando</span>
+            <span className="gradient-text-accent">estão falando</span>
           </h2>
         </ScrollReveal>
 
@@ -131,7 +143,7 @@ export default function Testimonials() {
           onMouseLeave={() => setIsPaused(false)}
         >
           {/* Large quote mark */}
-          <div className="absolute -top-6 left-0 md:-left-8 text-orbit-600/10 pointer-events-none">
+          <div className="absolute -top-6 left-0 md:-left-8 pointer-events-none" style={{ color: "rgba(155,123,255,0.1)" }}>
             <Quote className="w-24 h-24 fill-current" />
           </div>
 
@@ -148,9 +160,15 @@ export default function Testimonials() {
                 transition={{ duration: 0.45, ease: [0.22, 1, 0.36, 1] }}
                 className="w-full"
               >
-                <div className="bg-white border border-gray-100 rounded-2xl p-8 md:p-10 shadow-sm">
+                <div
+                  className="rounded-2xl p-8 md:p-10"
+                  style={{
+                    backgroundColor: "#1A1A2E",
+                    border: "1px solid rgba(255,255,255,0.08)",
+                  }}
+                >
                   {/* Quote */}
-                  <p className="text-lg md:text-xl text-dark/75 leading-relaxed mb-8 italic">
+                  <p className="text-lg md:text-xl text-white/70 leading-relaxed mb-8 italic">
                     &ldquo;{t.quote}&rdquo;
                   </p>
 
@@ -164,15 +182,21 @@ export default function Testimonials() {
                         {t.initials}
                       </div>
                       <div>
-                        <p className="font-display font-bold text-dark text-base">
+                        <p className="font-display font-bold text-white text-base">
                           {t.name}
                         </p>
-                        <p className="text-sm text-dark/50">{t.store}</p>
+                        <p className="text-sm text-white/45">{t.store}</p>
                       </div>
                     </div>
 
                     {/* Revenue badge */}
-                    <span className="text-xs font-bold px-3 py-1.5 rounded-full bg-orbit-600/10 text-orbit-600">
+                    <span
+                      className="text-xs font-bold px-3 py-1.5 rounded-full"
+                      style={{
+                        backgroundColor: "rgba(91,63,216,0.15)",
+                        color: "#9B7BFF",
+                      }}
+                    >
                       {t.revenue}
                     </span>
                   </div>
@@ -185,7 +209,8 @@ export default function Testimonials() {
           <div className="flex items-center justify-center gap-6 mt-8">
             <button
               onClick={prev}
-              className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-dark/50 hover:border-orbit-600/40 hover:text-orbit-600 transition-all duration-200 hover:scale-110"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white/40 hover:text-white hover:border-[#9B7BFF]/50 transition-all duration-200 hover:scale-110"
+              style={{ border: "1px solid rgba(255,255,255,0.12)" }}
               aria-label="Anterior"
             >
               <ChevronLeft className="w-5 h-5" />
@@ -201,7 +226,8 @@ export default function Testimonials() {
                   aria-label={`Ir para depoimento ${i + 1}`}
                 >
                   <motion.div
-                    className="rounded-full bg-orbit-600"
+                    className="rounded-full"
+                    style={{ backgroundColor: "#5B3FD8" }}
                     animate={{
                       width: i === current ? 24 : 8,
                       height: 8,
@@ -215,7 +241,8 @@ export default function Testimonials() {
 
             <button
               onClick={next}
-              className="w-10 h-10 rounded-full border border-gray-200 flex items-center justify-center text-dark/50 hover:border-orbit-600/40 hover:text-orbit-600 transition-all duration-200 hover:scale-110"
+              className="w-10 h-10 rounded-full flex items-center justify-center text-white/40 hover:text-white hover:border-[#9B7BFF]/50 transition-all duration-200 hover:scale-110"
+              style={{ border: "1px solid rgba(255,255,255,0.12)" }}
               aria-label="Próximo"
             >
               <ChevronRight className="w-5 h-5" />

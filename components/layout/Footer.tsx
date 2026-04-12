@@ -1,5 +1,4 @@
 import React from "react";
-import { cn } from "@/lib/utils";
 import { Logo } from "@/components/ui/Logo";
 
 // ─── Link columns data ────────────────────────────────────────────────────────
@@ -52,7 +51,7 @@ const COLUMNS = [
 const SOCIALS = [
   {
     label: "Instagram",
-    href: "#",
+    href: "https://www.instagram.com/sellerverseoficial",
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -72,7 +71,7 @@ const SOCIALS = [
   },
   {
     label: "YouTube",
-    href: "#",
+    href: "https://www.youtube.com/channel/UCksiby6SGhom0AzUhKEQr6g",
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -91,7 +90,7 @@ const SOCIALS = [
   },
   {
     label: "X (Twitter)",
-    href: "#",
+    href: "https://x.com/sellerverseofc",
     icon: (
       <svg
         viewBox="0 0 24 24"
@@ -132,7 +131,6 @@ const MARKETPLACES = [
   "Shopee",
   "Amazon",
   "Magazine Luiza",
-  "Americanas",
   "SHEIN",
 ] as const;
 
@@ -147,7 +145,7 @@ function FooterLinkColumn({
 }) {
   return (
     <div>
-      <h3 className="text-sm font-semibold font-display text-gray-900 dark:text-white mb-4">
+      <h3 className="text-sm font-semibold font-display text-white mb-4">
         {title}
       </h3>
       <ul className="space-y-3">
@@ -155,12 +153,7 @@ function FooterLinkColumn({
           <li key={link.label}>
             <a
               href={link.href}
-              className={cn(
-                "text-sm font-body",
-                "text-gray-500 hover:text-orbit-600",
-                "dark:text-white/50 dark:hover:text-orbit-400",
-                "transition-colors duration-150"
-              )}
+              className="text-sm font-body text-white/40 hover:text-[#9B7BFF] transition-colors duration-150"
             >
               {link.label}
             </a>
@@ -184,14 +177,9 @@ function SocialLink({
     <a
       href={href}
       aria-label={label}
-      className={cn(
-        "flex items-center justify-center w-9 h-9 rounded-xl",
-        "text-gray-500 hover:text-orbit-600",
-        "dark:text-white/50 dark:hover:text-orbit-400",
-        "bg-gray-100 hover:bg-orbit-50",
-        "dark:bg-white/5 dark:hover:bg-orbit-900/40",
-        "transition-colors duration-150"
-      )}
+      target="_blank"
+      rel="noopener noreferrer"
+      className="flex items-center justify-center w-9 h-9 rounded-xl text-white/40 hover:text-[#9B7BFF] bg-white/5 hover:bg-[#5B3FD8]/15 transition-colors duration-150"
     >
       {icon}
     </a>
@@ -205,29 +193,29 @@ export function Footer() {
 
   return (
     <footer
-      className={cn(
-        "border-t border-gray-200 dark:border-white/10",
-        "bg-white dark:bg-dark",
-        "font-body"
-      )}
+      className="font-body"
+      style={{
+        backgroundColor: "#0A0A0F",
+        borderTop: "1px solid rgba(255,255,255,0.06)",
+      }}
       aria-label="Rodapé do site"
     >
       {/* Marketplace strip */}
       <div
-        className={cn(
-          "border-b border-gray-100 dark:border-white/5",
-          "bg-gray-50 dark:bg-dark-surface"
-        )}
+        style={{
+          backgroundColor: "#0F0F1A",
+          borderBottom: "1px solid rgba(255,255,255,0.05)",
+        }}
       >
         <div className="container-orbit py-4">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
-            <span className="text-xs text-gray-400 dark:text-white/30 uppercase tracking-widest font-medium shrink-0">
+            <span className="text-xs text-white/25 uppercase tracking-widest font-medium shrink-0">
               Integra com
             </span>
             {MARKETPLACES.map((name) => (
               <span
                 key={name}
-                className="text-sm font-medium text-gray-600 dark:text-white/50 hover:text-orbit-600 dark:hover:text-orbit-400 transition-colors cursor-default"
+                className="text-sm font-medium text-white/45 hover:text-[#9B7BFF] transition-colors cursor-default"
               >
                 {name}
               </span>
@@ -243,14 +231,14 @@ export function Footer() {
           <div className="space-y-6">
             <Logo size="md" variant="full" tagline />
 
-            <p className="text-sm text-gray-500 dark:text-white/50 leading-relaxed max-w-xs">
+            <p className="text-sm text-white/40 leading-relaxed max-w-xs">
               A plataforma completa para sellers que querem escalar no e-commerce
               brasileiro. Gerencie, analise e cresça com inteligência.
             </p>
 
             {/* Social links */}
             <div>
-              <p className="text-xs text-gray-400 dark:text-white/30 uppercase tracking-widest font-medium mb-3">
+              <p className="text-xs text-white/25 uppercase tracking-widest font-medium mb-3">
                 Siga-nos
               </p>
               <div className="flex items-center gap-2">
@@ -272,15 +260,15 @@ export function Footer() {
 
       {/* Bottom bar */}
       <div
-        className={cn(
-          "border-t border-gray-100 dark:border-white/5",
-          "bg-gray-50/50 dark:bg-dark-surface/50"
-        )}
+        style={{
+          backgroundColor: "rgba(15,15,26,0.5)",
+          borderTop: "1px solid rgba(255,255,255,0.04)",
+        }}
       >
         <div className="container-orbit py-5">
           <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
             {/* Copyright */}
-            <p className="text-xs text-gray-400 dark:text-white/30 text-center sm:text-left">
+            <p className="text-xs text-white/25 text-center sm:text-left">
               &copy; {year} Sellerverse. Todos os direitos reservados.
             </p>
 
@@ -294,7 +282,7 @@ export function Footer() {
                 <a
                   key={item.label}
                   href={item.href}
-                  className="text-xs text-gray-400 dark:text-white/30 hover:text-orbit-600 dark:hover:text-orbit-400 transition-colors"
+                  className="text-xs text-white/25 hover:text-[#9B7BFF] transition-colors"
                 >
                   {item.label}
                 </a>
@@ -303,13 +291,13 @@ export function Footer() {
 
             {/* Made in Brazil badge */}
             <div className="flex items-center gap-1.5">
-              <span className="text-xs text-gray-400 dark:text-white/30">
+              <span className="text-xs text-white/25">
                 Feito com
               </span>
               <span aria-label="amor" role="img" className="text-sm">
                 🇧🇷
               </span>
-              <span className="text-xs text-gray-400 dark:text-white/30">
+              <span className="text-xs text-white/25">
                 no Brasil
               </span>
             </div>

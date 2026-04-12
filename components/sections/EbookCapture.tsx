@@ -51,14 +51,14 @@ export default function EbookCapture() {
     <section
       className="section-pad relative overflow-hidden"
       style={{
-        background: "linear-gradient(135deg, #042C53 0%, #0C447C 50%, #185FA5 100%)",
+        background: "linear-gradient(135deg, #0F0F1A 0%, #1A1A2E 50%, #252547 100%)",
       }}
     >
       {/* Background decorations */}
       <div
         className="absolute inset-0 opacity-10"
         style={{
-          backgroundImage: `radial-gradient(circle at 20% 50%, rgba(239,159,39,0.4) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(24,95,165,0.6) 0%, transparent 50%)`,
+          backgroundImage: `radial-gradient(circle at 20% 50%, rgba(91,63,216,0.3) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(155,123,255,0.2) 0%, transparent 50%)`,
         }}
       />
       <div
