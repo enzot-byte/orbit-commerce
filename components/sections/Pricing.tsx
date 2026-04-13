@@ -5,6 +5,8 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Check, Zap } from "lucide-react";
 import ScrollReveal from "@/components/shared/ScrollReveal";
 
+/* ─── Plan Data ─────────────────────────────────────────────────────── */
+
 const plans = [
   {
     id: "free",
@@ -49,7 +51,8 @@ const plans = [
     name: "Premium",
     monthlyPrice: 247,
     annualPrice: 197,
-    description: "Para quem quer acompanhamento individual e resultados acelerados.",
+    description:
+      "Para quem quer acompanhamento individual e resultados acelerados.",
     badge: null,
     highlighted: false,
     ctaLabel: "Falar com consultor",
@@ -65,6 +68,8 @@ const plans = [
     ],
   },
 ];
+
+/* ─── Toggle ────────────────────────────────────────────────────────── */
 
 function Toggle({
   value,
@@ -89,6 +94,8 @@ function Toggle({
   );
 }
 
+/* ─── Main Component ────────────────────────────────────────────────── */
+
 export default function Pricing() {
   const [isAnnual, setIsAnnual] = useState(false);
   const [selectedId, setSelectedId] = useState<string>("pro");
@@ -102,11 +109,114 @@ export default function Pricing() {
       id="planos"
       style={{ backgroundColor: "#1A1A2E", padding: "128px 0 160px" }}
     >
-      {/* Spotlight glow focused on center (Pro plan) */}
+      {/* ── 3D Rotating Rings ── */}
+      <div
+        className="absolute inset-0 hidden md:flex items-center justify-center pointer-events-none overflow-hidden"
+        style={{ perspective: "1200px", perspectiveOrigin: "50% 40%" }}
+      >
+        {/* Ring 1 — fast, tilted */}
+        <div
+          className="absolute rounded-full pricing-ring-1"
+          style={{
+            width: 550,
+            height: 550,
+            border: "1.5px solid rgba(91,63,216,0.12)",
+          }}
+        >
+          <div
+            className="absolute -top-1.5 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full"
+            style={{
+              background: "rgba(155,123,255,0.5)",
+              boxShadow: "0 0 12px rgba(155,123,255,0.4)",
+            }}
+          />
+        </div>
+
+        {/* Ring 2 — medium, opposite tilt */}
+        <div
+          className="absolute rounded-full pricing-ring-2"
+          style={{
+            width: 650,
+            height: 650,
+            border: "1px solid rgba(155,123,255,0.08)",
+          }}
+        >
+          <div
+            className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full"
+            style={{
+              background: "rgba(91,63,216,0.4)",
+              boxShadow: "0 0 8px rgba(91,63,216,0.3)",
+            }}
+          />
+        </div>
+
+        {/* Ring 3 — slow, steep */}
+        <div
+          className="absolute rounded-full pricing-ring-3"
+          style={{
+            width: 480,
+            height: 480,
+            border: "1px solid rgba(91,63,216,0.06)",
+          }}
+        >
+          <div
+            className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full"
+            style={{
+              background: "rgba(196,181,253,0.35)",
+              boxShadow: "0 0 8px rgba(196,181,253,0.25)",
+            }}
+          />
+        </div>
+      </div>
+
+      {/* ── Floating blur orbs ── */}
+      <motion.div
+        className="absolute rounded-full pointer-events-none"
+        style={{
+          width: 280,
+          height: 280,
+          top: "30%",
+          left: "50%",
+          x: "-50%",
+          background: "rgba(91,63,216,0.10)",
+          filter: "blur(80px)",
+        }}
+        animate={{ y: [0, -25, 0], scale: [1, 1.1, 1] }}
+        transition={{ duration: 8, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute rounded-full pointer-events-none hidden md:block"
+        style={{
+          width: 200,
+          height: 200,
+          top: "55%",
+          left: "20%",
+          background: "rgba(155,123,255,0.06)",
+          filter: "blur(60px)",
+        }}
+        animate={{ y: [0, 20, 0], x: [0, -15, 0] }}
+        transition={{ duration: 10, repeat: Infinity, ease: "easeInOut" }}
+      />
+      <motion.div
+        className="absolute rounded-full pointer-events-none hidden md:block"
+        style={{
+          width: 180,
+          height: 180,
+          top: "40%",
+          right: "15%",
+          background: "rgba(239,159,39,0.04)",
+          filter: "blur(60px)",
+        }}
+        animate={{ y: [0, -15, 0], x: [0, 10, 0] }}
+        transition={{ duration: 12, repeat: Infinity, ease: "easeInOut" }}
+      />
+
+      {/* Spotlight glow focused on center */}
       <div
         className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[800px] pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse at 50% 30%, rgba(91,63,216,0.12) 0%, transparent 60%)",
+          background:
+            "radial-gradient(ellipse at 50% 30%, rgba(91,63,216,0.14) 0%, transparent 60%)",
         }}
       />
 
@@ -129,12 +239,24 @@ export default function Pricing() {
         </ScrollReveal>
 
         {/* Billing toggle */}
-        <ScrollReveal direction="up" delay={0.1} className="flex items-center justify-center gap-4 mb-14">
-          <span className={`text-sm font-medium transition-colors duration-200 ${!isAnnual ? "text-white" : "text-white/35"}`}>
+        <ScrollReveal
+          direction="up"
+          delay={0.1}
+          className="flex items-center justify-center gap-4 mb-14"
+        >
+          <span
+            className={`text-sm font-medium transition-colors duration-200 ${
+              !isAnnual ? "text-white" : "text-white/35"
+            }`}
+          >
             Mensal
           </span>
           <Toggle value={isAnnual} onChange={setIsAnnual} />
-          <span className={`text-sm font-medium flex items-center gap-2 transition-colors duration-200 ${isAnnual ? "text-white" : "text-white/35"}`}>
+          <span
+            className={`text-sm font-medium flex items-center gap-2 transition-colors duration-200 ${
+              isAnnual ? "text-white" : "text-white/35"
+            }`}
+          >
             Anual
             <span className="text-xs font-bold px-2 py-0.5 rounded-full bg-accent-400/15 text-accent-400 border border-accent-400/20">
               Economize 20%
@@ -142,7 +264,7 @@ export default function Pricing() {
           </span>
         </ScrollReveal>
 
-        {/* Plan cards */}
+        {/* ── Plan cards ── */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-5 items-start">
           {plans.map((plan, i) => {
             const price = isAnnual ? plan.annualPrice : plan.monthlyPrice;
@@ -162,21 +284,40 @@ export default function Pricing() {
                       : "rgba(255,255,255,0.06)",
                   }}
                   transition={{ type: "spring", stiffness: 260, damping: 26 }}
-                  className="relative flex flex-col rounded-2xl p-8 cursor-pointer glass-card gradient-border"
+                  className="relative flex flex-col rounded-2xl p-8 cursor-pointer overflow-hidden"
                   style={{
-                    boxShadow: isPro && isActive
-                      ? "0 0 80px rgba(91,63,216,0.25), 0 20px 50px rgba(0,0,0,0.3)"
-                      : isActive
-                      ? "0 0 40px rgba(91,63,216,0.15), 0 12px 40px rgba(0,0,0,0.25)"
-                      : "0 8px 24px rgba(0,0,0,0.2)",
+                    background: isPro
+                      ? "linear-gradient(180deg, rgba(30,28,56,0.95) 0%, rgba(22,22,42,0.92) 100%)"
+                      : "linear-gradient(180deg, rgba(26,26,46,0.92) 0%, rgba(20,20,38,0.90) 100%)",
+                    backdropFilter: "blur(16px)",
+                    border: "1px solid rgba(255,255,255,0.06)",
+                    boxShadow:
+                      isPro && isActive
+                        ? "0 0 80px rgba(91,63,216,0.25), 0 20px 50px rgba(0,0,0,0.3), inset 0 1px 0 rgba(255,255,255,0.08)"
+                        : isActive
+                          ? "0 0 40px rgba(91,63,216,0.15), 0 12px 40px rgba(0,0,0,0.25), inset 0 1px 0 rgba(255,255,255,0.06)"
+                          : "0 8px 24px rgba(0,0,0,0.2), inset 0 1px 0 rgba(255,255,255,0.04)",
                   }}
                 >
+                  {/* Card glow overlay — appears on active */}
+                  <div
+                    className="absolute inset-0 rounded-2xl pointer-events-none"
+                    style={{
+                      opacity: isActive ? 1 : 0,
+                      background: isPro
+                        ? "radial-gradient(ellipse at 50% 0%, rgba(91,63,216,0.15) 0%, transparent 60%)"
+                        : "radial-gradient(ellipse at 50% 0%, rgba(155,123,255,0.08) 0%, transparent 60%)",
+                      transition: "opacity 0.4s ease",
+                    }}
+                  />
+
                   {/* Pro spotlight glow */}
                   {isPro && (
                     <div
                       className="absolute -inset-px rounded-2xl pointer-events-none"
                       style={{
-                        background: "linear-gradient(180deg, rgba(91,63,216,0.15) 0%, transparent 50%)",
+                        background:
+                          "linear-gradient(180deg, rgba(91,63,216,0.15) 0%, transparent 50%)",
                       }}
                     />
                   )}
@@ -187,11 +328,16 @@ export default function Pricing() {
                       <motion.span
                         className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-bold text-white"
                         style={{
-                          background: "linear-gradient(135deg, #5B3FD8 0%, #9B7BFF 100%)",
+                          background:
+                            "linear-gradient(135deg, #5B3FD8 0%, #9B7BFF 100%)",
                           boxShadow: "0 0 20px rgba(91,63,216,0.4)",
                         }}
                         animate={{ scale: [1, 1.04, 1] }}
-                        transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                        transition={{
+                          duration: 2.5,
+                          repeat: Infinity,
+                          ease: "easeInOut",
+                        }}
                       >
                         <Zap className="w-3 h-3" />
                         {plan.badge}
@@ -224,18 +370,23 @@ export default function Pricing() {
                           </span>
                         ) : (
                           <>
-                            <span className="text-lg font-medium text-white/50 mb-2">R$</span>
+                            <span className="text-lg font-medium text-white/50 mb-2">
+                              R$
+                            </span>
                             <span className="text-5xl font-display font-black text-white">
                               {price}
                             </span>
-                            <span className="text-sm text-white/40 mb-2">/m&ecirc;s</span>
+                            <span className="text-sm text-white/40 mb-2">
+                              /m&ecirc;s
+                            </span>
                           </>
                         )}
                       </motion.div>
                     </AnimatePresence>
                     {isAnnual && plan.monthlyPrice > 0 && (
                       <p className="text-xs text-white/30 mt-1">
-                        Cobrado anualmente · R${plan.monthlyPrice}/mês no plano mensal
+                        Cobrado anualmente &middot; R${plan.monthlyPrice}/m&ecirc;s
+                        no plano mensal
                       </p>
                     )}
                   </div>
@@ -268,12 +419,28 @@ export default function Pricing() {
                       <li key={feature} className="flex items-start gap-3">
                         <Check
                           className="w-4 h-4 mt-0.5 flex-shrink-0"
-                          style={{ color: isActive ? "#9B7BFF" : "rgba(255,255,255,0.25)" }}
+                          style={{
+                            color: isActive
+                              ? "#9B7BFF"
+                              : "rgba(255,255,255,0.25)",
+                          }}
                         />
                         <span className="text-sm text-white/55">{feature}</span>
                       </li>
                     ))}
                   </ul>
+
+                  {/* Bottom accent glow line on hover */}
+                  <div
+                    className="absolute bottom-0 left-8 right-8 h-px rounded-full"
+                    style={{
+                      opacity: isActive ? 1 : 0,
+                      background: isPro
+                        ? "linear-gradient(to right, transparent, rgba(91,63,216,0.5), transparent)"
+                        : "linear-gradient(to right, transparent, rgba(155,123,255,0.3), transparent)",
+                      transition: "opacity 0.4s ease",
+                    }}
+                  />
                 </motion.div>
               </ScrollReveal>
             );
@@ -283,7 +450,8 @@ export default function Pricing() {
         {/* Money-back note */}
         <ScrollReveal direction="up" delay={0.4} className="text-center mt-12">
           <p className="text-sm text-white/30">
-            ✓ 7 dias de garantia · ✓ Cancele a qualquer momento · ✓ Sem taxa de cancelamento
+            &check; 7 dias de garantia &middot; &check; Cancele a qualquer
+            momento &middot; &check; Sem taxa de cancelamento
           </p>
         </ScrollReveal>
       </div>
@@ -291,7 +459,9 @@ export default function Pricing() {
       {/* Section fade */}
       <div
         className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
-        style={{ background: "linear-gradient(to bottom, transparent, #0A0A0F)" }}
+        style={{
+          background: "linear-gradient(to bottom, transparent, #0A0A0F)",
+        }}
       />
     </section>
   );

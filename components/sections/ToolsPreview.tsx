@@ -25,7 +25,7 @@ const tools = [
     color: "#9B7BFF",
     bg: "rgba(155,123,255,0.12)",
     border: "rgba(155,123,255,0.25)",
-    headerBg: "rgba(91,63,216,0.04)",
+    headerBg: "rgba(91,63,216,0.10)",
     illustration: (
       <svg viewBox="0 0 240 90" fill="none" className="w-full h-full">
         <rect x="20" y="60" width="24" height="25" rx="3" fill="rgba(155,123,255,0.12)" stroke="rgba(155,123,255,0.25)" strokeWidth="0.5" />
@@ -47,7 +47,7 @@ const tools = [
     color: "#EF9F27",
     bg: "rgba(239,159,39,0.1)",
     border: "rgba(239,159,39,0.25)",
-    headerBg: "rgba(239,159,39,0.04)",
+    headerBg: "rgba(239,159,39,0.10)",
     illustration: (
       <svg viewBox="0 0 240 90" fill="none" className="w-full h-full">
         <rect x="15" y="15" width="120" height="10" rx="5" fill="rgba(239,159,39,0.12)" stroke="rgba(239,159,39,0.2)" strokeWidth="0.5" />
@@ -69,7 +69,7 @@ const tools = [
     color: "#9B7BFF",
     bg: "rgba(155,123,255,0.12)",
     border: "rgba(155,123,255,0.25)",
-    headerBg: "rgba(91,63,216,0.04)",
+    headerBg: "rgba(91,63,216,0.10)",
     illustration: (
       <svg viewBox="0 0 240 90" fill="none" className="w-full h-full">
         <circle cx="40" cy="60" r="8" stroke="rgba(155,123,255,0.3)" strokeWidth="1" fill="rgba(155,123,255,0.08)" />
@@ -92,7 +92,7 @@ const tools = [
     color: "#EF9F27",
     bg: "rgba(239,159,39,0.1)",
     border: "rgba(239,159,39,0.25)",
-    headerBg: "rgba(239,159,39,0.04)",
+    headerBg: "rgba(239,159,39,0.10)",
     illustration: (
       <svg viewBox="0 0 240 90" fill="none" className="w-full h-full">
         {[0, 1, 2].map((row) =>
@@ -124,7 +124,7 @@ const tools = [
     color: "#EF9F27",
     bg: "rgba(239,159,39,0.1)",
     border: "rgba(239,159,39,0.25)",
-    headerBg: "rgba(239,159,39,0.04)",
+    headerBg: "rgba(239,159,39,0.10)",
     illustration: (
       <svg viewBox="0 0 240 90" fill="none" className="w-full h-full">
         <rect x="60" y="4" width="110" height="82" rx="6" fill="rgba(239,159,39,0.04)" stroke="rgba(239,159,39,0.15)" strokeWidth="0.8" />
@@ -146,7 +146,7 @@ const tools = [
     color: "#9B7BFF",
     bg: "rgba(155,123,255,0.12)",
     border: "rgba(155,123,255,0.25)",
-    headerBg: "rgba(91,63,216,0.04)",
+    headerBg: "rgba(91,63,216,0.10)",
     illustration: (
       <svg viewBox="0 0 240 90" fill="none" className="w-full h-full">
         <path d="M15 55 L45 42 L75 48 L105 25 L135 32 L165 14 L195 20 L220 8" stroke="rgba(155,123,255,0.35)" strokeWidth="1.5" fill="none" />
@@ -239,31 +239,52 @@ function ToolCard({
   tool: (typeof tools)[number];
   onHoverChange: (h: boolean) => void;
 }) {
+  const [hovered, setHovered] = useState(false);
   const Icon = tool.icon;
   return (
     <div
-      onMouseEnter={() => onHoverChange(true)}
-      onMouseLeave={() => onHoverChange(false)}
-      className="flex flex-col rounded-2xl cursor-pointer hover:scale-[1.04] transition-transform duration-200 overflow-hidden"
+      onMouseEnter={() => { setHovered(true); onHoverChange(true); }}
+      onMouseLeave={() => { setHovered(false); onHoverChange(false); }}
+      className="relative flex flex-col rounded-2xl cursor-pointer overflow-hidden"
       style={{
         width: 280,
-        background: "rgba(10,10,15,0.92)",
-        border: `1px solid ${tool.border}`,
+        background: hovered
+          ? "linear-gradient(180deg, rgba(30,30,58,0.98) 0%, rgba(22,22,44,0.96) 100%)"
+          : "linear-gradient(180deg, rgba(22,22,44,0.96) 0%, rgba(16,16,34,0.95) 100%)",
+        border: `1px solid ${hovered ? tool.color + "55" : tool.border}`,
         backdropFilter: "blur(12px)",
-        boxShadow: `0 12px 40px rgba(0,0,0,0.4), 0 0 24px ${
-          tool.type === "pro" ? "rgba(239,159,39,0.06)" : "rgba(91,63,216,0.08)"
-        }`,
+        boxShadow: hovered
+          ? `0 24px 60px rgba(0,0,0,0.5), 0 0 80px ${tool.color}18, inset 0 1px 0 rgba(255,255,255,0.08)`
+          : "0 12px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04)",
+        transform: hovered ? "scale(1.06)" : "scale(1)",
+        transition: "all 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
       }}
     >
+      {/* Hover spotlight glow */}
+      <div
+        className="absolute inset-0 rounded-2xl pointer-events-none z-[1]"
+        style={{
+          opacity: hovered ? 1 : 0,
+          background: `radial-gradient(ellipse at 50% 0%, ${tool.color}20, transparent 65%)`,
+          transition: "opacity 0.35s ease",
+        }}
+      />
+
       {/* Illustration header */}
       <div
-        className="relative w-full overflow-hidden"
+        className="relative w-full overflow-hidden z-[2]"
         style={{
           height: 90,
-          background: `linear-gradient(180deg, ${tool.headerBg} 0%, rgba(10,10,15,0.92) 100%)`,
+          background: `linear-gradient(180deg, ${tool.headerBg} 0%, transparent 100%)`,
         }}
       >
-        <div className="absolute inset-0 flex items-center justify-center">
+        <div
+          className="absolute inset-0 flex items-center justify-center"
+          style={{
+            filter: hovered ? "brightness(1.8)" : "brightness(1.15)",
+            transition: "filter 0.35s ease",
+          }}
+        >
           {tool.illustration}
         </div>
         {/* Grid overlay */}
@@ -271,7 +292,7 @@ function ToolCard({
           className="absolute inset-0 pointer-events-none"
           style={{
             backgroundImage:
-              "linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px)",
+              "linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px)",
             backgroundSize: "20px 20px",
           }}
         />
@@ -281,8 +302,8 @@ function ToolCard({
             className="text-[10px] font-bold px-2.5 py-1 rounded-full"
             style={
               tool.type === "free"
-                ? { backgroundColor: "rgba(16,185,129,0.2)", color: "#34d399", border: "1px solid rgba(16,185,129,0.15)" }
-                : { backgroundColor: "rgba(239,159,39,0.2)", color: "#EF9F27", border: "1px solid rgba(239,159,39,0.15)" }
+                ? { backgroundColor: "rgba(16,185,129,0.25)", color: "#34d399", border: "1px solid rgba(16,185,129,0.2)" }
+                : { backgroundColor: "rgba(239,159,39,0.25)", color: "#EF9F27", border: "1px solid rgba(239,159,39,0.2)" }
             }
           >
             {tool.badge}
@@ -291,7 +312,7 @@ function ToolCard({
       </div>
 
       {/* Body */}
-      <div className="px-5 py-4">
+      <div className="px-5 py-4 relative z-[2]">
         <div className="flex items-center gap-2.5 mb-2">
           <div
             className="w-8 h-8 rounded-lg flex items-center justify-center flex-shrink-0"
@@ -303,7 +324,7 @@ function ToolCard({
             {tool.name}
           </p>
         </div>
-        <p className="text-[11px] text-white/40 leading-relaxed">
+        <p className="text-[11px] text-white/55 leading-relaxed">
           {tool.desc}
         </p>
       </div>
@@ -374,7 +395,14 @@ export default function ToolsPreview() {
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] pointer-events-none"
         style={{
           background:
-            "radial-gradient(ellipse at center, rgba(91,63,216,0.05) 0%, transparent 65%)",
+            "radial-gradient(ellipse at center, rgba(91,63,216,0.09) 0%, transparent 65%)",
+        }}
+      />
+      <div
+        className="absolute top-1/3 left-1/3 w-[400px] h-[400px] pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse at center, rgba(155,123,255,0.05) 0%, transparent 70%)",
         }}
       />
 

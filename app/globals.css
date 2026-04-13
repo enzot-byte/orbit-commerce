@@ -617,6 +617,41 @@ html {
   height: 100% !important;
 }
 
+/* 3D Rotating rings — Pricing section */
+.pricing-ring-1 {
+  animation: pricing-ring-a 18s linear infinite;
+  will-change: transform;
+}
+.pricing-ring-2 {
+  animation: pricing-ring-b 24s linear infinite;
+  will-change: transform;
+}
+.pricing-ring-3 {
+  animation: pricing-ring-c 30s linear infinite;
+  will-change: transform;
+}
+
+@keyframes pricing-ring-a {
+  from { transform: rotateX(75deg) rotateZ(0deg); }
+  to   { transform: rotateX(75deg) rotateZ(360deg); }
+}
+@keyframes pricing-ring-b {
+  from { transform: rotateX(60deg) rotateY(25deg) rotateZ(0deg); }
+  to   { transform: rotateX(60deg) rotateY(25deg) rotateZ(-360deg); }
+}
+@keyframes pricing-ring-c {
+  from { transform: rotateX(80deg) rotateY(-15deg) rotateZ(0deg); }
+  to   { transform: rotateX(80deg) rotateY(-15deg) rotateZ(360deg); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pricing-ring-1,
+  .pricing-ring-2,
+  .pricing-ring-3 {
+    animation: none;
+  }
+}
+
 /* Gradient border for cards (via background trick) */
 .gradient-border {
   position: relative;
