@@ -3,7 +3,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Pricing from "@/components/sections/Pricing";
 import ScrollReveal from "@/components/shared/ScrollReveal";
-import FloatingLinesBg from "@/components/shared/FloatingLinesBg";
+import AntigravityBg from "@/components/shared/AntigravityBg";
 import PlanosClient from "./PlanosClient";
 
 export const metadata: Metadata = {
@@ -100,33 +100,40 @@ export default function PlanosPage() {
       <Navbar />
       <main style={{ backgroundColor: "#0A0A0F" }}>
 
-        {/* ── Hero ── */}
+        {/* ── Hero — full viewport height ── */}
         <section
-          className="relative overflow-hidden"
-          style={{ background: "#0A0A0F", padding: "160px 0 96px" }}
+          className="relative overflow-hidden flex items-center justify-center"
+          style={{
+            background: "#0A0A0F",
+            minHeight: "100vh",
+            paddingTop: "80px",
+          }}
         >
-          {/* FloatingLines WebGL background — warm gold accent */}
-          <FloatingLinesBg
-            className="opacity-55"
-            linesGradient={["#EF9F27", "#FAC775", "#5B3FD8", "#9B7BFF"]}
-            enabledWaves={["top", "middle", "bottom"]}
-            lineCount={8}
-            lineDistance={6}
-            bendRadius={5}
-            bendStrength={-0.5}
-            interactive
-            parallax
-            parallaxStrength={0.2}
-            animationSpeed={0.7}
-            mixBlendMode="screen"
+          {/* Antigravity 3D particle background */}
+          <AntigravityBg
+            count={300}
+            magnetRadius={6}
+            ringRadius={7}
+            waveSpeed={0.4}
+            waveAmplitude={1}
+            particleSize={1.5}
+            lerpSpeed={0.05}
+            color="#5B3FD8"
+            autoAnimate
+            particleVariance={1}
+            rotationSpeed={0}
+            depthFactor={1}
+            pulseSpeed={3}
+            particleShape="capsule"
+            fieldStrength={10}
           />
 
-          {/* Dim overlay for text readability */}
+          {/* Radial overlay for text readability */}
           <div
             className="absolute inset-0 pointer-events-none z-[1]"
             style={{
               background:
-                "radial-gradient(ellipse 80% 70% at 50% 40%, transparent 0%, rgba(10,10,15,0.6) 100%)",
+                "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(10,10,15,0.5) 0%, rgba(10,10,15,0.2) 60%, transparent 100%)",
             }}
           />
 
@@ -203,7 +210,7 @@ export default function PlanosPage() {
 
           {/* Bottom fade → Pricing section bg */}
           <div
-            className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+            className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none z-[2]"
             style={{
               background: "linear-gradient(to bottom, transparent, #1A1A2E)",
             }}

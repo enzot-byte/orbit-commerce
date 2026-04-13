@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@auth/supabase-adapter": "^1.11.1",
+    "@react-three/fiber": "^9.5.0",
     "@stripe/react-stripe-js": "^6.1.0",
     "@stripe/stripe-js": "^9.1.0",
     "@supabase/supabase-js": "^2.102.1",

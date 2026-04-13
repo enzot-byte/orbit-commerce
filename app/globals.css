@@ -755,3 +755,15 @@ html {
   width: 100%;
   height: 100%;
 }
+
+/* ── Antigravity Three.js container ────────────────────────── */
+.antigravity-container {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.antigravity-container canvas {
+  display: block;
+  width: 100% !important;
+  height: 100% !important;
+}
