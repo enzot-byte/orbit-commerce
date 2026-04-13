@@ -594,6 +594,90 @@ html {
   pointer-events: auto;
 }
 
+/* Orbit card inner wrapper — smooth CSS transition for depth overrides */
+.orbit-card-inner {
+  transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1), filter 0.35s ease;
+}
+
+/* Tool card — CSS-only hover for zero React re-renders */
+.tool-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  border-radius: 1rem;
+  cursor: pointer;
+  overflow: hidden;
+  width: 280px;
+  background: linear-gradient(180deg, rgba(22,22,44,0.96) 0%, rgba(16,16,34,0.95) 100%);
+  backdrop-filter: blur(12px);
+  box-shadow: 0 12px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
+  transition: background 0.35s cubic-bezier(0.22,1,0.36,1),
+              border-color 0.35s cubic-bezier(0.22,1,0.36,1),
+              box-shadow 0.35s cubic-bezier(0.22,1,0.36,1);
+}
+.tool-card:hover {
+  background: linear-gradient(180deg, rgba(30,30,58,0.98) 0%, rgba(22,22,44,0.96) 100%);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* Type-specific border & glow */
+.tool-card[data-type="free"] {
+  border: 1px solid rgba(155,123,255,0.25);
+}
+.tool-card[data-type="free"]:hover {
+  border-color: rgba(155,123,255,0.55);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 80px rgba(155,123,255,0.09), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+.tool-card[data-type="pro"] {
+  border: 1px solid rgba(239,159,39,0.25);
+}
+.tool-card[data-type="pro"]:hover {
+  border-color: rgba(239,159,39,0.55);
+  box-shadow: 0 24px 60px rgba(0,0,0,0.5), 0 0 80px rgba(239,159,39,0.09), inset 0 1px 0 rgba(255,255,255,0.08);
+}
+
+/* Hover spotlight glow overlay */
+.tool-card-glow {
+  position: absolute;
+  inset: 0;
+  border-radius: 1rem;
+  pointer-events: none;
+  z-index: 1;
+  opacity: 0;
+  transition: opacity 0.35s ease;
+}
+.tool-card:hover .tool-card-glow {
+  opacity: 1;
+}
+.tool-card[data-type="free"] .tool-card-glow {
+  background: radial-gradient(ellipse at 50% 0%, rgba(155,123,255,0.14), transparent 65%);
+}
+.tool-card[data-type="pro"] .tool-card-glow {
+  background: radial-gradient(ellipse at 50% 0%, rgba(239,159,39,0.14), transparent 65%);
+}
+
+/* Illustration header */
+.tool-card-header {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  height: 90px;
+  z-index: 2;
+  background: linear-gradient(180deg, var(--tc-header-bg) 0%, transparent 100%);
+}
+.tool-card-illustration {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  filter: brightness(1.15);
+  transition: filter 0.35s ease;
+}
+.tool-card:hover .tool-card-illustration {
+  filter: brightness(1.8);
+}
+
 /* Galaxy & FloatingLines containers */
 .galaxy-container {
   width: 100%;

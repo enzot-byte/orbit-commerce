@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useEffect, useRef, useState, useCallback } from "react";
+import { useMemo, useEffect, useRef, useState } from "react";
 import { type MotionValue, motion, useMotionValue, useTransform } from "framer-motion";
 import {
   Calculator,
@@ -180,6 +180,9 @@ function OrbitItem({
   path,
   rot,
   progress,
+  isHovered,
+  onHoverStart,
+  onHoverEnd,
 }: {
   children: React.ReactNode;
   index: number;
@@ -187,104 +190,82 @@ function OrbitItem({
   path: string;
   rot: number;
   progress: MotionValue<number>;
+  isHovered: boolean;
+  onHoverStart: () => void;
+  onHoverEnd: () => void;
 }) {
   const off = (index / total) * 100;
+  const innerRef = useRef<HTMLDivElement>(null);
 
-  const dist = useTransform(progress, (p: number) => {
-    return `${(((p + off) % 100) + 100) % 100}%`;
-  });
+  /* Only 1 MotionValue per card — just orbit position */
+  const dist = useTransform(progress, (p: number) =>
+    `${(((p + off) % 100) + 100) % 100}%`
+  );
 
-  const z = useTransform(progress, (p: number) => {
-    const a = ((((p + off) % 100) + 100) % 100 / 100) * Math.PI * 2;
-    return Math.round((Math.sin(a) + 1) * 50);
-  });
+  /* Direct DOM updates for depth (replaces 3 MotionValues → 1 listener) */
+  useEffect(() => {
+    const el = innerRef.current;
+    if (!el) return;
 
-  const sc = useTransform(progress, (p: number) => {
-    const a = ((((p + off) % 100) + 100) % 100 / 100) * Math.PI * 2;
-    const d = (Math.sin(a) + 1) / 2;
-    return 0.82 + d * 0.18;
-  });
+    const applyDepth = (p: number) => {
+      const a = ((((p + off) % 100) + 100) % 100 / 100) * Math.PI * 2;
+      const d = (Math.sin(a) + 1) / 2;
+      el.style.opacity = String(0.3 + d * 0.7);
+      el.style.zIndex = String(Math.round((Math.sin(a) + 1) * 50));
+      el.style.transform = `rotate(${-rot}deg) scale(${0.82 + d * 0.18})`;
+      el.style.filter = "";
+    };
 
-  const op = useTransform(progress, (p: number) => {
-    const a = ((((p + off) % 100) + 100) % 100 / 100) * Math.PI * 2;
-    const d = (Math.sin(a) + 1) / 2;
-    return 0.3 + d * 0.7;
-  });
+    if (isHovered) {
+      el.style.opacity = "1";
+      el.style.zIndex = "200";
+      el.style.transform = `rotate(${-rot}deg) scale(1.08)`;
+      el.style.filter = "brightness(1.15)";
+      return;
+    }
+
+    /* Apply depth immediately (handles hovered→unhovered transition) */
+    applyDepth(progress.get());
+    const unsub = progress.on("change", applyDepth);
+    return unsub;
+  }, [isHovered, progress, off, rot]);
 
   return (
     <motion.div
+      onMouseEnter={onHoverStart}
+      onMouseLeave={onHoverEnd}
       style={{
         position: "absolute",
         offsetPath: `path("${path}")`,
         offsetRotate: "0deg",
         offsetAnchor: "center center",
         offsetDistance: dist,
-        zIndex: z,
-        scale: sc,
-        opacity: op,
-        willChange: "offset-distance, transform, opacity",
+        willChange: "offset-distance",
       }}
     >
-      <div style={{ transform: `rotate(${-rot}deg)` }}>{children}</div>
+      <div ref={innerRef} className="orbit-card-inner">
+        {children}
+      </div>
     </motion.div>
   );
 }
 
 /* ─── Tool Card — with thematic illustration ─────────────────────────────── */
 
-function ToolCard({
-  tool,
-  onHoverChange,
-}: {
-  tool: (typeof tools)[number];
-  onHoverChange: (h: boolean) => void;
-}) {
-  const [hovered, setHovered] = useState(false);
+function ToolCard({ tool }: { tool: (typeof tools)[number] }) {
   const Icon = tool.icon;
   return (
     <div
-      onMouseEnter={() => { setHovered(true); onHoverChange(true); }}
-      onMouseLeave={() => { setHovered(false); onHoverChange(false); }}
-      className="relative flex flex-col rounded-2xl cursor-pointer overflow-hidden"
-      style={{
-        width: 280,
-        background: hovered
-          ? "linear-gradient(180deg, rgba(30,30,58,0.98) 0%, rgba(22,22,44,0.96) 100%)"
-          : "linear-gradient(180deg, rgba(22,22,44,0.96) 0%, rgba(16,16,34,0.95) 100%)",
-        border: `1px solid ${hovered ? tool.color + "55" : tool.border}`,
-        backdropFilter: "blur(12px)",
-        boxShadow: hovered
-          ? `0 24px 60px rgba(0,0,0,0.5), 0 0 80px ${tool.color}18, inset 0 1px 0 rgba(255,255,255,0.08)`
-          : "0 12px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04)",
-        transform: hovered ? "scale(1.06)" : "scale(1)",
-        transition: "all 0.35s cubic-bezier(0.22, 1, 0.36, 1)",
-      }}
+      className="tool-card"
+      data-type={tool.type}
+      style={{ "--tc-header-bg": tool.headerBg } as React.CSSProperties}
     >
-      {/* Hover spotlight glow */}
-      <div
-        className="absolute inset-0 rounded-2xl pointer-events-none z-[1]"
-        style={{
-          opacity: hovered ? 1 : 0,
-          background: `radial-gradient(ellipse at 50% 0%, ${tool.color}20, transparent 65%)`,
-          transition: "opacity 0.35s ease",
-        }}
-      />
+      {/* Hover spotlight glow — CSS-driven via .tool-card:hover */}
+      <div className="tool-card-glow" />
 
       {/* Illustration header */}
-      <div
-        className="relative w-full overflow-hidden z-[2]"
-        style={{
-          height: 90,
-          background: `linear-gradient(180deg, ${tool.headerBg} 0%, transparent 100%)`,
-        }}
-      >
-        <div
-          className="absolute inset-0 flex items-center justify-center"
-          style={{
-            filter: hovered ? "brightness(1.8)" : "brightness(1.15)",
-            transition: "filter 0.35s ease",
-          }}
-        >
+      <div className="tool-card-header">
+        <div className="tool-card-illustration">
           {tool.illustration}
         </div>
         {/* Grid overlay */}
@@ -337,14 +318,10 @@ function ToolCard({
 export default function ToolsPreview() {
   const containerRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
-  const [hoveredCount, setHoveredCount] = useState(0);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
   const progress = useMotionValue(0);
 
-  const isPaused = hoveredCount > 0;
-
-  const handleCardHover = useCallback((hovering: boolean) => {
-    setHoveredCount((c) => c + (hovering ? 1 : -1));
-  }, []);
+  const isPaused = hoveredIndex !== null;
 
   // Orbit geometry — more vertical ellipse, minimal rotation
   const BASE = 1400;
@@ -466,8 +443,11 @@ export default function ToolsPreview() {
                   path={path}
                   rot={ROT}
                   progress={progress}
+                  isHovered={hoveredIndex === i}
+                  onHoverStart={() => setHoveredIndex(i)}
+                  onHoverEnd={() => setHoveredIndex(null)}
                 >
-                  <ToolCard tool={tool} onHoverChange={handleCardHover} />
+                  <ToolCard tool={tool} />
                 </OrbitItem>
               ))}
             </div>
