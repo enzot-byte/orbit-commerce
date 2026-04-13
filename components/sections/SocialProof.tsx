@@ -3,11 +3,6 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import AnimatedCounter from "@/components/shared/AnimatedCounter";
-import dynamic from "next/dynamic";
-
-const FloatingLines = dynamic(() => import("@/components/shared/FloatingLines"), {
-  ssr: false,
-});
 
 const stats = [
   {
@@ -79,28 +74,11 @@ export default function SocialProof() {
         padding: "clamp(80px, 10vw, 128px) 0",
       }}
     >
-      {/* FloatingLines WebGL background */}
-      <div className="absolute inset-0 z-0 opacity-40">
-        <FloatingLines
-          linesGradient={["#5B3FD8", "#9B7BFF", "#185FA5", "#C4B5FD"]}
-          enabledWaves={["middle", "bottom"]}
-          lineCount={8}
-          lineDistance={4}
-          bendRadius={5}
-          bendStrength={-0.3}
-          interactive
-          parallax
-          parallaxStrength={0.15}
-          animationSpeed={0.6}
-          mixBlendMode="screen"
-        />
-      </div>
-
-      {/* Dim overlay to keep text readable */}
+      {/* Subtle ambient glow — CSS only, zero performance cost */}
       <div
-        className="absolute inset-0 z-[1] pointer-events-none"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[400px] pointer-events-none"
         style={{
-          background: "radial-gradient(ellipse at center, rgba(26,26,46,0.3) 0%, rgba(26,26,46,0.7) 100%)",
+          background: "radial-gradient(ellipse at center, rgba(91,63,216,0.07) 0%, transparent 70%)",
         }}
       />
 
@@ -132,7 +110,6 @@ export default function SocialProof() {
                 style={{
                   background: "linear-gradient(180deg, rgba(255,255,255,0.04) 0%, rgba(255,255,255,0.01) 100%)",
                   border: "1px solid rgba(255,255,255,0.06)",
-                  backdropFilter: "blur(8px)",
                 }}
               >
                 {/* Hover glow */}
@@ -210,7 +187,6 @@ export default function SocialProof() {
                   borderColor: "rgba(155,123,255,0.2)",
                   backgroundColor: "rgba(91,63,216,0.06)",
                   color: "rgba(255,255,255,0.7)",
-                  backdropFilter: "blur(4px)",
                 }}
               >
                 {name}
