@@ -1032,26 +1032,25 @@ html {
    All CSS keyframes — zero JS cost.
    ═══════════════════════════════════════════════════════════════ */
 
-/* Scene container — centered behind hero text */
+/* Scene container — panels flank the centered hero text */
 .crs-scene {
   position: absolute;
   inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 0;
-  opacity: 0.18;
+  opacity: 0.55;
   pointer-events: none;
   z-index: 0;
 }
 
 /* ── Left: Learning Panels ── */
 .crs-panels {
+  position: absolute;
+  left: 3%;
+  top: 50%;
+  transform: translateY(-50%);
   display: flex;
   flex-direction: column;
-  width: 220px;
-  gap: 4px;
-  flex-shrink: 0;
+  width: 260px;
+  gap: 5px;
 }
 .crs-panel {
   background: #1d1f20;
@@ -1078,77 +1077,73 @@ html {
   flex-shrink: 0;
 }
 .crs-panel-body {
-  padding: 10px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 .crs-row {
   display: flex;
   gap: 6px;
 }
 .crs-bar {
-  height: 7px;
+  height: 8px;
   border-radius: 2px;
   transform-origin: left;
   will-change: transform, opacity;
 }
 
-/* ── Divider ── */
-.crs-divider {
-  width: 8px;
-  background: #343436;
-  border-radius: 2px;
-  align-self: stretch;
-  flex-shrink: 0;
-  margin: 0 2px;
-}
+/* ── Divider (hidden — panels now flanking text) ── */
+.crs-divider { display: none; }
 
 /* ── Right: Dashboard Canvas ── */
 .crs-canvas {
-  width: 380px;
+  position: absolute;
+  right: 3%;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 420px;
   background: #1d1f20;
-  border-radius: 4px;
+  border-radius: 6px;
   overflow: hidden;
-  flex-shrink: 0;
 }
 .crs-chrome {
   display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 10px;
+  gap: 5px;
+  padding: 8px 12px;
   background: #2a2a2e;
   will-change: opacity;
 }
 .crs-wdot {
-  width: 6px;
-  height: 6px;
+  width: 7px;
+  height: 7px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 .crs-chrome-title {
-  font-size: 9px;
-  color: #666;
+  font-size: 10px;
+  color: #888;
   margin-left: auto;
   font-weight: 600;
   letter-spacing: 0.03em;
 }
 .crs-dash {
   display: flex;
-  min-height: 220px;
+  min-height: 240px;
 }
 .crs-sidebar {
-  width: 36px;
+  width: 40px;
   background: #16162a;
-  padding: 8px 6px;
+  padding: 10px 7px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 7px;
   will-change: opacity;
 }
 .crs-nav {
-  height: 6px;
-  background: rgba(255,255,255,0.1);
+  height: 7px;
+  background: rgba(255,255,255,0.12);
   border-radius: 2px;
 }
 .crs-nav-active {
@@ -1156,15 +1151,15 @@ html {
 }
 .crs-main {
   flex: 1;
-  padding: 10px;
+  padding: 12px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: 10px;
 }
 .crs-label {
-  font-size: 7px;
+  font-size: 8px;
   font-weight: 700;
-  color: rgba(255,255,255,0.35);
+  color: rgba(255,255,255,0.4);
   letter-spacing: 0.1em;
   text-transform: uppercase;
   will-change: opacity;
@@ -1173,7 +1168,7 @@ html {
 /* Course progress cards */
 .crs-cards {
   display: flex;
-  gap: 5px;
+  gap: 6px;
   will-change: opacity, transform;
 }
 .crs-ccard {
@@ -1183,14 +1178,14 @@ html {
   background: #0f0f1a;
 }
 .crs-ccard-top {
-  height: 30px;
+  height: 36px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
 .crs-play {
-  width: 10px;
-  height: 10px;
+  width: 12px;
+  height: 12px;
   border-radius: 50%;
   background: rgba(255,255,255,0.3);
   position: relative;
@@ -1205,14 +1200,14 @@ html {
   border-color: transparent transparent transparent rgba(255,255,255,0.7);
 }
 .crs-ccard-bot {
-  padding: 4px 5px;
+  padding: 5px 6px;
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 5px;
 }
 .crs-prog {
   flex: 1;
-  height: 3px;
+  height: 4px;
   background: rgba(255,255,255,0.08);
   border-radius: 2px;
   overflow: hidden;
@@ -1222,7 +1217,7 @@ html {
   border-radius: 2px;
 }
 .crs-pct {
-  font-size: 7px;
+  font-size: 8px;
   font-weight: 700;
   flex-shrink: 0;
 }
@@ -1231,8 +1226,8 @@ html {
 .crs-chart {
   display: flex;
   align-items: flex-end;
-  gap: 4px;
-  height: 50px;
+  gap: 5px;
+  height: 60px;
   padding: 4px;
   background: #0f0f1a;
   border-radius: 4px;
@@ -1358,7 +1353,11 @@ html {
 .crs-d3 { animation-delay: 1.2s; }
 .crs-d4 { animation-delay: 1.6s; }
 
-@media (max-width: 768px) {
+@media (max-width: 1400px) {
+  .crs-panels { transform: translateY(-50%) scale(0.8); transform-origin: left center; }
+  .crs-canvas { transform: translateY(-50%) scale(0.8); transform-origin: right center; }
+}
+@media (max-width: 1100px) {
   .crs-scene { display: none; }
 }
 

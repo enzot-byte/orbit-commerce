@@ -30,12 +30,12 @@ export default function CursosPage() {
           {/* Course Builder animated background */}
           <CursosHero />
 
-          {/* Gradient overlay for readability */}
+          {/* Subtle center vignette — keeps text readable without dimming side panels */}
           <div
             className="absolute inset-0 pointer-events-none z-[1]"
             style={{
               background:
-                "radial-gradient(ellipse 70% 60% at 50% 40%, rgba(26,5,51,0.35) 0%, rgba(10,10,15,0.7) 100%)",
+                "radial-gradient(ellipse 45% 50% at 50% 45%, rgba(26,5,51,0.4) 0%, transparent 100%)",
             }}
           />
 
