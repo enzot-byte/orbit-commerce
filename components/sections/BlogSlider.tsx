@@ -2,19 +2,18 @@
 
 /**
  * BlogSlider — Swiper-based featured news carousel with hover highlight.
- * A white "spotlight" card follows the hovered slide.
+ * Large hero-style cards (3 only) for the "Artigos em destaque" section.
  * Background: orbital / planetary Sellerverse theme (CSS).
- * Converted from jQuery to React refs.
  */
 
 import { useRef, useCallback, useEffect, useState } from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Navigation, EffectCoverflow } from "swiper/modules";
+import { Navigation, Pagination } from "swiper/modules";
 import type { Swiper as SwiperType } from "swiper";
 
 import "swiper/css";
 import "swiper/css/navigation";
-import "swiper/css/effect-coverflow";
+import "swiper/css/pagination";
 
 interface SlideData {
   id: number;
@@ -24,96 +23,62 @@ interface SlideData {
   date: string;
   readTime: string;
   author: string;
+  authorRole: string;
   gradient: string;
   emoji: string;
   catColor: string;
   catBg: string;
+  highlights: string[];
 }
 
 const slides: SlideData[] = [
   {
     id: 1,
-    title: "Como dominar o algoritmo do Mercado Livre em 2025",
+    title: "O guia definitivo para escalar vendas no Mercado Livre em 2025",
     excerpt:
-      "Descubra os fatores que realmente influenciam o posicionamento dos seus anúncios e como otimizá-los.",
+      "Desde a escolha do produto até a otimização de campanhas — um roadmap completo baseado em dados reais de sellers que faturam mais de R$100k/mês. Descubra como ranquear no topo, dominar o algoritmo e construir uma operação sustentável.",
     category: "Mercado Livre",
-    date: "05 abr 2025",
-    readTime: "8 min",
+    date: "07 abr 2025",
+    readTime: "18 min",
     author: "Rafael Mendes",
-    gradient: "linear-gradient(135deg, #0C447C 0%, #185FA5 100%)",
-    emoji: "🛒",
+    authorRole: "Co-fundador, ex-seller ML",
+    gradient: "linear-gradient(135deg, #0C447C 0%, #185FA5 50%, #378ADD 100%)",
+    emoji: "📈",
     catColor: "#60a5fa",
     catBg: "rgba(96,165,250,0.15)",
+    highlights: ["Algoritmo e posicionamento", "Campanhas de anúncios", "Escalabilidade de operação"],
   },
   {
     id: 2,
-    title: "Shopee vs Mercado Livre: onde vale mais a pena vender?",
+    title: "Shopee vs Mercado Livre: onde vale mais a pena vender em cada nicho?",
     excerpt:
-      "Uma análise detalhada das taxas, alcance e potencial de lucro em cada plataforma.",
-    category: "Shopee",
+      "Uma análise detalhada das taxas, alcance, logística e potencial de lucro em cada plataforma. Comparamos comissões, frete, visibilidade orgânica e estratégias de crescimento para 8 nichos diferentes.",
+    category: "Comparativo",
     date: "02 abr 2025",
-    readTime: "12 min",
+    readTime: "14 min",
     author: "Carla Vasconcelos",
-    gradient: "linear-gradient(135deg, #7c2d12 0%, #c2410c 100%)",
+    authorRole: "Analista de marketplaces",
+    gradient: "linear-gradient(135deg, #7c2d12 0%, #c2410c 50%, #f97316 100%)",
     emoji: "⚖️",
     catColor: "#fb923c",
     catBg: "rgba(251,146,60,0.15)",
+    highlights: ["Tabela de comissões atualizada", "8 nichos comparados", "Calculadora de margem inclusa"],
   },
   {
     id: 3,
-    title: "Amazon FBA: vale a pena para sellers brasileiros?",
+    title: "Precificação inteligente: como usar dados para maximizar lucro sem perder vendas",
     excerpt:
-      "Tudo sobre a estrutura FBA no Brasil, custos reais, vantagens e como começar do jeito certo.",
-    category: "Amazon",
-    date: "29 mar 2025",
-    readTime: "10 min",
-    author: "Amanda Costa",
-    gradient: "linear-gradient(135deg, #7f1d1d 0%, #dc2626 100%)",
-    emoji: "📦",
-    catColor: "#facc15",
-    catBg: "rgba(250,204,21,0.15)",
-  },
-  {
-    id: 4,
-    title: "Precificação dinâmica: ajustar preços sem perder margem",
-    excerpt:
-      "Estratégias avançadas de precificação para competir no preço sem destruir lucratividade.",
+      "Estratégias avançadas de precificação dinâmica que os top sellers utilizam. Aprenda a monitorar concorrentes, ajustar margens automaticamente e encontrar o ponto ideal entre volume de vendas e lucratividade.",
     category: "Precificação",
     date: "25 mar 2025",
-    readTime: "7 min",
+    readTime: "12 min",
     author: "Lucas Ferreira",
-    gradient: "linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%)",
+    authorRole: "Especialista em pricing",
+    gradient: "linear-gradient(135deg, #4c1d95 0%, #6d28d9 50%, #8b5cf6 100%)",
     emoji: "💹",
     catColor: "#a78bfa",
     catBg: "rgba(167,139,250,0.15)",
-  },
-  {
-    id: 5,
-    title: "TikTok Shop: a oportunidade que sellers estão ignorando",
-    excerpt:
-      "Como usar o TikTok Shop para gerar vendas orgânicas e construir audiência fiel.",
-    category: "Marketing",
-    date: "20 mar 2025",
-    readTime: "9 min",
-    author: "Pedro Alves",
-    gradient: "linear-gradient(135deg, #831843 0%, #ec4899 100%)",
-    emoji: "🎵",
-    catColor: "#f472b6",
-    catBg: "rgba(244,114,182,0.15)",
-  },
-  {
-    id: 6,
-    title: "SEO para marketplaces: títulos que vendem",
-    excerpt:
-      "Framework comprovado para criar títulos que rankeiam bem e convencem o cliente a clicar.",
-    category: "Marketing",
-    date: "15 mar 2025",
-    readTime: "11 min",
-    author: "Julia Ramos",
-    gradient: "linear-gradient(135deg, #064e3b 0%, #059669 100%)",
-    emoji: "✍️",
-    catColor: "#34d399",
-    catBg: "rgba(52,211,153,0.15)",
+    highlights: ["Pricing dinâmico na prática", "Monitoramento de concorrentes", "Template de planilha grátis"],
   },
 ];
 
@@ -131,11 +96,11 @@ export default function BlogSlider() {
       const spotlight = spotlightRef.current;
       if (!container || !spotlight) return;
 
-      const slides = container.querySelectorAll<HTMLElement>(".blog-slide");
+      const cards = container.querySelectorAll<HTMLElement>(".blog-slide");
       let found = false;
 
-      slides.forEach((slide) => {
-        const rect = slide.getBoundingClientRect();
+      cards.forEach((card) => {
+        const rect = card.getBoundingClientRect();
         const containerRect = container.getBoundingClientRect();
 
         if (
@@ -172,17 +137,13 @@ export default function BlogSlider() {
     <div className="blog-slider-wrapper">
       {/* ── Orbital background ── */}
       <div className="blog-slider-bg" aria-hidden="true">
-        {/* Central sun/planet */}
         <div className="blog-orbit-sun" />
-        {/* Orbit rings */}
         <div className="blog-orbit-ring blog-orbit-ring-1" />
         <div className="blog-orbit-ring blog-orbit-ring-2" />
         <div className="blog-orbit-ring blog-orbit-ring-3" />
-        {/* Tiny planets */}
         <div className="blog-planet blog-planet-1" />
         <div className="blog-planet blog-planet-2" />
         <div className="blog-planet blog-planet-3" />
-        {/* Scattered dots */}
         {Array.from({ length: 20 }).map((_, i) => (
           <div
             key={i}
@@ -206,50 +167,42 @@ export default function BlogSlider() {
         onMouseMove={handleMouseMove}
         onMouseLeave={handleMouseLeave}
       >
-        {/* Spotlight follow card */}
         <div ref={spotlightRef} className="blog-spotlight" />
 
         <Swiper
-          modules={[Navigation, EffectCoverflow]}
+          modules={[Navigation, Pagination]}
           onSwiper={(swiper) => {
             swiperRef.current = swiper;
           }}
-          effect="coverflow"
-          coverflowEffect={{
-            rotate: 0,
-            stretch: 0,
-            depth: 80,
-            modifier: 1.5,
-            slideShadows: false,
-          }}
           centeredSlides
-          slidesPerView="auto"
-          spaceBetween={24}
+          slidesPerView={1}
+          spaceBetween={32}
           loop
           grabCursor
+          pagination={{ clickable: true, el: ".blog-slider-dots" }}
           navigation={{
             nextEl: ".blog-slider-next",
             prevEl: ".blog-slider-prev",
           }}
           breakpoints={{
-            320: { slidesPerView: 1, spaceBetween: 16 },
-            640: { slidesPerView: 1.5, spaceBetween: 20 },
-            900: { slidesPerView: 2.2, spaceBetween: 24 },
-            1200: { slidesPerView: 3, spaceBetween: 28 },
+            900: { slidesPerView: 1.15, spaceBetween: 32 },
+            1200: { slidesPerView: 1.3, spaceBetween: 40 },
           }}
-          style={{ padding: "20px 0 40px", overflow: "visible" }}
+          style={{ padding: "20px 0 50px", overflow: "visible" }}
         >
           {slides.map((slide) => (
-            <SwiperSlide key={slide.id} style={{ width: "340px" }}>
-              <article className="blog-slide">
-                {/* Thumbnail */}
+            <SwiperSlide key={slide.id}>
+              <article className="blog-slide blog-slide--featured">
+                {/* Left — Visual */}
                 <div
-                  className="blog-slide-thumb"
+                  className="blog-slide-visual"
                   style={{ background: slide.gradient }}
                 >
-                  <span className="blog-slide-emoji">{slide.emoji}</span>
+                  <span className="blog-slide-emoji blog-slide-emoji--lg">
+                    {slide.emoji}
+                  </span>
                   <span
-                    className="blog-slide-cat"
+                    className="blog-slide-cat blog-slide-cat--lg"
                     style={{
                       color: slide.catColor,
                       backgroundColor: slide.catBg,
@@ -259,27 +212,69 @@ export default function BlogSlider() {
                   </span>
                 </div>
 
-                {/* Content */}
-                <div className="blog-slide-body">
-                  <h3 className="blog-slide-title">{slide.title}</h3>
-                  <p className="blog-slide-excerpt">{slide.excerpt}</p>
-                  <div className="blog-slide-meta">
+                {/* Right — Content */}
+                <div className="blog-slide-content">
+                  <h3 className="blog-slide-title blog-slide-title--lg">
+                    {slide.title}
+                  </h3>
+                  <p className="blog-slide-excerpt blog-slide-excerpt--lg">
+                    {slide.excerpt}
+                  </p>
+
+                  {/* Highlights */}
+                  <div className="blog-slide-highlights">
+                    {slide.highlights.map((h, i) => (
+                      <span key={i} className="blog-slide-highlight">
+                        <span className="blog-slide-highlight-dot" style={{ backgroundColor: slide.catColor }} />
+                        {h}
+                      </span>
+                    ))}
+                  </div>
+
+                  {/* Author + Meta */}
+                  <div className="blog-slide-footer">
                     <div className="blog-slide-author">
-                      <div className="blog-slide-avatar">
+                      <div
+                        className="blog-slide-avatar blog-slide-avatar--lg"
+                        style={{
+                          background: slide.gradient,
+                        }}
+                      >
                         {slide.author.charAt(0)}
                       </div>
-                      <span>{slide.author}</span>
+                      <div>
+                        <span className="blog-slide-author-name">
+                          {slide.author}
+                        </span>
+                        <span className="blog-slide-author-role">
+                          {slide.authorRole}
+                        </span>
+                      </div>
                     </div>
                     <div className="blog-slide-info">
                       <span>{slide.date}</span>
                       <span className="blog-slide-time">{slide.readTime}</span>
                     </div>
                   </div>
+
+                  {/* CTA */}
+                  <a
+                    href="#"
+                    className="blog-slide-cta"
+                    style={{
+                      background: slide.gradient,
+                    }}
+                  >
+                    Ler artigo completo →
+                  </a>
                 </div>
               </article>
             </SwiperSlide>
           ))}
         </Swiper>
+
+        {/* Pagination dots */}
+        <div className="blog-slider-dots" />
 
         {/* Nav arrows */}
         <button className="blog-slider-prev" aria-label="Anterior">
