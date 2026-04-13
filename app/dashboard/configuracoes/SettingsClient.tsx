@@ -18,15 +18,56 @@ const tabs: { id: Tab; label: string; icon: React.ReactNode }[] = [
   { id: "conta", label: "Conta", icon: <Trash2 size={16} /> },
 ];
 
-const marketplaces = [
-  { value: "", label: "Selecione..." },
-  { value: "mercado-livre", label: "Mercado Livre" },
-  { value: "amazon", label: "Amazon" },
-  { value: "shopee", label: "Shopee" },
-  { value: "magalu", label: "Magazine Luiza" },
-  { value: "americanas", label: "Americanas" },
-  { value: "shein", label: "Shein" },
-  { value: "outro", label: "Outro" },
+const MARKETPLACES = [
+  {
+    value: "mercado-livre",
+    label: "Mercado Livre",
+    bg: "bg-yellow-500",
+    text: "text-black",
+    abbr: "ML",
+  },
+  {
+    value: "shopee",
+    label: "Shopee",
+    bg: "bg-orange-500",
+    text: "text-white",
+    abbr: "SH",
+  },
+  {
+    value: "amazon",
+    label: "Amazon",
+    bg: "bg-amber-400",
+    text: "text-black",
+    abbr: "AZ",
+  },
+  {
+    value: "magalu",
+    label: "Magazine Luiza",
+    bg: "bg-blue-600",
+    text: "text-white",
+    abbr: "ML",
+  },
+  {
+    value: "americanas",
+    label: "Americanas",
+    bg: "bg-red-600",
+    text: "text-white",
+    abbr: "AM",
+  },
+  {
+    value: "shein",
+    label: "Shein",
+    bg: "bg-neutral-800",
+    text: "text-white",
+    abbr: "SN",
+  },
+  {
+    value: "outro",
+    label: "Outro",
+    bg: "bg-white/20",
+    text: "text-white",
+    abbr: "+",
+  },
 ];
 
 function FormField({
@@ -83,7 +124,7 @@ function ProfileTab() {
   const { user, updateProfile } = useAuth();
   const [name, setName] = useState("");
   const [whatsapp, setWhatsapp] = useState("");
-  const [marketplace, setMarketplace] = useState("");
+  const [selectedMarketplaces, setSelectedMarketplaces] = useState<string[]>([]);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState("");
 
@@ -91,9 +132,15 @@ function ProfileTab() {
     if (user) {
       setName(user.name);
       setWhatsapp(user.whatsapp);
-      setMarketplace(user.marketplace);
+      setSelectedMarketplaces(user.marketplaces ?? []);
     }
   }, [user]);
+
+  const toggleMarketplace = (value: string) => {
+    setSelectedMarketplaces((prev) =>
+      prev.includes(value) ? prev.filter((v) => v !== value) : [...prev, value]
+    );
+  };
 
   const initials = name
     .split(" ")
@@ -104,7 +151,7 @@ function ProfileTab() {
 
   const handleSave = async () => {
     setError("");
-    const { error: err } = await updateProfile({ name, whatsapp, marketplace });
+    const { error: err } = await updateProfile({ name, whatsapp, marketplaces: selectedMarketplaces });
     if (err) {
       setError(err);
     } else {
@@ -146,18 +193,34 @@ function ProfileTab() {
           />
         </FormField>
 
-        <FormField label="Principal marketplace">
-          <select
-            value={marketplace}
-            onChange={(e) => setMarketplace(e.target.value)}
-            className="w-full bg-white/5 border border-white/10 rounded-xl text-white text-sm px-3 h-10 focus:outline-none focus:border-orbit-400/60 transition-all cursor-pointer appearance-none"
-          >
-            {marketplaces.map((mp) => (
-              <option key={mp.value} value={mp.value} className="bg-dark-surface">
-                {mp.label}
-              </option>
-            ))}
-          </select>
+        <FormField label="Marketplaces que você vende">
+          <div className="flex flex-wrap gap-2 mt-1">
+            {MARKETPLACES.map((mp) => {
+              const active = selectedMarketplaces.includes(mp.value);
+              return (
+                <button
+                  key={mp.value}
+                  type="button"
+                  onClick={() => toggleMarketplace(mp.value)}
+                  className={cn(
+                    "flex items-center gap-2 px-3 py-1.5 rounded-xl text-xs font-semibold border transition-all",
+                    active
+                      ? "border-white/40 bg-white/10 text-white scale-105"
+                      : "border-white/10 bg-white/5 text-white/50 hover:border-white/20 hover:text-white/70"
+                  )}
+                >
+                  <span className={cn("w-5 h-5 rounded-md flex items-center justify-center text-[10px] font-bold shrink-0", mp.bg, mp.text)}>
+                    {mp.abbr}
+                  </span>
+                  {mp.label}
+                  {active && <span className="text-emerald-400 ml-0.5">✓</span>}
+                </button>
+              );
+            })}
+          </div>
+          {selectedMarketplaces.length === 0 && (
+            <p className="text-white/30 text-xs mt-1.5">Selecione pelo menos um marketplace</p>
+          )}
         </FormField>
       </div>
 
