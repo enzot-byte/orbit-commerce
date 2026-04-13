@@ -2,16 +2,9 @@ import type { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollReveal from "@/components/shared/ScrollReveal";
+import FloatingLinesBg from "@/components/shared/FloatingLinesBg";
 import ToolsClient from "./ToolsClient";
 import Link from "next/link";
-import {
-  Calculator,
-  Search,
-  Truck,
-  Package,
-  FileText,
-  BarChart2,
-} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Ferramentas",
@@ -28,201 +21,98 @@ export default function FerramentasPage() {
         {/* ── Hero ── */}
         <section
           className="relative overflow-hidden"
-          style={{ padding: "160px 0 80px" }}
+          style={{ background: "#0A0A0F", padding: "160px 0 96px" }}
         >
-          {/* ── Background layers ── */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(160deg, #042C53 0%, #0C447C 20%, #1A1A2E 55%, #0A0A0F 100%)",
-            }}
+          {/* FloatingLines WebGL background — blue engineering accent */}
+          <FloatingLinesBg
+            className="opacity-55"
+            linesGradient={["#185FA5", "#378ADD", "#5B3FD8", "#9B7BFF"]}
+            enabledWaves={["top", "middle", "bottom"]}
+            lineCount={10}
+            lineDistance={5}
+            bendRadius={5}
+            bendStrength={-0.5}
+            interactive
+            parallax
+            parallaxStrength={0.2}
+            animationSpeed={0.8}
+            mixBlendMode="screen"
           />
 
-          {/* Warm seller‐gold glow */}
+          {/* Dim overlay for text readability */}
           <div
-            className="absolute pointer-events-none"
+            className="absolute inset-0 pointer-events-none z-[1]"
             style={{
-              top: "10%",
-              right: "5%",
-              width: 450,
-              height: 450,
-              borderRadius: "50%",
               background:
-                "radial-gradient(circle, rgba(239,159,39,0.09) 0%, transparent 65%)",
+                "radial-gradient(ellipse 80% 70% at 50% 40%, transparent 0%, rgba(10,10,15,0.6) 100%)",
             }}
           />
-
-          {/* Cool blue glow */}
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              top: "25%",
-              left: "10%",
-              width: 500,
-              height: 500,
-              borderRadius: "50%",
-              background:
-                "radial-gradient(circle, rgba(24,95,165,0.12) 0%, transparent 65%)",
-            }}
-          />
-
-          {/* Center purple spotlight */}
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              top: "15%",
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: 600,
-              height: 600,
-              borderRadius: "50%",
-              background:
-                "radial-gradient(circle, rgba(91,63,216,0.08) 0%, transparent 60%)",
-            }}
-          />
-
-          {/* 3D Perspective grid floor */}
-          <div className="ft-grid-floor" />
-
-          {/* ── Floating tool pills & metrics (desktop) ── */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
-            {/* Tool pills */}
-            <div className="ft-pill ft-pill-1">
-              <Calculator className="w-4 h-4" style={{ color: "#9B7BFF" }} />
-              <span>Margem</span>
-            </div>
-            <div className="ft-pill ft-pill-2">
-              <Search className="w-4 h-4" style={{ color: "#EF9F27" }} />
-              <span>SEO</span>
-            </div>
-            <div className="ft-pill ft-pill-3">
-              <Package className="w-4 h-4" style={{ color: "#9B7BFF" }} />
-              <span>Estoque</span>
-            </div>
-            <div className="ft-pill ft-pill-4">
-              <Truck className="w-4 h-4" style={{ color: "#EF9F27" }} />
-              <span>Frete</span>
-            </div>
-            <div className="ft-pill ft-pill-5">
-              <FileText className="w-4 h-4" style={{ color: "#EF9F27" }} />
-              <span>Templates</span>
-            </div>
-            <div className="ft-pill ft-pill-6">
-              <BarChart2 className="w-4 h-4" style={{ color: "#9B7BFF" }} />
-              <span>Métricas</span>
-            </div>
-
-            {/* Floating metric badges — seller KPIs */}
-            <div
-              className="ft-metric ft-metric-1"
-              style={{
-                background: "rgba(16,185,129,0.10)",
-                border: "1px solid rgba(16,185,129,0.18)",
-                color: "#34d399",
-              }}
-            >
-              +247% ROI
-            </div>
-            <div
-              className="ft-metric ft-metric-2"
-              style={{
-                background: "rgba(239,159,39,0.10)",
-                border: "1px solid rgba(239,159,39,0.18)",
-                color: "#EF9F27",
-              }}
-            >
-              R$ 12.5k MRR
-            </div>
-            <div
-              className="ft-metric ft-metric-3"
-              style={{
-                background: "rgba(155,123,255,0.10)",
-                border: "1px solid rgba(155,123,255,0.18)",
-                color: "#C4B5FD",
-              }}
-            >
-              4.8★ Rating
-            </div>
-
-            {/* Data‐flow connection lines (SVG SMIL — zero JS) */}
-            <svg
-              className="absolute inset-0 w-full h-full ft-lines"
-              viewBox="0 0 1200 600"
-              preserveAspectRatio="none"
-            >
-              <defs>
-                <linearGradient id="fl1" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="rgba(155,123,255,0)" />
-                  <stop offset="35%" stopColor="rgba(155,123,255,0.25)" />
-                  <stop offset="65%" stopColor="rgba(239,159,39,0.18)" />
-                  <stop offset="100%" stopColor="rgba(239,159,39,0)" />
-                </linearGradient>
-                <linearGradient id="fl2" x1="0%" y1="0%" x2="100%" y2="0%">
-                  <stop offset="0%" stopColor="rgba(55,138,221,0)" />
-                  <stop offset="40%" stopColor="rgba(55,138,221,0.18)" />
-                  <stop offset="60%" stopColor="rgba(155,123,255,0.15)" />
-                  <stop offset="100%" stopColor="rgba(155,123,255,0)" />
-                </linearGradient>
-              </defs>
-              <path
-                d="M 60 130 Q 300 70 600 210 Q 900 340 1140 170"
-                stroke="url(#fl1)"
-                strokeWidth="0.8"
-                strokeDasharray="4 8"
-                fill="none"
-              >
-                <animate
-                  attributeName="stroke-dashoffset"
-                  from="0"
-                  to="-12"
-                  dur="3s"
-                  repeatCount="indefinite"
-                />
-              </path>
-              <path
-                d="M 80 320 Q 350 260 600 290 Q 850 330 1120 260"
-                stroke="url(#fl2)"
-                strokeWidth="0.6"
-                strokeDasharray="3 10"
-                fill="none"
-              >
-                <animate
-                  attributeName="stroke-dashoffset"
-                  from="0"
-                  to="-13"
-                  dur="4s"
-                  repeatCount="indefinite"
-                />
-              </path>
-            </svg>
-          </div>
 
           {/* ── Content ── */}
           <div
-            className="container-orbit relative z-10"
-            style={{ textAlign: "center" }}
+            className="container-orbit text-center"
+            style={{ position: "relative", zIndex: 10 }}
           >
-            <p
-              className="text-xs font-bold tracking-[0.12em] uppercase mb-5"
-              style={{ color: "#378ADD" }}
-            >
-              Ferramentas
-            </p>
-            <h1
-              className="font-display font-extrabold text-white leading-[1.1] max-w-3xl mx-auto mb-5"
+            <div
               style={{
-                fontSize: "clamp(2rem, 5vw, 3.5rem)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "6px 16px",
+                borderRadius: "999px",
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                marginBottom: "24px",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "13px",
+                  color: "rgba(255,255,255,0.7)",
+                  fontWeight: 500,
+                }}
+              >
+                Ferramentas para Sellers
+              </span>
+            </div>
+
+            <h1
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "clamp(2.2rem, 5vw, 3.75rem)",
+                fontWeight: 800,
+                color: "white",
+                lineHeight: 1.1,
+                maxWidth: "820px",
+                margin: "0 auto 24px",
                 letterSpacing: "-0.02em",
               }}
             >
               Ferramentas para otimizar{" "}
-              <span className="shimmer-text" style={{ WebkitTextFillColor: "unset", background: "linear-gradient(90deg, #EF9F27 0%, #FAC775 25%, #EF9F27 50%, #FAC775 75%, #EF9F27 100%)", backgroundSize: "200% auto", WebkitBackgroundClip: "text", backgroundClip: "text", color: "transparent" }}>
+              <span
+                className="shimmer-text"
+                style={{
+                  WebkitTextFillColor: "unset",
+                  background:
+                    "linear-gradient(90deg, #EF9F27 0%, #FAC775 25%, #EF9F27 50%, #FAC775 75%, #EF9F27 100%)",
+                  backgroundSize: "200% auto",
+                  WebkitBackgroundClip: "text",
+                  backgroundClip: "text",
+                  color: "transparent",
+                }}
+              >
                 cada etapa do seu neg&oacute;cio
               </span>
             </h1>
+
             <p
-              className="text-lg text-white/50 max-w-xl mx-auto mb-10 leading-relaxed"
+              style={{
+                fontSize: "18px",
+                color: "rgba(255,255,255,0.45)",
+                maxWidth: "560px",
+                margin: "0 auto 48px",
+                lineHeight: 1.7,
+              }}
             >
               15+ ferramentas desenvolvidas especialmente para sellers
               brasileiros. Algumas gr&aacute;tis para sempre, outras

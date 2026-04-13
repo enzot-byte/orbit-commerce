@@ -3,15 +3,8 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Pricing from "@/components/sections/Pricing";
 import ScrollReveal from "@/components/shared/ScrollReveal";
+import FloatingLinesBg from "@/components/shared/FloatingLinesBg";
 import PlanosClient from "./PlanosClient";
-import {
-  Users,
-  Wrench,
-  BookOpen,
-  Headphones,
-  Award,
-  BarChart2,
-} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Planos e Preços",
@@ -110,210 +103,70 @@ export default function PlanosPage() {
         {/* ── Hero ── */}
         <section
           className="relative overflow-hidden"
-          style={{ padding: "160px 0 60px" }}
+          style={{ background: "#0A0A0F", padding: "160px 0 96px" }}
         >
-          {/* ── Background layers ── */}
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(160deg, #042C53 0%, #0C447C 20%, #1A1A2E 55%, #0A0A0F 100%)",
-            }}
+          {/* FloatingLines WebGL background — warm gold accent */}
+          <FloatingLinesBg
+            className="opacity-55"
+            linesGradient={["#EF9F27", "#FAC775", "#5B3FD8", "#9B7BFF"]}
+            enabledWaves={["top", "middle", "bottom"]}
+            lineCount={8}
+            lineDistance={6}
+            bendRadius={5}
+            bendStrength={-0.5}
+            interactive
+            parallax
+            parallaxStrength={0.2}
+            animationSpeed={0.7}
+            mixBlendMode="screen"
           />
 
-          {/* Warm gold glow */}
+          {/* Dim overlay for text readability */}
           <div
-            className="absolute pointer-events-none"
+            className="absolute inset-0 pointer-events-none z-[1]"
             style={{
-              top: "8%",
-              right: "8%",
-              width: 420,
-              height: 420,
-              borderRadius: "50%",
               background:
-                "radial-gradient(circle, rgba(239,159,39,0.08) 0%, transparent 65%)",
+                "radial-gradient(ellipse 80% 70% at 50% 40%, transparent 0%, rgba(10,10,15,0.6) 100%)",
             }}
           />
-          {/* Cool blue glow */}
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              top: "25%",
-              left: "10%",
-              width: 480,
-              height: 480,
-              borderRadius: "50%",
-              background:
-                "radial-gradient(circle, rgba(24,95,165,0.10) 0%, transparent 65%)",
-            }}
-          />
-          {/* Center purple spotlight */}
-          <div
-            className="absolute pointer-events-none"
-            style={{
-              top: "15%",
-              left: "50%",
-              transform: "translateX(-50%)",
-              width: 550,
-              height: 550,
-              borderRadius: "50%",
-              background:
-                "radial-gradient(circle, rgba(91,63,216,0.07) 0%, transparent 60%)",
-            }}
-          />
-
-          {/* 3D Perspective grid floor */}
-          <div className="ft-grid-floor" />
-
-          {/* 3D Orbital rings (desktop) */}
-          <div
-            className="absolute inset-0 hidden md:flex items-center justify-center pointer-events-none overflow-hidden"
-            style={{ perspective: "1000px", perspectiveOrigin: "50% 45%" }}
-          >
-            <div className="pl-ring pl-ring-1">
-              <div
-                className="absolute -top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full"
-                style={{
-                  background: "rgba(155,123,255,0.45)",
-                  boxShadow: "0 0 10px rgba(155,123,255,0.3)",
-                }}
-              />
-            </div>
-            <div className="pl-ring pl-ring-2">
-              <div
-                className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full"
-                style={{
-                  background: "rgba(239,159,39,0.35)",
-                  boxShadow: "0 0 8px rgba(239,159,39,0.25)",
-                }}
-              />
-            </div>
-          </div>
-
-          {/* ── Floating feature pills & pricing badges (desktop) ── */}
-          <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
-            {/* Plan feature pills */}
-            <div
-              className="ft-pill"
-              style={{
-                top: "14%",
-                left: "6%",
-                animation: "ft-fa 8s ease-in-out infinite",
-              }}
-            >
-              <Users className="w-4 h-4" style={{ color: "#9B7BFF" }} />
-              <span>Comunidade</span>
-            </div>
-            <div
-              className="ft-pill"
-              style={{
-                top: "10%",
-                right: "7%",
-                animation: "ft-fb 10s ease-in-out infinite",
-              }}
-            >
-              <Wrench className="w-4 h-4" style={{ color: "#EF9F27" }} />
-              <span>15+ Ferramentas</span>
-            </div>
-            <div
-              className="ft-pill"
-              style={{
-                top: "42%",
-                left: "3%",
-                animation: "ft-fc 9s ease-in-out infinite",
-              }}
-            >
-              <BookOpen className="w-4 h-4" style={{ color: "#9B7BFF" }} />
-              <span>Cursos ilimitados</span>
-            </div>
-            <div
-              className="ft-pill"
-              style={{
-                top: "44%",
-                right: "4%",
-                animation: "ft-fd 7s ease-in-out infinite",
-              }}
-            >
-              <Award className="w-4 h-4" style={{ color: "#EF9F27" }} />
-              <span>Mentoria 1:1</span>
-            </div>
-            <div
-              className="ft-pill"
-              style={{
-                bottom: "28%",
-                left: "8%",
-                animation: "ft-fe 8.5s ease-in-out infinite",
-              }}
-            >
-              <BarChart2 className="w-4 h-4" style={{ color: "#9B7BFF" }} />
-              <span>Dashboard Pro</span>
-            </div>
-            <div
-              className="ft-pill"
-              style={{
-                bottom: "22%",
-                right: "6%",
-                animation: "ft-ff 9.5s ease-in-out infinite",
-              }}
-            >
-              <Headphones className="w-4 h-4" style={{ color: "#EF9F27" }} />
-              <span>Suporte priorit&aacute;rio</span>
-            </div>
-
-            {/* Pricing highlight badges */}
-            <div
-              className="ft-metric"
-              style={{
-                top: "24%",
-                right: "19%",
-                animation: "ft-fb 11s ease-in-out infinite",
-                background: "rgba(239,159,39,0.10)",
-                border: "1px solid rgba(239,159,39,0.18)",
-                color: "#EF9F27",
-              }}
-            >
-              a partir de R$ 97/m&ecirc;s
-            </div>
-            <div
-              className="ft-metric"
-              style={{
-                top: "56%",
-                left: "7%",
-                animation: "ft-fd 9s ease-in-out infinite",
-                background: "rgba(16,185,129,0.10)",
-                border: "1px solid rgba(16,185,129,0.18)",
-                color: "#34d399",
-              }}
-            >
-              Economize 20% anual
-            </div>
-            <div
-              className="ft-metric"
-              style={{
-                bottom: "32%",
-                right: "5%",
-                animation: "ft-fa 10s ease-in-out infinite",
-                background: "rgba(155,123,255,0.10)",
-                border: "1px solid rgba(155,123,255,0.18)",
-                color: "#C4B5FD",
-              }}
-            >
-              7 dias de garantia
-            </div>
-          </div>
 
           {/* ── Content ── */}
-          <div className="container-orbit relative z-10 text-center">
-            <p
-              className="text-xs font-bold tracking-[0.12em] uppercase mb-5"
-              style={{ color: "#378ADD" }}
-            >
-              Planos e Pre&ccedil;os
-            </p>
-            <h1
-              className="font-display font-extrabold text-white leading-[1.1] max-w-3xl mx-auto mb-5"
+          <div
+            className="container-orbit text-center"
+            style={{ position: "relative", zIndex: 10 }}
+          >
+            <div
               style={{
-                fontSize: "clamp(2rem, 5vw, 3.5rem)",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "6px 16px",
+                borderRadius: "999px",
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                marginBottom: "24px",
+              }}
+            >
+              <span
+                style={{
+                  fontSize: "13px",
+                  color: "rgba(255,255,255,0.7)",
+                  fontWeight: 500,
+                }}
+              >
+                Planos e Pre&ccedil;os
+              </span>
+            </div>
+
+            <h1
+              style={{
+                fontFamily: "var(--font-display)",
+                fontSize: "clamp(2.2rem, 5vw, 3.75rem)",
+                fontWeight: 800,
+                color: "white",
+                lineHeight: 1.1,
+                maxWidth: "820px",
+                margin: "0 auto 24px",
                 letterSpacing: "-0.02em",
               }}
             >
@@ -333,7 +186,16 @@ export default function PlanosPage() {
                 seu neg&oacute;cio
               </span>
             </h1>
-            <p className="text-lg text-white/50 max-w-xl mx-auto leading-relaxed">
+
+            <p
+              style={{
+                fontSize: "18px",
+                color: "rgba(255,255,255,0.45)",
+                maxWidth: "540px",
+                margin: "0 auto",
+                lineHeight: 1.7,
+              }}
+            >
               Comece gr&aacute;tis. Fa&ccedil;a upgrade quando seu neg&oacute;cio
               pedir mais.
             </p>
