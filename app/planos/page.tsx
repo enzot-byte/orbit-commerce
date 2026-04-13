@@ -138,11 +138,11 @@ export default function PlanosPage() {
               <div
                 style={{
                   display: "grid",
-                  gridTemplateColumns: "1fr 100px 100px 120px",
+                  gridTemplateColumns: "1fr clamp(52px, 10vw, 100px) clamp(52px, 10vw, 100px) clamp(60px, 11vw, 120px)",
                   gap: 0,
                   backgroundColor: "#16162A",
                   borderBottom: "1px solid rgba(255,255,255,0.1)",
-                  padding: "20px 32px",
+                  padding: "20px clamp(16px, 3vw, 32px)",
                 }}
               >
                 <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)", fontWeight: 600 }}>
@@ -169,7 +169,7 @@ export default function PlanosPage() {
                   {/* Category header */}
                   <div
                     style={{
-                      padding: "12px 32px",
+                      padding: "12px clamp(16px, 3vw, 32px)",
                       backgroundColor: "rgba(55,138,221,0.06)",
                       borderBottom: "1px solid rgba(255,255,255,0.06)",
                       fontSize: "12px",
@@ -189,8 +189,8 @@ export default function PlanosPage() {
                         key={feature.name}
                         style={{
                           display: "grid",
-                          gridTemplateColumns: "1fr 100px 100px 120px",
-                          padding: "16px 32px",
+                          gridTemplateColumns: "1fr clamp(52px, 10vw, 100px) clamp(52px, 10vw, 100px) clamp(60px, 11vw, 120px)",
+                          padding: "16px clamp(16px, 3vw, 32px)",
                           backgroundColor: isEven ? "#16162A" : "#1A1A2E",
                           borderBottom: "1px solid rgba(255,255,255,0.04)",
                           alignItems: "center",
