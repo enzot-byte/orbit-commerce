@@ -26,12 +26,12 @@ export default function FerramentasPage() {
           {/* Factory conveyor scene background */}
           <FerramentasHero />
 
-          {/* Subtle gradient overlay for depth */}
+          {/* Narrow center vignette — text readable, sides visible */}
           <div
             className="absolute inset-0 pointer-events-none z-[1]"
             style={{
               background:
-                "radial-gradient(ellipse 70% 60% at 50% 40%, rgba(10,10,15,0.3) 0%, rgba(10,10,15,0.7) 100%)",
+                "radial-gradient(ellipse 45% 50% at 50% 45%, rgba(10,10,15,0.35) 0%, transparent 100%)",
             }}
           />
 

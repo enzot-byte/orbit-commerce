@@ -1,8 +1,9 @@
 "use client";
 
 /**
- * Pixel-art factory scene — conveyor belts with cute "agent" boxes
- * representing Sellerverse's AI-powered tools processing seller data.
+ * Pixel-art factory scene — conveyor belts with cute personalized "agent"
+ * boxes representing Sellerverse's AI-powered tools.
+ * Each agent has a unique icon, color, and shape.
  * Pure CSS animations — zero JS per-frame cost.
  */
 
@@ -11,36 +12,36 @@ const LEVELS = [
     y: "18%",
     dir: "right" as const,
     agents: [
-      { name: "Calculadora", color: "#9B7BFF", delay: 0, dur: 14 },
-      { name: "SEO", color: "#EF9F27", delay: 4.5, dur: 14 },
-      { name: "Ads", color: "#378ADD", delay: 9, dur: 14 },
+      { name: "Calculadora", color: "#9B7BFF", delay: 0, dur: 24, icon: "=", rad: 3 },
+      { name: "SEO", color: "#EF9F27", delay: 8, dur: 24, icon: "S", rad: 12 },
+      { name: "Ads", color: "#378ADD", delay: 16, dur: 24, icon: "A", rad: 4 },
     ],
   },
   {
     y: "38%",
     dir: "left" as const,
     agents: [
-      { name: "Frete", color: "#10b981", delay: 1, dur: 16 },
-      { name: "Estoque", color: "#9B7BFF", delay: 6, dur: 16 },
-      { name: "Margem", color: "#EF9F27", delay: 11, dur: 16 },
+      { name: "Frete", color: "#10b981", delay: 2, dur: 28, icon: "F", rad: 3 },
+      { name: "Estoque", color: "#9B7BFF", delay: 11, dur: 28, icon: "E", rad: 4 },
+      { name: "Margem", color: "#EF9F27", delay: 20, dur: 28, icon: "%", rad: 5 },
     ],
   },
   {
     y: "58%",
     dir: "right" as const,
     agents: [
-      { name: "Templates", color: "#378ADD", delay: 2, dur: 12 },
-      { name: "Métricas", color: "#9B7BFF", delay: 6, dur: 12 },
+      { name: "Templates", color: "#378ADD", delay: 3, dur: 22, icon: "T", rad: 3 },
+      { name: "M\u00e9tricas", color: "#9B7BFF", delay: 12, dur: 22, icon: "M", rad: 5 },
     ],
   },
   {
     y: "78%",
     dir: "left" as const,
     agents: [
-      { name: "Monitor", color: "#10b981", delay: 0, dur: 18 },
-      { name: "Relatórios", color: "#EF9F27", delay: 5, dur: 18 },
-      { name: "ROI", color: "#378ADD", delay: 10, dur: 18 },
-      { name: "Analytics", color: "#9B7BFF", delay: 15, dur: 18 },
+      { name: "Monitor", color: "#10b981", delay: 0, dur: 30, icon: "!", rad: 12 },
+      { name: "Relat\u00f3rios", color: "#EF9F27", delay: 7.5, dur: 30, icon: "R", rad: 4 },
+      { name: "ROI", color: "#378ADD", delay: 15, dur: 30, icon: "$", rad: 12 },
+      { name: "Analytics", color: "#9B7BFF", delay: 22.5, dur: 30, icon: "~", rad: 5 },
     ],
   },
 ];
@@ -70,7 +71,14 @@ export default function FerramentasHero() {
                 animationDuration: `${agent.dur}s`,
               }}
             >
-              <div className="factory-box" style={{ "--box-color": agent.color } as React.CSSProperties} />
+              <div
+                className="factory-box"
+                data-icon={agent.icon}
+                style={{
+                  "--box-color": agent.color,
+                  borderRadius: agent.rad + "px",
+                } as React.CSSProperties}
+              />
               <span className="factory-label">{agent.name}</span>
             </div>
           ))}
