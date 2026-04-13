@@ -25,12 +25,20 @@ interface Star {
 
 export default function StarField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const visibleRef = useRef(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+
+    // Pause canvas rendering when off-screen
+    const io = new IntersectionObserver(
+      ([entry]) => { visibleRef.current = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    io.observe(canvas);
 
     let w = 0;
     let h = 0;
@@ -83,6 +91,9 @@ export default function StarField() {
     let time = 0;
 
     function draw() {
+      raf = requestAnimationFrame(draw);
+      if (!visibleRef.current) return;
+
       ctx!.clearRect(0, 0, w, h);
 
       const cx = w / 2;
@@ -123,8 +134,6 @@ export default function StarField() {
         ctx!.ellipse(cx, cy, r, r * 0.6, 0, 0, Math.PI * 2);
         ctx!.stroke();
       }
-
-      raf = requestAnimationFrame(draw);
     }
 
     resize();
@@ -139,6 +148,7 @@ export default function StarField() {
 
     return () => {
       cancelAnimationFrame(raf);
+      io.disconnect();
       window.removeEventListener("resize", onResize);
     };
   }, []);

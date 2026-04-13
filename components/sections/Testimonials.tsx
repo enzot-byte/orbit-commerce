@@ -87,7 +87,21 @@ export default function Testimonials() {
   const [current, setCurrent] = useState(0);
   const [direction, setDirection] = useState(1);
   const [isPaused, setIsPaused] = useState(false);
+  const [isVisible, setIsVisible] = useState(false);
+  const sectionRef = useRef<HTMLElement>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Pause auto-advance when section is off-screen
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   const go = useCallback(
     (index: number, dir: number) => {
@@ -101,17 +115,18 @@ export default function Testimonials() {
   const prev = useCallback(() => go(current - 1, -1), [current, go]);
 
   useEffect(() => {
-    if (isPaused) return;
+    if (isPaused || !isVisible) return;
     intervalRef.current = setInterval(next, 4000);
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current);
     };
-  }, [isPaused, next]);
+  }, [isPaused, isVisible, next]);
 
   const t = testimonials[current];
 
   return (
     <section
+      ref={sectionRef}
       className="overflow-hidden relative ambient-light"
       style={{ backgroundColor: "#12121F", padding: "128px 0 160px" }}
     >

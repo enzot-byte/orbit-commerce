@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
+import dynamic from "next/dynamic";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollReveal from "@/components/shared/ScrollReveal";
 import AnimatedCounter from "@/components/shared/AnimatedCounter";
-import FloatingLinesBg from "@/components/shared/FloatingLinesBg";
+
+// WebGL background — lazy loaded, not needed for first paint
+const FloatingLinesBg = dynamic(
+  () => import("@/components/shared/FloatingLinesBg")
+);
 
 export const metadata: Metadata = {
   title: "Sobre Nós",

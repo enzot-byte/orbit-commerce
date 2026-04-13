@@ -38,6 +38,14 @@ export default function CursosPage() {
                 "radial-gradient(ellipse 45% 50% at 50% 45%, rgba(26,5,51,0.4) 0%, transparent 100%)",
             }}
           />
+          {/* Stronger vignette on mobile where animation is closer to text */}
+          <div
+            className="absolute inset-0 pointer-events-none z-[1] md:hidden"
+            style={{
+              background:
+                "radial-gradient(ellipse 70% 60% at 50% 45%, rgba(26,5,51,0.55) 0%, transparent 100%)",
+            }}
+          />
 
           <div className="container-orbit" style={{ position: "relative", zIndex: 2 }}>
             <p

@@ -86,12 +86,20 @@ export default function PlanosHero() {
   const worldRef = useRef<HTMLDivElement>(null);
   const overlayRef = useRef<HTMLDivElement>(null);
   const itemEls = useRef<(HTMLDivElement | null)[]>([]);
+  const visibleRef = useRef(false);
 
   useEffect(() => {
     const section = sectionRef.current;
     const world = worldRef.current;
     const overlay = overlayRef.current;
     if (!section || !world || !overlay) return;
+
+    // Pause 3D calculations when off-screen
+    const io = new IntersectionObserver(
+      ([entry]) => { visibleRef.current = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    io.observe(section);
 
     let mouseX = 0;
     let mouseY = 0;
@@ -107,6 +115,7 @@ export default function PlanosHero() {
 
     const tick = () => {
       rafId = requestAnimationFrame(tick);
+      if (!visibleRef.current) return;
 
       const rect = section.getBoundingClientRect();
       const scrollable = rect.height - window.innerHeight;
@@ -143,6 +152,7 @@ export default function PlanosHero() {
 
     return () => {
       cancelAnimationFrame(rafId);
+      io.disconnect();
       window.removeEventListener("mousemove", onMouse);
     };
   }, []);

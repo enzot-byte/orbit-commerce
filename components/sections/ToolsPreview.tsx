@@ -317,11 +317,25 @@ function ToolCard({ tool }: { tool: (typeof tools)[number] }) {
 
 export default function ToolsPreview() {
   const containerRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
   const [scale, setScale] = useState(1);
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [isVisible, setIsVisible] = useState(false);
   const progress = useMotionValue(0);
 
-  const isPaused = hoveredIndex !== null;
+  const isPaused = hoveredIndex !== null || !isVisible;
+
+  // Pause orbit animation when section is off-screen
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => setIsVisible(entry.isIntersecting),
+      { threshold: 0 }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
 
   // Orbit geometry — more vertical ellipse, minimal rotation
   const BASE = 1400;
@@ -364,6 +378,7 @@ export default function ToolsPreview() {
 
   return (
     <section
+      ref={sectionRef}
       className="relative overflow-hidden ambient-light"
       style={{ backgroundColor: "#0A0A0F", padding: "128px 0 100px" }}
     >
@@ -433,6 +448,51 @@ export default function ToolsPreview() {
                   strokeDasharray={`${8 / Math.max(scale, 0.3)} ${6 / Math.max(scale, 0.3)}`}
                 />
               </svg>
+
+              {/* ── Central Globe ── */}
+              <div
+                className="orbit-globe-container"
+                style={{ left: cx, top: cy }}
+              >
+                {/* Outer glow halo */}
+                <div className="orbit-globe-glow" />
+
+                {/* Sphere body */}
+                <div className="orbit-globe">
+                  {/* 3D light reflection */}
+                  <div className="orbit-globe-shine" />
+
+                  {/* Static wireframe grid */}
+                  <svg className="orbit-globe-wireframe" viewBox="0 0 200 200" fill="none">
+                    {/* Outer circle */}
+                    <circle cx="100" cy="100" r="90" stroke="rgba(155,123,255,0.18)" strokeWidth="0.7" />
+                    {/* Parallels (horizontal latitude lines) */}
+                    <ellipse cx="100" cy="35" rx="58" ry="7" stroke="rgba(155,123,255,0.08)" strokeWidth="0.5" />
+                    <ellipse cx="100" cy="55" rx="76" ry="11" stroke="rgba(155,123,255,0.1)" strokeWidth="0.5" />
+                    <ellipse cx="100" cy="77" rx="86" ry="14" stroke="rgba(155,123,255,0.12)" strokeWidth="0.5" />
+                    <ellipse cx="100" cy="100" rx="90" ry="16" stroke="rgba(155,123,255,0.15)" strokeWidth="0.6" />
+                    <ellipse cx="100" cy="123" rx="86" ry="14" stroke="rgba(155,123,255,0.12)" strokeWidth="0.5" />
+                    <ellipse cx="100" cy="145" rx="76" ry="11" stroke="rgba(155,123,255,0.1)" strokeWidth="0.5" />
+                    <ellipse cx="100" cy="165" rx="58" ry="7" stroke="rgba(155,123,255,0.08)" strokeWidth="0.5" />
+                    {/* Static meridians (vertical longitude lines) */}
+                    <ellipse cx="100" cy="100" rx="22" ry="90" stroke="rgba(155,123,255,0.1)" strokeWidth="0.5" />
+                    <ellipse cx="100" cy="100" rx="50" ry="90" stroke="rgba(155,123,255,0.12)" strokeWidth="0.5" />
+                    <ellipse cx="100" cy="100" rx="73" ry="90" stroke="rgba(155,123,255,0.1)" strokeWidth="0.5" />
+                  </svg>
+
+                  {/* Rotating meridian overlay — creates 3D spin illusion */}
+                  <div className="orbit-globe-spin">
+                    <svg viewBox="0 0 200 200" fill="none" style={{ width: "100%", height: "100%" }}>
+                      <ellipse cx="100" cy="100" rx="35" ry="90" stroke="rgba(155,123,255,0.07)" strokeWidth="0.5" />
+                      <ellipse cx="100" cy="100" rx="62" ry="90" stroke="rgba(155,123,255,0.06)" strokeWidth="0.5" />
+                      <ellipse cx="100" cy="100" rx="85" ry="90" stroke="rgba(155,123,255,0.05)" strokeWidth="0.5" />
+                    </svg>
+                  </div>
+
+                  {/* Equator accent ring */}
+                  <div className="orbit-globe-equator" />
+                </div>
+              </div>
 
               {/* Orbiting cards */}
               {tools.map((tool, i) => (

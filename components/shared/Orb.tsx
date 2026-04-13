@@ -250,10 +250,18 @@ export default function Orb({
   backgroundColor = "#000000",
 }: OrbProps) {
   const ctnDom = useRef<HTMLDivElement>(null);
+  const visibleRef = useRef(false);
 
   useEffect(() => {
     const container = ctnDom.current;
     if (!container) return;
+
+    // Pause WebGL rendering when off-screen
+    const io = new IntersectionObserver(
+      ([entry]) => { visibleRef.current = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    io.observe(container);
 
     const renderer = new Renderer({ alpha: true, premultipliedAlpha: false });
     const gl = renderer.gl;
@@ -330,6 +338,7 @@ export default function Orb({
     let rafId: number;
     const update = (t: number) => {
       rafId = requestAnimationFrame(update);
+      if (!visibleRef.current) return;
       const dt = (t - lastTime) * 0.001;
       lastTime = t;
 
@@ -353,6 +362,7 @@ export default function Orb({
 
     return () => {
       cancelAnimationFrame(rafId);
+      io.disconnect();
       window.removeEventListener("resize", resize);
       container.removeEventListener("mousemove", handleMouseMove);
       container.removeEventListener("mouseleave", handleMouseLeave);

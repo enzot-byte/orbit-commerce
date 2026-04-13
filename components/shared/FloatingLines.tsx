@@ -232,6 +232,7 @@ export default function FloatingLines({
   className,
 }: FloatingLinesProps) {
   const containerRef = useRef<HTMLDivElement>(null);
+  const visibleRef = useRef(false);
   const targetMouseRef = useRef({ x: -1000, y: -1000 });
   const currentMouseRef = useRef({ x: -1000, y: -1000 });
   const targetInfluenceRef = useRef(0);
@@ -267,6 +268,13 @@ export default function FloatingLines({
 
     let active = true;
     let raf = 0;
+
+    // Pause WebGL rendering when off-screen
+    const io = new IntersectionObserver(
+      ([entry]) => { visibleRef.current = entry.isIntersecting; },
+      { threshold: 0 }
+    );
+    io.observe(container);
 
     import("three").then(
       ({
@@ -414,6 +422,8 @@ export default function FloatingLines({
 
         const renderLoop = () => {
           if (!active) return;
+          raf = requestAnimationFrame(renderLoop);
+          if (!visibleRef.current) return;
           uniforms.iTime.value = clock.getElapsedTime();
 
           if (interactive) {
@@ -433,7 +443,6 @@ export default function FloatingLines({
           }
 
           renderer.render(scene, camera);
-          raf = requestAnimationFrame(renderLoop);
         };
         renderLoop();
 
@@ -458,6 +467,7 @@ export default function FloatingLines({
     return () => {
       active = false;
       cancelAnimationFrame(raf);
+      io.disconnect();
       const cleanup = (container as HTMLDivElement & { _flCleanup?: () => void })._flCleanup;
       if (cleanup) cleanup();
     };

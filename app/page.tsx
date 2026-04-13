@@ -1,13 +1,16 @@
+import dynamic from "next/dynamic";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Hero from "@/components/sections/Hero";
 import SocialProof from "@/components/sections/SocialProof";
-import HowItWorks from "@/components/sections/HowItWorks";
-import ToolsPreview from "@/components/sections/ToolsPreview";
-import Testimonials from "@/components/sections/Testimonials";
-import Pricing from "@/components/sections/Pricing";
-import EbookCapture from "@/components/sections/EbookCapture";
 import Link from "next/link";
+
+// Below-fold heavy sections — lazy loaded to reduce initial JS bundle
+const HowItWorks = dynamic(() => import("@/components/sections/HowItWorks"));
+const ToolsPreview = dynamic(() => import("@/components/sections/ToolsPreview"));
+const Testimonials = dynamic(() => import("@/components/sections/Testimonials"));
+const Pricing = dynamic(() => import("@/components/sections/Pricing"));
+const EbookCapture = dynamic(() => import("@/components/sections/EbookCapture"));
 
 // ─── Courses Data ─────────────────────────────────────────────────────────────
 

@@ -90,37 +90,45 @@ export default function BlogSlider() {
 
   useEffect(() => setMounted(true), []);
 
+  // Throttled mousemove — runs at most once per animation frame
+  const rafRef = useRef(0);
   const handleMouseMove = useCallback(
     (e: React.MouseEvent) => {
-      const container = containerRef.current;
-      const spotlight = spotlightRef.current;
-      if (!container || !spotlight) return;
+      const clientX = e.clientX;
+      const clientY = e.clientY;
+      if (rafRef.current) return; // already scheduled
+      rafRef.current = requestAnimationFrame(() => {
+        rafRef.current = 0;
+        const container = containerRef.current;
+        const spotlight = spotlightRef.current;
+        if (!container || !spotlight) return;
 
-      const cards = container.querySelectorAll<HTMLElement>(".blog-slide");
-      let found = false;
+        const cards = container.querySelectorAll<HTMLElement>(".blog-slide");
+        let found = false;
 
-      cards.forEach((card) => {
-        const rect = card.getBoundingClientRect();
-        const containerRect = container.getBoundingClientRect();
+        cards.forEach((card) => {
+          const rect = card.getBoundingClientRect();
+          const containerRect = container.getBoundingClientRect();
 
-        if (
-          e.clientX >= rect.left &&
-          e.clientX <= rect.right &&
-          e.clientY >= rect.top &&
-          e.clientY <= rect.bottom
-        ) {
-          found = true;
-          spotlight.style.opacity = "1";
-          spotlight.style.left = `${rect.left - containerRect.left}px`;
-          spotlight.style.top = `${rect.top - containerRect.top}px`;
-          spotlight.style.width = `${rect.width}px`;
-          spotlight.style.height = `${rect.height}px`;
+          if (
+            clientX >= rect.left &&
+            clientX <= rect.right &&
+            clientY >= rect.top &&
+            clientY <= rect.bottom
+          ) {
+            found = true;
+            spotlight.style.opacity = "1";
+            spotlight.style.left = `${rect.left - containerRect.left}px`;
+            spotlight.style.top = `${rect.top - containerRect.top}px`;
+            spotlight.style.width = `${rect.width}px`;
+            spotlight.style.height = `${rect.height}px`;
+          }
+        });
+
+        if (!found) {
+          spotlight.style.opacity = "0";
         }
       });
-
-      if (!found) {
-        spotlight.style.opacity = "0";
-      }
     },
     []
   );
