@@ -90,7 +90,7 @@ export default function Hero() {
       {/* Content */}
       <motion.div
         style={{ y: contentY, opacity: contentOpacity, willChange: "transform" }}
-        className="relative z-10 container-orbit flex flex-col items-center text-center px-4"
+        className="relative z-10 w-full container-orbit flex flex-col items-center text-center px-4"
       >
         <>
           {/* Badge */}
@@ -141,7 +141,7 @@ export default function Hero() {
           >
             <a
               href="/cadastro"
-              className="group relative inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-semibold overflow-hidden transition-all duration-300 hover:scale-105"
+              className="group relative w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-semibold overflow-hidden transition-all duration-300 hover:scale-105"
               style={{
                 background: "linear-gradient(135deg, #5B3FD8 0%, #9B7BFF 100%)",
                 color: "#ffffff",
@@ -155,7 +155,7 @@ export default function Hero() {
             </a>
             <a
               href="/planos"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-semibold text-white/80 border border-white/[0.15] backdrop-blur-sm transition-all duration-300 hover:border-white/30 hover:bg-white/[0.06] hover:scale-105"
+              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-semibold text-white/80 border border-white/[0.15] backdrop-blur-sm transition-all duration-300 hover:border-white/30 hover:bg-white/[0.06] hover:scale-105"
             >
               Conhecer os planos
             </a>

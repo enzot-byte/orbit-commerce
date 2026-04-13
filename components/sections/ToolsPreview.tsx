@@ -454,41 +454,62 @@ export default function ToolsPreview() {
           </div>
         </div>
 
-        {/* ─── Mobile: Grid fallback ─── */}
-        <div className="md:hidden">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 mb-8">
-            {tools.map((tool) => {
+        {/* ─── Mobile: auto-scrolling horizontal strip ─── */}
+        <div className="md:hidden relative overflow-hidden mb-6">
+          {/* Fade edges */}
+          <div className="absolute left-0 top-0 bottom-0 w-10 bg-gradient-to-r from-[#0A0A0F] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-10 bg-gradient-to-l from-[#0A0A0F] to-transparent z-10 pointer-events-none" />
+
+          <div className="tools-marquee-track flex gap-3 py-2">
+            {[...tools, ...tools].map((tool, idx) => {
               const Icon = tool.icon;
               return (
                 <div
-                  key={tool.name}
-                  className="flex items-center gap-3 px-4 py-3 rounded-xl"
-                  style={{
-                    background: "rgba(255,255,255,0.03)",
-                    border: `1px solid ${tool.border}`,
-                  }}
+                  key={`m-${idx}`}
+                  className="tool-card-mobile flex-shrink-0 relative rounded-xl overflow-hidden"
+                  data-type={tool.type}
                 >
+                  {/* Mini illustration header */}
                   <div
-                    className="w-9 h-9 rounded-lg flex items-center justify-center flex-shrink-0"
-                    style={{ backgroundColor: tool.bg }}
+                    className="w-full relative overflow-hidden"
+                    style={{
+                      height: 56,
+                      background: `linear-gradient(180deg, ${tool.headerBg} 0%, transparent 100%)`,
+                    }}
                   >
-                    <Icon className="w-4 h-4" style={{ color: tool.color }} />
+                    <div className="absolute inset-0 flex items-center justify-center opacity-75 scale-[0.85]">
+                      {tool.illustration}
+                    </div>
+                    <div className="absolute top-2 right-2">
+                      <span
+                        className="text-[9px] font-bold px-2 py-0.5 rounded-full"
+                        style={
+                          tool.type === "free"
+                            ? { backgroundColor: "rgba(16,185,129,0.25)", color: "#34d399" }
+                            : { backgroundColor: "rgba(239,159,39,0.25)", color: "#EF9F27" }
+                        }
+                      >
+                        {tool.badge}
+                      </span>
+                    </div>
                   </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="font-display font-bold text-white text-sm">
-                      {tool.name}
+                  {/* Card body */}
+                  <div className="px-3.5 py-2.5">
+                    <div className="flex items-center gap-2 mb-1">
+                      <div
+                        className="w-6 h-6 rounded-md flex items-center justify-center flex-shrink-0"
+                        style={{ backgroundColor: tool.bg }}
+                      >
+                        <Icon className="w-3 h-3" style={{ color: tool.color }} />
+                      </div>
+                      <p className="font-display font-bold text-white text-[11px] leading-tight">
+                        {tool.name}
+                      </p>
+                    </div>
+                    <p className="text-[10px] text-white/45 leading-relaxed line-clamp-2">
+                      {tool.desc}
                     </p>
                   </div>
-                  <span
-                    className="text-[10px] font-bold px-2 py-0.5 rounded-full"
-                    style={
-                      tool.type === "free"
-                        ? { backgroundColor: "rgba(16,185,129,0.15)", color: "#34d399" }
-                        : { backgroundColor: "rgba(239,159,39,0.15)", color: "#EF9F27" }
-                    }
-                  >
-                    {tool.badge}
-                  </span>
                 </div>
               );
             })}

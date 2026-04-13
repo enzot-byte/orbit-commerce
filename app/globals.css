@@ -701,39 +701,33 @@ html {
   height: 100% !important;
 }
 
-/* 3D Rotating rings — Pricing section */
-.pricing-ring-1 {
-  animation: pricing-ring-a 18s linear infinite;
-  will-change: transform;
+/* Mobile tool cards — horizontal auto-scroll marquee */
+.tool-card-mobile {
+  width: 200px;
+  background: linear-gradient(180deg, rgba(22,22,44,0.96) 0%, rgba(16,16,34,0.95) 100%);
+  box-shadow: 0 8px 24px rgba(0,0,0,0.3);
 }
-.pricing-ring-2 {
-  animation: pricing-ring-b 24s linear infinite;
-  will-change: transform;
+.tool-card-mobile[data-type="free"] {
+  border: 1px solid rgba(155,123,255,0.2);
 }
-.pricing-ring-3 {
-  animation: pricing-ring-c 30s linear infinite;
-  will-change: transform;
-}
-
-@keyframes pricing-ring-a {
-  from { transform: rotateX(75deg) rotateZ(0deg); }
-  to   { transform: rotateX(75deg) rotateZ(360deg); }
-}
-@keyframes pricing-ring-b {
-  from { transform: rotateX(60deg) rotateY(25deg) rotateZ(0deg); }
-  to   { transform: rotateX(60deg) rotateY(25deg) rotateZ(-360deg); }
-}
-@keyframes pricing-ring-c {
-  from { transform: rotateX(80deg) rotateY(-15deg) rotateZ(0deg); }
-  to   { transform: rotateX(80deg) rotateY(-15deg) rotateZ(360deg); }
+.tool-card-mobile[data-type="pro"] {
+  border: 1px solid rgba(239,159,39,0.2);
 }
 
+@keyframes tools-marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+.tools-marquee-track {
+  width: max-content;
+  animation: tools-marquee 28s linear infinite;
+}
+/* Pause on touch */
+.tools-marquee-track:active {
+  animation-play-state: paused;
+}
 @media (prefers-reduced-motion: reduce) {
-  .pricing-ring-1,
-  .pricing-ring-2,
-  .pricing-ring-3 {
-    animation: none;
-  }
+  .tools-marquee-track { animation: none; }
 }
 
 /* Gradient border for cards (via background trick) */
