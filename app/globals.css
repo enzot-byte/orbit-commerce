@@ -863,3 +863,11 @@ html {
   -webkit-mask-composite: xor;
   pointer-events: none;
 }
+
+/* ── Orb WebGL container ───────────────────────────────────── */
+.orb-container {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+}
