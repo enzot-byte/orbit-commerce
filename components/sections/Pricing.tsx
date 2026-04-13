@@ -171,6 +171,24 @@ export default function Pricing() {
 
             return (
               <ScrollReveal key={plan.id} direction="up" index={i} delay={0.1}>
+                <div className="relative" style={{ paddingTop: plan.badge ? 14 : 0 }}>
+                {/* Popular badge — outside card to avoid overflow-hidden clip */}
+                {plan.badge && (
+                  <div className="absolute top-0 left-1/2 -translate-x-1/2 z-20">
+                    <motion.span
+                      className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-bold text-white"
+                      style={{
+                        background: "linear-gradient(135deg, #5B3FD8 0%, #9B7BFF 100%)",
+                        boxShadow: "0 0 20px rgba(91,63,216,0.4)",
+                      }}
+                      animate={{ scale: [1, 1.04, 1] }}
+                      transition={{ duration: 2.5, repeat: Infinity, ease: "easeInOut" }}
+                    >
+                      <Zap className="w-3 h-3" />
+                      {plan.badge}
+                    </motion.span>
+                  </div>
+                )}
                 <motion.div
                   onClick={() => setSelectedId(plan.id)}
                   onHoverStart={() => setHoveredId(plan.id)}
@@ -218,29 +236,6 @@ export default function Pricing() {
                           "linear-gradient(180deg, rgba(91,63,216,0.15) 0%, transparent 50%)",
                       }}
                     />
-                  )}
-
-                  {/* Popular badge */}
-                  {plan.badge && (
-                    <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 z-10">
-                      <motion.span
-                        className="inline-flex items-center gap-1.5 px-4 py-1 rounded-full text-xs font-bold text-white"
-                        style={{
-                          background:
-                            "linear-gradient(135deg, #5B3FD8 0%, #9B7BFF 100%)",
-                          boxShadow: "0 0 20px rgba(91,63,216,0.4)",
-                        }}
-                        animate={{ scale: [1, 1.04, 1] }}
-                        transition={{
-                          duration: 2.5,
-                          repeat: Infinity,
-                          ease: "easeInOut",
-                        }}
-                      >
-                        <Zap className="w-3 h-3" />
-                        {plan.badge}
-                      </motion.span>
-                    </div>
                   )}
 
                   {/* Plan header */}
@@ -340,6 +335,7 @@ export default function Pricing() {
                     }}
                   />
                 </motion.div>
+                </div>
               </ScrollReveal>
             );
           })}
