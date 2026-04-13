@@ -382,6 +382,84 @@ export default function ToolsPreview() {
       className="relative overflow-hidden ambient-light"
       style={{ backgroundColor: "#0A0A0F", padding: "128px 0 100px" }}
     >
+      {/* Injected styles — bypasses Tailwind CSS v4 Lightning CSS stripping */}
+      <style dangerouslySetInnerHTML={{ __html: `
+        .orbit-atom-ring {
+          position: absolute;
+          border-radius: 50%;
+          border: 1px solid rgba(155,123,255,0.12);
+          top: 50%; left: 50%;
+          pointer-events: none;
+          will-change: transform;
+        }
+        .orbit-atom-ring::after {
+          content: "";
+          position: absolute;
+          width: 6px; height: 6px;
+          border-radius: 50%;
+          background: rgba(155,123,255,0.5);
+          box-shadow: 0 0 8px 2px rgba(155,123,255,0.25);
+          top: 0; left: 50%;
+          transform: translate(-50%, -50%);
+        }
+        .orbit-atom-ring--1 {
+          width: 160%; height: 50%;
+          margin-left: -80%; margin-top: -25%;
+          animation: atom-orbit-1 8s linear infinite;
+          border-color: rgba(155,123,255,0.1);
+        }
+        .orbit-atom-ring--2 {
+          width: 140%; height: 60%;
+          margin-left: -70%; margin-top: -30%;
+          animation: atom-orbit-2 11s linear infinite reverse;
+          border-color: rgba(155,123,255,0.08);
+        }
+        .orbit-atom-ring--2::after {
+          width: 5px; height: 5px;
+          background: rgba(239,159,39,0.45);
+          box-shadow: 0 0 6px 2px rgba(239,159,39,0.2);
+        }
+        .orbit-atom-ring--3 {
+          width: 180%; height: 45%;
+          margin-left: -90%; margin-top: -22.5%;
+          animation: atom-orbit-3 14s linear infinite;
+          border-color: rgba(155,123,255,0.06);
+        }
+        .orbit-atom-ring--3::after {
+          width: 4px; height: 4px;
+          background: rgba(55,138,221,0.45);
+          box-shadow: 0 0 6px 2px rgba(55,138,221,0.2);
+        }
+        @keyframes atom-orbit-1 {
+          from { transform: rotateX(65deg) rotateY(0deg); }
+          to   { transform: rotateX(65deg) rotateY(360deg); }
+        }
+        @keyframes atom-orbit-2 {
+          from { transform: rotateX(55deg) rotateZ(60deg) rotateY(0deg); }
+          to   { transform: rotateX(55deg) rotateZ(60deg) rotateY(360deg); }
+        }
+        @keyframes atom-orbit-3 {
+          from { transform: rotateX(70deg) rotateZ(-40deg) rotateY(0deg); }
+          to   { transform: rotateX(70deg) rotateZ(-40deg) rotateY(360deg); }
+        }
+        .orbit-micro-tool {
+          position: absolute;
+          transform: translate(-50%, -50%);
+          pointer-events: none;
+          opacity: 0.5;
+          animation: micro-tool-float 6s ease-in-out infinite;
+        }
+        .orbit-micro-tool:nth-child(odd) {
+          animation-duration: 7s; animation-delay: -2s;
+        }
+        .orbit-micro-tool:nth-child(even) {
+          animation-duration: 5s; animation-delay: -3.5s;
+        }
+        @keyframes micro-tool-float {
+          0%, 100% { opacity: 0.35; transform: translate(-50%, -50%) scale(1); }
+          50% { opacity: 0.55; transform: translate(-50%, -48%) scale(1.08); }
+        }
+      `}} />
       {/* Ambient glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[600px] pointer-events-none"
