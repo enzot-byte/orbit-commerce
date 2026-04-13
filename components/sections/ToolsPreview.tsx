@@ -449,7 +449,25 @@ export default function ToolsPreview() {
                 />
               </svg>
 
-              {/* ── Central Globe ── */}
+              {/* ── Force lines connecting cards to center ── */}
+              <svg className="orbit-path-svg" viewBox={`0 0 ${BASE} ${BASE}`} style={{ zIndex: 1 }}>
+                {tools.map((_, i) => {
+                  const angle = (i / tools.length) * Math.PI * 2;
+                  const ex = cx + RX * Math.cos(angle);
+                  const ey = cy + RY * Math.sin(angle);
+                  return (
+                    <line
+                      key={`fl-${i}`}
+                      x1={cx} y1={cy} x2={ex} y2={ey}
+                      stroke="rgba(155,123,255,0.04)"
+                      strokeWidth={1.2 / Math.max(scale, 0.3)}
+                      strokeDasharray={`${4 / Math.max(scale, 0.3)} ${8 / Math.max(scale, 0.3)}`}
+                    />
+                  );
+                })}
+              </svg>
+
+              {/* ── Central Sellerverse Globe ── */}
               <div
                 className="orbit-globe-container"
                 style={{ left: cx, top: cy }}
@@ -457,42 +475,78 @@ export default function ToolsPreview() {
                 {/* Outer glow halo */}
                 <div className="orbit-globe-glow" />
 
+                {/* 3D Atom rings */}
+                <div className="orbit-atom-ring orbit-atom-ring--1" />
+                <div className="orbit-atom-ring orbit-atom-ring--2" />
+                <div className="orbit-atom-ring orbit-atom-ring--3" />
+
                 {/* Sphere body */}
                 <div className="orbit-globe">
-                  {/* 3D light reflection */}
                   <div className="orbit-globe-shine" />
 
-                  {/* Static wireframe grid */}
+                  {/* Wireframe grid */}
                   <svg className="orbit-globe-wireframe" viewBox="0 0 200 200" fill="none">
-                    {/* Outer circle */}
                     <circle cx="100" cy="100" r="90" stroke="rgba(155,123,255,0.18)" strokeWidth="0.7" />
-                    {/* Parallels (horizontal latitude lines) */}
-                    <ellipse cx="100" cy="35" rx="58" ry="7" stroke="rgba(155,123,255,0.08)" strokeWidth="0.5" />
-                    <ellipse cx="100" cy="55" rx="76" ry="11" stroke="rgba(155,123,255,0.1)" strokeWidth="0.5" />
-                    <ellipse cx="100" cy="77" rx="86" ry="14" stroke="rgba(155,123,255,0.12)" strokeWidth="0.5" />
-                    <ellipse cx="100" cy="100" rx="90" ry="16" stroke="rgba(155,123,255,0.15)" strokeWidth="0.6" />
-                    <ellipse cx="100" cy="123" rx="86" ry="14" stroke="rgba(155,123,255,0.12)" strokeWidth="0.5" />
-                    <ellipse cx="100" cy="145" rx="76" ry="11" stroke="rgba(155,123,255,0.1)" strokeWidth="0.5" />
-                    <ellipse cx="100" cy="165" rx="58" ry="7" stroke="rgba(155,123,255,0.08)" strokeWidth="0.5" />
-                    {/* Static meridians (vertical longitude lines) */}
-                    <ellipse cx="100" cy="100" rx="22" ry="90" stroke="rgba(155,123,255,0.1)" strokeWidth="0.5" />
-                    <ellipse cx="100" cy="100" rx="50" ry="90" stroke="rgba(155,123,255,0.12)" strokeWidth="0.5" />
-                    <ellipse cx="100" cy="100" rx="73" ry="90" stroke="rgba(155,123,255,0.1)" strokeWidth="0.5" />
+                    <ellipse cx="100" cy="55" rx="76" ry="11" stroke="rgba(155,123,255,0.08)" strokeWidth="0.5" />
+                    <ellipse cx="100" cy="77" rx="86" ry="14" stroke="rgba(155,123,255,0.1)" strokeWidth="0.5" />
+                    <ellipse cx="100" cy="100" rx="90" ry="16" stroke="rgba(155,123,255,0.12)" strokeWidth="0.5" />
+                    <ellipse cx="100" cy="123" rx="86" ry="14" stroke="rgba(155,123,255,0.1)" strokeWidth="0.5" />
+                    <ellipse cx="100" cy="145" rx="76" ry="11" stroke="rgba(155,123,255,0.08)" strokeWidth="0.5" />
+                    <ellipse cx="100" cy="100" rx="22" ry="90" stroke="rgba(155,123,255,0.08)" strokeWidth="0.5" />
+                    <ellipse cx="100" cy="100" rx="50" ry="90" stroke="rgba(155,123,255,0.1)" strokeWidth="0.5" />
+                    <ellipse cx="100" cy="100" rx="73" ry="90" stroke="rgba(155,123,255,0.08)" strokeWidth="0.5" />
                   </svg>
 
-                  {/* Rotating meridian overlay — creates 3D spin illusion */}
+                  {/* Sellerverse "S" logo inscribed */}
+                  <svg className="orbit-globe-wireframe" viewBox="0 0 200 200" fill="none" style={{ zIndex: 2 }}>
+                    <path
+                      d="M118 70 C118 70 85 70 85 88 C85 106 125 100 125 115 C125 130 90 130 90 130"
+                      stroke="rgba(155,123,255,0.35)"
+                      strokeWidth="3"
+                      strokeLinecap="round"
+                      fill="none"
+                    />
+                    <circle cx="100" cy="100" r="45" stroke="rgba(155,123,255,0.08)" strokeWidth="0.5" strokeDasharray="3 4" />
+                  </svg>
+
+                  {/* Rotating meridians */}
                   <div className="orbit-globe-spin">
                     <svg viewBox="0 0 200 200" fill="none" style={{ width: "100%", height: "100%" }}>
-                      <ellipse cx="100" cy="100" rx="35" ry="90" stroke="rgba(155,123,255,0.07)" strokeWidth="0.5" />
-                      <ellipse cx="100" cy="100" rx="62" ry="90" stroke="rgba(155,123,255,0.06)" strokeWidth="0.5" />
-                      <ellipse cx="100" cy="100" rx="85" ry="90" stroke="rgba(155,123,255,0.05)" strokeWidth="0.5" />
+                      <ellipse cx="100" cy="100" rx="35" ry="90" stroke="rgba(155,123,255,0.06)" strokeWidth="0.5" />
+                      <ellipse cx="100" cy="100" rx="62" ry="90" stroke="rgba(155,123,255,0.05)" strokeWidth="0.5" />
                     </svg>
                   </div>
 
-                  {/* Equator accent ring */}
                   <div className="orbit-globe-equator" />
                 </div>
               </div>
+
+              {/* ── Distant orbiting micro-tools ── */}
+              {[
+                { angle: 0.3, dist: 1.35, size: 22, icon: "M9 7h6m0 10v-3m-3 3h.01M9 17h.01M5 20h14a2 2 0 002-2V6a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" },
+                { angle: 1.1, dist: 1.45, size: 18, icon: "M13 10V3L4 14h7v7l9-11h-7z" },
+                { angle: 2.0, dist: 1.3, size: 20, icon: "M12 20V10m0 0l3 3m-3-3l-3 3M6.5 14.5l-1-1M17.5 14.5l1-1" },
+                { angle: 2.8, dist: 1.5, size: 16, icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" },
+                { angle: 3.7, dist: 1.4, size: 18, icon: "M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" },
+                { angle: 4.5, dist: 1.55, size: 15, icon: "M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" },
+                { angle: 5.2, dist: 1.35, size: 17, icon: "M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" },
+                { angle: 5.9, dist: 1.5, size: 14, icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" },
+              ].map((mt, i) => (
+                <div
+                  key={`mt-${i}`}
+                  className="orbit-micro-tool"
+                  style={{
+                    left: cx + RX * mt.dist * Math.cos(mt.angle),
+                    top: cy + RY * mt.dist * Math.sin(mt.angle),
+                    width: mt.size,
+                    height: mt.size,
+                  }}
+                >
+                  <svg viewBox="0 0 24 24" fill="none" stroke="rgba(155,123,255,0.2)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d={mt.icon} />
+                  </svg>
+                </div>
+              ))}
 
               {/* Orbiting cards */}
               {tools.map((tool, i) => (
