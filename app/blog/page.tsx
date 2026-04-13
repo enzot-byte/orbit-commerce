@@ -2,7 +2,8 @@ import type { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollReveal from "@/components/shared/ScrollReveal";
-import BlogClient from "./BlogClient";
+import StarField from "@/components/shared/StarField";
+import BlogSlider from "@/components/sections/BlogSlider";
 import Link from "next/link";
 
 export const metadata: Metadata = {
@@ -34,30 +35,28 @@ export default function BlogPage() {
       <Navbar />
       <main style={{ backgroundColor: "#0A0A0F" }}>
 
-        {/* ── Hero ── */}
+        {/* ── Hero with Star Field ── */}
         <section
+          className="relative overflow-hidden"
           style={{
-            background: "linear-gradient(160deg, #042C53 0%, #1A1A2E 55%, #0A0A0F 100%)",
+            background: "linear-gradient(160deg, #042C53 0%, #0d1b3a 40%, #0A0A0F 100%)",
             padding: "160px 0 80px",
-            position: "relative",
-            overflow: "hidden",
             textAlign: "center",
           }}
         >
+          {/* Star field canvas */}
+          <StarField />
+
+          {/* Subtle center vignette for text readability */}
           <div
+            className="absolute inset-0 pointer-events-none z-[1]"
             style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "700px",
-              height: "700px",
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(24,95,165,0.1) 0%, transparent 65%)",
-              pointerEvents: "none",
+              background:
+                "radial-gradient(ellipse 40% 45% at 50% 45%, rgba(4,44,83,0.45) 0%, transparent 100%)",
             }}
           />
-          <div className="container-orbit" style={{ position: "relative", zIndex: 1 }}>
+
+          <div className="container-orbit" style={{ position: "relative", zIndex: 2 }}>
             <p
               style={{
                 fontSize: "12px",
@@ -106,6 +105,15 @@ export default function BlogPage() {
               Conteúdo gratuito, sem enrolação. Publicado por sellers que vivem o dia a dia dos marketplaces brasileiros.
             </p>
           </div>
+
+          {/* Bottom fade */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
+            style={{
+              background: "linear-gradient(to bottom, transparent, #0A0A0F)",
+              zIndex: 3,
+            }}
+          />
         </section>
 
         {/* ── Featured article ── */}
@@ -283,10 +291,10 @@ export default function BlogPage() {
           </div>
         </section>
 
-        {/* ── Article grid with filter ── */}
-        <section style={{ padding: "60px 0" }}>
+        {/* ── Swiper news carousel ── */}
+        <section style={{ padding: "60px 0 80px" }}>
           <div className="container-orbit">
-            <ScrollReveal direction="up" className="mb-8">
+            <ScrollReveal direction="up" className="mb-4">
               <h2
                 style={{
                   fontFamily: "var(--font-display)",
@@ -296,14 +304,14 @@ export default function BlogPage() {
                   marginBottom: "4px",
                 }}
               >
-                Todos os artigos
+                Últimos artigos
               </h2>
               <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.4)" }}>
-                Filtre por categoria para encontrar o que precisa.
+                Deslize para explorar os conteúdos mais recentes.
               </p>
             </ScrollReveal>
-            <BlogClient />
           </div>
+          <BlogSlider />
         </section>
 
         {/* ── Newsletter CTA ── */}
