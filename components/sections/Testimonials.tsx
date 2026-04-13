@@ -112,15 +112,15 @@ export default function Testimonials() {
 
   return (
     <section
-      className="section-pad overflow-hidden relative"
-      style={{ backgroundColor: "#12121F" }}
+      className="overflow-hidden relative ambient-light"
+      style={{ backgroundColor: "#12121F", padding: "128px 0 160px" }}
     >
       {/* Background glow */}
       <div
-        className="absolute top-0 right-0 w-[500px] h-[500px] pointer-events-none"
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none"
         style={{
           background:
-            "radial-gradient(circle, rgba(91,63,216,0.08) 0%, transparent 70%)",
+            "radial-gradient(circle, rgba(91,63,216,0.06) 0%, transparent 70%)",
         }}
       />
 
@@ -130,9 +130,12 @@ export default function Testimonials() {
           <p className="text-sm font-semibold tracking-widest uppercase mb-3" style={{ color: "#9B7BFF" }}>
             Depoimentos
           </p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white leading-tight">
+          <h2
+            className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white leading-tight"
+            style={{ letterSpacing: "-0.02em" }}
+          >
             O que nossos sellers{" "}
-            <span className="gradient-text-accent">estão falando</span>
+            <span className="shimmer-text">est&atilde;o falando</span>
           </h2>
         </ScrollReveal>
 
@@ -161,11 +164,7 @@ export default function Testimonials() {
                 className="w-full"
               >
                 <div
-                  className="rounded-2xl p-8 md:p-10"
-                  style={{
-                    backgroundColor: "#1A1A2E",
-                    border: "1px solid rgba(255,255,255,0.08)",
-                  }}
+                  className="rounded-2xl p-8 md:p-10 glass-card gradient-border"
                 >
                   {/* Quote */}
                   <p className="text-lg md:text-xl text-white/70 leading-relaxed mb-8 italic">
@@ -250,6 +249,12 @@ export default function Testimonials() {
           </div>
         </div>
       </div>
+
+      {/* Section fade */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+        style={{ background: "linear-gradient(to bottom, transparent, #1A1A2E)" }}
+      />
     </section>
   );
 }

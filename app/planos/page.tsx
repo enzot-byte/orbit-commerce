@@ -3,6 +3,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Pricing from "@/components/sections/Pricing";
 import ScrollReveal from "@/components/shared/ScrollReveal";
+import PlanosHero from "@/components/sections/PlanosHero";
 import PlanosClient from "./PlanosClient";
 
 export const metadata: Metadata = {
@@ -99,79 +100,8 @@ export default function PlanosPage() {
       <Navbar />
       <main style={{ backgroundColor: "#0A0A0F" }}>
 
-        {/* ── Hero ── */}
-        <section
-          style={{
-            background: "linear-gradient(160deg, #042C53 0%, #1A1A2E 60%, #0A0A0F 100%)",
-            padding: "160px 0 80px",
-            textAlign: "center",
-            position: "relative",
-            overflow: "hidden",
-          }}
-        >
-          <div
-            style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "700px",
-              height: "700px",
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(24,95,165,0.12) 0%, transparent 70%)",
-              pointerEvents: "none",
-            }}
-          />
-          <div className="container-orbit" style={{ position: "relative", zIndex: 1 }}>
-            <p
-              style={{
-                fontSize: "12px",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "#378ADD",
-                marginBottom: "20px",
-              }}
-            >
-              Planos e Preços
-            </p>
-            <h1
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(2rem, 5vw, 3.5rem)",
-                fontWeight: 800,
-                color: "white",
-                lineHeight: 1.1,
-                maxWidth: "720px",
-                margin: "0 auto 20px",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              Escolha o plano ideal para o{" "}
-              <span
-                style={{
-                  background: "linear-gradient(135deg, #EF9F27 0%, #FAC775 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
-                seu negócio
-              </span>
-            </h1>
-            <p
-              style={{
-                fontSize: "1.1rem",
-                color: "rgba(255,255,255,0.5)",
-                maxWidth: "520px",
-                margin: "0 auto",
-                lineHeight: 1.7,
-              }}
-            >
-              Comece grátis. Faça upgrade quando seu negócio pedir mais.
-            </p>
-          </div>
-        </section>
+        {/* ── Hero — Scroll 3D Parallax ── */}
+        <PlanosHero />
 
         {/* ── Pricing Component ── */}
         <Pricing />

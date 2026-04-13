@@ -2,6 +2,8 @@ import type { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollReveal from "@/components/shared/ScrollReveal";
+import StarField from "@/components/shared/StarField";
+import BlogSlider from "@/components/sections/BlogSlider";
 import BlogClient from "./BlogClient";
 import Link from "next/link";
 
@@ -9,21 +11,6 @@ export const metadata: Metadata = {
   title: "Blog",
   description:
     "Estratégias, dicas e análises para sellers de alto nível. Conteúdo gratuito criado por quem realmente vende nos marketplaces brasileiros.",
-};
-
-// ─── Featured article ─────────────────────────────────────────────────────────
-
-const featured = {
-  title: "O guia definitivo para escalar vendas no Mercado Livre em 2025",
-  excerpt:
-    "Desde a escolha do produto até a otimização de campanhas — um roadmap completo baseado em dados reais de sellers que faturam mais de R$100k/mês.",
-  category: "Mercado Livre",
-  date: "07 abr 2025",
-  readTime: "18 min",
-  author: "Rafael Mendes",
-  authorRole: "Co-fundador, ex-seller ML",
-  gradient: "linear-gradient(135deg, #0C447C 0%, #185FA5 50%, #378ADD 100%)",
-  emoji: "📈",
 };
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
@@ -34,30 +21,28 @@ export default function BlogPage() {
       <Navbar />
       <main style={{ backgroundColor: "#0A0A0F" }}>
 
-        {/* ── Hero ── */}
+        {/* ── Hero with Star Field ── */}
         <section
+          className="relative overflow-hidden"
           style={{
-            background: "linear-gradient(160deg, #042C53 0%, #1A1A2E 55%, #0A0A0F 100%)",
+            background: "linear-gradient(160deg, #042C53 0%, #0d1b3a 40%, #0A0A0F 100%)",
             padding: "160px 0 80px",
-            position: "relative",
-            overflow: "hidden",
             textAlign: "center",
           }}
         >
+          {/* Star field canvas */}
+          <StarField />
+
+          {/* Subtle center vignette for text readability */}
           <div
+            className="absolute inset-0 pointer-events-none z-[1]"
             style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "700px",
-              height: "700px",
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(24,95,165,0.1) 0%, transparent 65%)",
-              pointerEvents: "none",
+              background:
+                "radial-gradient(ellipse 40% 45% at 50% 45%, rgba(4,44,83,0.45) 0%, transparent 100%)",
             }}
           />
-          <div className="container-orbit" style={{ position: "relative", zIndex: 1 }}>
+
+          <div className="container-orbit" style={{ position: "relative", zIndex: 2 }}>
             <p
               style={{
                 fontSize: "12px",
@@ -106,181 +91,38 @@ export default function BlogPage() {
               Conteúdo gratuito, sem enrolação. Publicado por sellers que vivem o dia a dia dos marketplaces brasileiros.
             </p>
           </div>
+
+          {/* Bottom fade */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-20 pointer-events-none"
+            style={{
+              background: "linear-gradient(to bottom, transparent, #0A0A0F)",
+              zIndex: 3,
+            }}
+          />
         </section>
 
-        {/* ── Featured article ── */}
+        {/* ── Featured — Swiper news carousel ── */}
         <section style={{ padding: "80px 0 40px" }}>
           <div className="container-orbit">
-            <ScrollReveal direction="up">
-              <div
+            <ScrollReveal direction="up" className="mb-4">
+              <h2
                 style={{
-                  borderRadius: "24px",
-                  overflow: "hidden",
-                  border: "1px solid rgba(255,255,255,0.1)",
-                  display: "grid",
-                  gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-                  cursor: "pointer",
-                  transition: "border-color 0.2s",
+                  fontFamily: "var(--font-display)",
+                  fontSize: "1.5rem",
+                  fontWeight: 700,
+                  color: "white",
+                  marginBottom: "4px",
                 }}
               >
-                {/* Visual */}
-                <div
-                  style={{
-                    background: featured.gradient,
-                    minHeight: "320px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "96px",
-                    position: "relative",
-                  }}
-                >
-                  {featured.emoji}
-                  <div
-                    style={{
-                      position: "absolute",
-                      top: "20px",
-                      left: "20px",
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      padding: "6px 14px",
-                      borderRadius: "999px",
-                      backgroundColor: "rgba(0,0,0,0.3)",
-                      backdropFilter: "blur(8px)",
-                      border: "1px solid rgba(255,255,255,0.2)",
-                    }}
-                  >
-                    <span
-                      style={{
-                        width: "6px",
-                        height: "6px",
-                        borderRadius: "50%",
-                        backgroundColor: "#EF9F27",
-                        animation: "pulse 2s infinite",
-                      }}
-                    />
-                    <span style={{ fontSize: "12px", fontWeight: 700, color: "white" }}>
-                      Artigo em destaque
-                    </span>
-                  </div>
-                </div>
-
-                {/* Content */}
-                <div
-                  style={{
-                    backgroundColor: "#16162A",
-                    padding: "48px 40px",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                  }}
-                >
-                  <span
-                    style={{
-                      display: "inline-flex",
-                      fontSize: "11px",
-                      fontWeight: 700,
-                      color: "#60a5fa",
-                      backgroundColor: "rgba(96,165,250,0.12)",
-                      padding: "4px 12px",
-                      borderRadius: "999px",
-                      marginBottom: "16px",
-                      width: "fit-content",
-                    }}
-                  >
-                    {featured.category}
-                  </span>
-
-                  <h2
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "clamp(1.4rem, 2.5vw, 1.9rem)",
-                      fontWeight: 700,
-                      color: "white",
-                      lineHeight: 1.25,
-                      marginBottom: "16px",
-                    }}
-                  >
-                    {featured.title}
-                  </h2>
-
-                  <p
-                    style={{
-                      fontSize: "15px",
-                      color: "rgba(255,255,255,0.5)",
-                      lineHeight: 1.75,
-                      marginBottom: "28px",
-                    }}
-                  >
-                    {featured.excerpt}
-                  </p>
-
-                  <div
-                    style={{
-                      display: "flex",
-                      alignItems: "center",
-                      gap: "16px",
-                      marginBottom: "28px",
-                    }}
-                  >
-                    <div
-                      style={{
-                        width: "44px",
-                        height: "44px",
-                        borderRadius: "50%",
-                        background: "linear-gradient(135deg, #185FA5 0%, #378ADD 100%)",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "center",
-                        fontSize: "16px",
-                        fontWeight: 700,
-                        color: "white",
-                        flexShrink: 0,
-                      }}
-                    >
-                      {featured.author.charAt(0)}
-                    </div>
-                    <div>
-                      <p style={{ fontSize: "14px", fontWeight: 600, color: "white" }}>
-                        {featured.author}
-                      </p>
-                      <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)" }}>
-                        {featured.authorRole}
-                      </p>
-                    </div>
-                    <div style={{ marginLeft: "auto", textAlign: "right" }}>
-                      <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.35)" }}>
-                        {featured.date}
-                      </p>
-                      <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.35)" }}>
-                        {featured.readTime} de leitura
-                      </p>
-                    </div>
-                  </div>
-
-                  <a
-                    href="#"
-                    style={{
-                      display: "inline-flex",
-                      alignItems: "center",
-                      gap: "8px",
-                      padding: "12px 24px",
-                      borderRadius: "10px",
-                      background: "linear-gradient(135deg, #185FA5 0%, #378ADD 100%)",
-                      color: "white",
-                      fontWeight: 600,
-                      fontSize: "14px",
-                      textDecoration: "none",
-                      width: "fit-content",
-                    }}
-                  >
-                    Ler o artigo completo →
-                  </a>
-                </div>
-              </div>
+                Artigos em destaque
+              </h2>
+              <p style={{ fontSize: "14px", color: "rgba(255,255,255,0.4)" }}>
+                Deslize para explorar os conteúdos mais recentes.
+              </p>
             </ScrollReveal>
           </div>
+          <BlogSlider />
         </section>
 
         {/* ── Article grid with filter ── */}

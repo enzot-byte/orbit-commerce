@@ -1,10 +1,10 @@
 "use client";
 
-import React, { useRef, useState, useEffect, useCallback } from "react";
+import React, { useRef, useState, useCallback } from "react";
+import dynamic from "next/dynamic";
 import { motion, useMotionValue, useSpring, useTransform } from "framer-motion";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
-import GradientMesh from "@/components/shared/GradientMesh";
 import { Logo } from "@/components/ui/Logo";
 import {
   Mail,
@@ -12,6 +12,8 @@ import {
   Copy,
   Check,
 } from "lucide-react";
+
+const Orb = dynamic(() => import("@/components/shared/Orb"), { ssr: false });
 
 // ─── Social links data ───────────────────────────────────────────────────────
 
@@ -93,59 +95,6 @@ const SOCIAL_LINKS = [
   },
 ] as const;
 
-// ─── Floating particles background ──────────────────────────────────────────
-
-function seededRandom(seed: number) {
-  const x = Math.sin(seed * 9301 + 49297) * 49297;
-  return x - Math.floor(x);
-}
-
-function FloatingParticles() {
-  const [mounted, setMounted] = useState(false);
-  useEffect(() => setMounted(true), []);
-
-  if (!mounted) return <div className="absolute inset-0 overflow-hidden pointer-events-none" />;
-
-  const particles = Array.from({ length: 20 }, (_, i) => ({
-    id: i,
-    x: seededRandom(i * 7 + 1) * 100,
-    y: seededRandom(i * 13 + 3) * 100,
-    size: 2 + seededRandom(i * 19 + 5) * 3,
-    duration: 10 + seededRandom(i * 23 + 7) * 15,
-    delay: seededRandom(i * 31 + 11) * 5,
-    opacity: 0.1 + seededRandom(i * 37 + 13) * 0.2,
-  }));
-
-  return (
-    <div className="absolute inset-0 overflow-hidden pointer-events-none">
-      {particles.map((p) => (
-        <motion.div
-          key={p.id}
-          className="absolute rounded-full"
-          style={{
-            left: `${p.x}%`,
-            top: `${p.y}%`,
-            width: p.size,
-            height: p.size,
-            backgroundColor: "#9B7BFF",
-            opacity: p.opacity,
-          }}
-          animate={{
-            y: [0, -30, 0],
-            x: [0, 10, -8, 0],
-            opacity: [p.opacity, p.opacity * 1.4, p.opacity],
-          }}
-          transition={{
-            duration: p.duration,
-            delay: p.delay,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      ))}
-    </div>
-  );
-}
 
 // ─── Social card ─────────────────────────────────────────────────────────────
 
@@ -290,32 +239,6 @@ function SocialCard({
   );
 }
 
-// ─── Orbiting rings (smaller, background only) ──────────────────────────────
-
-function OrbitalRings() {
-  return (
-    <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-      {[160, 220, 300].map((size, i) => (
-        <motion.div
-          key={size}
-          className="absolute rounded-full border"
-          style={{
-            width: size,
-            height: size,
-            borderColor: `rgba(155,123,255,${0.08 - i * 0.02})`,
-            borderStyle: i === 1 ? "dashed" : "solid",
-          }}
-          animate={{ rotate: i === 1 ? -360 : 360 }}
-          transition={{
-            duration: 25 + i * 10,
-            repeat: Infinity,
-            ease: "linear",
-          }}
-        />
-      ))}
-    </div>
-  );
-}
 
 // ─── Page ────────────────────────────────────────────────────────────────────
 
@@ -324,11 +247,15 @@ export default function RedesPage() {
     <>
       <Navbar />
       <main className="relative min-h-screen flex flex-col items-center overflow-hidden" style={{ backgroundColor: "#0A0A0F" }}>
-        {/* Background */}
-        <div className="absolute inset-0 pointer-events-none">
-          <GradientMesh intensity="medium" />
+        {/* WebGL Orb background */}
+        <div className="absolute inset-0 pointer-events-auto" style={{ opacity: 0.55 }}>
+          <Orb
+            hue={0}
+            hoverIntensity={0.2}
+            rotateOnHover
+            backgroundColor="#0A0A0F"
+          />
         </div>
-        <FloatingParticles />
 
         {/* Content */}
         <div className="relative z-10 flex flex-col items-center w-full max-w-lg mx-auto px-4 pt-32 pb-20">
@@ -347,9 +274,6 @@ export default function RedesPage() {
               Conecte-se com a maior comunidade de sellers do Brasil
             </p>
           </motion.div>
-
-          {/* Orbital decoration */}
-          <OrbitalRings />
 
           {/* Social links stack */}
           <div className="relative z-10 w-full flex flex-col gap-3">

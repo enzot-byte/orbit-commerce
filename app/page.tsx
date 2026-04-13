@@ -81,27 +81,27 @@ function StarRating({ rating }: { rating: number }) {
 
 function CoursesPreview() {
   return (
-    <section style={{ backgroundColor: "#0A0A0F", padding: "96px 0" }}>
-      <div className="container-orbit">
+    <section className="relative overflow-hidden ambient-light" style={{ backgroundColor: "#0A0A0F", padding: "128px 0 160px" }}>
+      {/* Background glow */}
+      <div
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] pointer-events-none"
+        style={{ background: "radial-gradient(ellipse at center, rgba(239,159,39,0.04) 0%, transparent 70%)" }}
+      />
+
+      <div className="container-orbit relative z-10">
         {/* Header */}
         <div className="text-center mb-14">
           <p className="text-sm font-semibold tracking-widest uppercase text-orbit-400 mb-3">
             Cursos
           </p>
-          <h2 className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white leading-tight">
+          <h2
+            className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white leading-tight"
+            style={{ letterSpacing: "-0.02em" }}
+          >
             Aprenda com quem{" "}
-            <span
-              style={{
-                background: "linear-gradient(135deg, #EF9F27 0%, #FAC775 100%)",
-                WebkitBackgroundClip: "text",
-                WebkitTextFillColor: "transparent",
-                backgroundClip: "text",
-              }}
-            >
-              vende de verdade
-            </span>
+            <span className="shimmer-text">vende de verdade</span>
           </h2>
-          <p className="mt-4 text-lg text-white/50 max-w-xl mx-auto">
+          <p className="mt-4 text-lg text-white/40 max-w-xl mx-auto">
             Conteúdo prático, atualizado e criado por sellers com histórico comprovado.
           </p>
         </div>
@@ -112,13 +112,11 @@ function CoursesPreview() {
             <div
               key={course.id}
               style={{
-                backgroundColor: "#16162A",
                 borderRadius: "16px",
-                border: "1px solid rgba(255,255,255,0.08)",
                 overflow: "hidden",
                 transition: "all 0.3s ease",
               }}
-              className="group hover:border-white/20 hover:-translate-y-1 hover:shadow-xl"
+              className="group glass-card gradient-border hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(91,63,216,0.12)]"
             >
               {/* Thumbnail */}
               <div
@@ -209,21 +207,20 @@ function CoursesPreview() {
         <div className="text-center">
           <Link
             href="/cursos"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              gap: "8px",
-              color: "#378ADD",
-              fontWeight: 600,
-              fontSize: "16px",
-              textDecoration: "none",
-              transition: "color 0.2s",
-            }}
+            className="inline-flex items-center gap-2 font-semibold transition-colors duration-200 group"
+            style={{ color: "#9B7BFF" }}
           >
-            Ver todos os cursos →
+            Ver todos os cursos
+            <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
           </Link>
         </div>
       </div>
+
+      {/* Section fade */}
+      <div
+        className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+        style={{ background: "linear-gradient(to bottom, transparent, #12121F)" }}
+      />
     </section>
   );
 }

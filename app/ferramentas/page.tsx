@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollReveal from "@/components/shared/ScrollReveal";
+import FerramentasHero from "@/components/sections/FerramentasHero";
 import ToolsClient from "./ToolsClient";
 import Link from "next/link";
 
@@ -19,121 +20,121 @@ export default function FerramentasPage() {
 
         {/* ── Hero ── */}
         <section
-          style={{
-            background: "linear-gradient(160deg, #042C53 0%, #1A1A2E 55%, #0A0A0F 100%)",
-            padding: "160px 0 80px",
-            position: "relative",
-            overflow: "hidden",
-            textAlign: "center",
-          }}
+          className="relative overflow-hidden"
+          style={{ background: "#0A0A0F", padding: "160px 0 96px" }}
         >
+          {/* Factory conveyor scene background */}
+          <FerramentasHero />
+
+          {/* Narrow center vignette — text readable, sides visible */}
           <div
+            className="absolute inset-0 pointer-events-none z-[1]"
             style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "800px",
-              height: "800px",
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(24,95,165,0.1) 0%, transparent 65%)",
-              pointerEvents: "none",
+              background:
+                "radial-gradient(ellipse 45% 50% at 50% 45%, rgba(10,10,15,0.35) 0%, transparent 100%)",
             }}
           />
+
+          {/* ── Content ── */}
           <div
-            style={{
-              position: "absolute",
-              bottom: "-100px",
-              right: "-100px",
-              width: "400px",
-              height: "400px",
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(239,159,39,0.06) 0%, transparent 65%)",
-              pointerEvents: "none",
-            }}
-          />
-          <div className="container-orbit" style={{ position: "relative", zIndex: 1 }}>
-            <p
+            className="container-orbit text-center"
+            style={{ position: "relative", zIndex: 10 }}
+          >
+            <div
               style={{
-                fontSize: "12px",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "#378ADD",
-                marginBottom: "20px",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "6px 16px",
+                borderRadius: "999px",
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.1)",
+                marginBottom: "24px",
               }}
             >
-              Ferramentas
-            </p>
+              <span
+                style={{
+                  fontSize: "13px",
+                  color: "rgba(255,255,255,0.7)",
+                  fontWeight: 500,
+                }}
+              >
+                Ferramentas para Sellers
+              </span>
+            </div>
+
             <h1
               style={{
                 fontFamily: "var(--font-display)",
-                fontSize: "clamp(2rem, 5vw, 3.5rem)",
+                fontSize: "clamp(2.2rem, 5vw, 3.75rem)",
                 fontWeight: 800,
                 color: "white",
                 lineHeight: 1.1,
-                maxWidth: "760px",
-                margin: "0 auto 20px",
+                maxWidth: "820px",
+                margin: "0 auto 24px",
                 letterSpacing: "-0.02em",
               }}
             >
               Ferramentas para otimizar{" "}
               <span
+                className="shimmer-text"
                 style={{
-                  background: "linear-gradient(135deg, #EF9F27 0%, #FAC775 100%)",
+                  WebkitTextFillColor: "unset",
+                  background:
+                    "linear-gradient(90deg, #EF9F27 0%, #FAC775 25%, #EF9F27 50%, #FAC775 75%, #EF9F27 100%)",
+                  backgroundSize: "200% auto",
                   WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
+                  color: "transparent",
                 }}
               >
-                cada etapa do seu negócio
+                cada etapa do seu neg&oacute;cio
               </span>
             </h1>
+
             <p
               style={{
-                fontSize: "1.1rem",
-                color: "rgba(255,255,255,0.5)",
-                maxWidth: "540px",
-                margin: "0 auto 40px",
+                fontSize: "18px",
+                color: "rgba(255,255,255,0.45)",
+                maxWidth: "560px",
+                margin: "0 auto 48px",
                 lineHeight: 1.7,
               }}
             >
-              15+ ferramentas desenvolvidas especialmente para sellers brasileiros. Algumas grátis para sempre, outras disponíveis nos planos Pro e Premium.
+              15+ ferramentas desenvolvidas especialmente para sellers
+              brasileiros. Algumas gr&aacute;tis para sempre, outras
+              dispon&iacute;veis nos planos Pro e Premium.
             </p>
 
             {/* Quick stats */}
-            <div
-              style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: "40px",
-                flexWrap: "wrap",
-              }}
-            >
+            <div className="flex justify-center gap-10 flex-wrap">
               {[
-                { label: "Ferramentas disponíveis", value: "15+" },
-                { label: "Sempre grátis", value: "4" },
-                { label: "Usuários ativos", value: "2.5k+" },
+                { label: "Ferramentas dispon\u00edveis", value: "15+" },
+                { label: "Sempre gr\u00e1tis", value: "4" },
+                { label: "Usu\u00e1rios ativos", value: "2.5k+" },
               ].map((stat) => (
-                <div key={stat.label} style={{ textAlign: "center" }}>
+                <div key={stat.label} className="text-center">
                   <div
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "2rem",
-                      fontWeight: 800,
-                      color: "white",
-                      lineHeight: 1,
-                    }}
+                    className="font-display font-extrabold text-white leading-none"
+                    style={{ fontSize: "2rem" }}
                   >
                     {stat.value}
                   </div>
-                  <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)", marginTop: "4px" }}>
+                  <div className="text-[13px] text-white/40 mt-1">
                     {stat.label}
                   </div>
                 </div>
               ))}
             </div>
           </div>
+
+          {/* Bottom fade */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-24 pointer-events-none"
+            style={{
+              background: "linear-gradient(to bottom, transparent, #0A0A0F)",
+            }}
+          />
         </section>
 
         {/* ── Tools section ── */}
