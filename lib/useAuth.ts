@@ -8,7 +8,7 @@ export interface AuthUser {
   id: string;
   email: string;
   name: string;
-  marketplace: string;
+  marketplaces: string[];
   whatsapp: string;
   plan: "Grátis" | "Pro" | "Premium";
   createdAt: string;
@@ -16,11 +16,18 @@ export interface AuthUser {
 
 function parseUser(user: User): AuthUser {
   const meta = user.user_metadata ?? {};
+  // Support both old single `marketplace` string and new `marketplaces` array
+  let marketplaces: string[] = [];
+  if (Array.isArray(meta.marketplaces)) {
+    marketplaces = meta.marketplaces;
+  } else if (meta.marketplace) {
+    marketplaces = [meta.marketplace];
+  }
   return {
     id: user.id,
     email: user.email ?? "",
     name: meta.full_name ?? meta.name ?? user.email?.split("@")[0] ?? "Usuário",
-    marketplace: meta.marketplace ?? "",
+    marketplaces,
     whatsapp: meta.whatsapp ?? "",
     plan: (meta.plan as AuthUser["plan"]) ?? "Grátis",
     createdAt: user.created_at ?? "",
@@ -52,12 +59,12 @@ export function useAuth() {
     return () => subscription.unsubscribe();
   }, []);
 
-  const updateProfile = async (updates: Partial<Pick<AuthUser, "name" | "marketplace" | "whatsapp">>) => {
+  const updateProfile = async (updates: Partial<Pick<AuthUser, "name" | "marketplaces" | "whatsapp">>) => {
     if (!supabase) return { error: "Supabase não configurado" };
     const { data, error } = await supabase.auth.updateUser({
       data: {
         name: updates.name,
-        marketplace: updates.marketplace,
+        marketplaces: updates.marketplaces,
         whatsapp: updates.whatsapp,
       },
     });
