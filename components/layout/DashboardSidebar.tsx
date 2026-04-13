@@ -18,6 +18,7 @@ import {
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
 import { supabase } from "@/lib/supabase";
+import { useAuth } from "@/lib/useAuth";
 
 async function handleSignOut() {
   try {
@@ -27,13 +28,6 @@ async function handleSignOut() {
   }
   window.location.href = "/login";
 }
-
-const mockUser = {
-  name: "Pedro Alves",
-  email: "pedro@exemplo.com",
-  plan: "Pro" as "Grátis" | "Pro" | "Premium",
-  avatar: null,
-};
 
 const navItems = [
   { label: "Home", href: "/dashboard", icon: LayoutDashboard },
@@ -50,7 +44,7 @@ const planVariant: Record<string, "primary" | "accent" | "success"> = {
   Premium: "success",
 };
 
-function UserAvatar({ name, collapsed }: { name: string; collapsed: boolean }) {
+function UserAvatar({ name, plan, collapsed }: { name: string; plan: string; collapsed: boolean }) {
   const initials = name
     .split(" ")
     .map((n) => n[0])
@@ -78,8 +72,8 @@ function UserAvatar({ name, collapsed }: { name: string; collapsed: boolean }) {
             className="overflow-hidden min-w-0"
           >
             <p className="text-sm font-semibold text-white truncate">{name}</p>
-            <Badge variant="accent" size="sm">
-              {mockUser.plan}
+            <Badge variant={planVariant[plan] ?? "primary"} size="sm">
+              {plan}
             </Badge>
           </motion.div>
         )}
@@ -141,6 +135,10 @@ function NavItem({
 export function DashboardSidebar() {
   const [collapsed, setCollapsed] = useState(false);
   const pathname = usePathname();
+  const { user } = useAuth();
+
+  const displayName = user?.name ?? "Usuário";
+  const displayPlan = user?.plan ?? "Grátis";
 
   const isActive = (href: string) => {
     if (href === "/dashboard") return pathname === "/dashboard";
@@ -179,7 +177,7 @@ export function DashboardSidebar() {
       </div>
 
       {/* User section */}
-      <UserAvatar name={mockUser.name} collapsed={collapsed} />
+      <UserAvatar name={displayName} plan={displayPlan} collapsed={collapsed} />
 
       {/* Navigation */}
       <nav className="flex-1 py-4 flex flex-col gap-1 overflow-y-auto">
