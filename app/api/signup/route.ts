@@ -113,7 +113,7 @@ function renderWelcomeEmail({
                     : ""
                 }
                 <div style="margin:28px 0;text-align:center;">
-                  <a href="https://project-9hhfa.vercel.app/dashboard" style="display:inline-block;padding:14px 28px;background:linear-gradient(135deg,#EF9F27 0%,#FAC775 100%);color:#0A0A0F;text-decoration:none;border-radius:10px;font-weight:700;font-size:15px;">Acessar área do aluno →</a>
+                  <a href="https://sellerverse.com.br/dashboard" style="display:inline-block;padding:14px 28px;background:linear-gradient(135deg,#EF9F27 0%,#FAC775 100%);color:#0A0A0F;text-decoration:none;border-radius:10px;font-weight:700;font-size:15px;">Acessar área do aluno →</a>
                 </div>
                 <p style="margin:24px 0 0 0;font-size:14px;line-height:1.6;color:#6B7280;">
                   Qualquer dúvida, é só responder esse e-mail. Estamos juntos nessa.
