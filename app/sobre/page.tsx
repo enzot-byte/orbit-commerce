@@ -3,6 +3,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollReveal from "@/components/shared/ScrollReveal";
 import AnimatedCounter from "@/components/shared/AnimatedCounter";
+import FloatingLinesBg from "@/components/shared/FloatingLinesBg";
 
 export const metadata: Metadata = {
   title: "Sobre Nós",
@@ -108,42 +109,40 @@ export default function SobrePage() {
       <Navbar />
       <main style={{ backgroundColor: "#0A0A0F" }}>
 
-        {/* ── Hero ── */}
+        {/* ── Hero with FloatingLines ── */}
         <section
           style={{
-            background: "linear-gradient(160deg, #0C447C 0%, #1A1A2E 50%, #0A0A0F 100%)",
+            background: "#0A0A0F",
             padding: "160px 0 96px",
             position: "relative",
             overflow: "hidden",
           }}
         >
-          {/* Decorative blobs */}
-          <div
-            style={{
-              position: "absolute",
-              top: "-120px",
-              right: "-120px",
-              width: "500px",
-              height: "500px",
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(55,138,221,0.15) 0%, transparent 70%)",
-              pointerEvents: "none",
-            }}
+          {/* FloatingLines WebGL background */}
+          <FloatingLinesBg
+            className="opacity-50"
+            linesGradient={["#5B3FD8", "#9B7BFF", "#185FA5", "#C4B5FD"]}
+            enabledWaves={["top", "middle", "bottom"]}
+            lineCount={10}
+            lineDistance={5}
+            bendRadius={5}
+            bendStrength={-0.5}
+            interactive
+            parallax
+            parallaxStrength={0.2}
+            animationSpeed={0.8}
+            mixBlendMode="screen"
           />
+
+          {/* Dim overlay for text readability */}
           <div
+            className="absolute inset-0 pointer-events-none z-[1]"
             style={{
-              position: "absolute",
-              bottom: "-80px",
-              left: "-80px",
-              width: "400px",
-              height: "400px",
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(239,159,39,0.08) 0%, transparent 70%)",
-              pointerEvents: "none",
+              background: "radial-gradient(ellipse 80% 70% at 50% 40%, transparent 0%, rgba(10,10,15,0.6) 100%)",
             }}
           />
 
-          <div className="container-orbit text-center" style={{ position: "relative", zIndex: 1 }}>
+          <div className="container-orbit text-center" style={{ position: "relative", zIndex: 10 }}>
             <div
               style={{
                 display: "inline-flex",
@@ -151,8 +150,8 @@ export default function SobrePage() {
                 gap: "8px",
                 padding: "6px 16px",
                 borderRadius: "999px",
-                background: "rgba(255,255,255,0.08)",
-                border: "1px solid rgba(255,255,255,0.15)",
+                background: "rgba(255,255,255,0.06)",
+                border: "1px solid rgba(255,255,255,0.1)",
                 marginBottom: "24px",
               }}
             >
@@ -174,14 +173,7 @@ export default function SobrePage() {
               }}
             >
               Nossa missão é democratizar o{" "}
-              <span
-                style={{
-                  background: "linear-gradient(135deg, #EF9F27 0%, #FAC775 100%)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                  backgroundClip: "text",
-                }}
-              >
+              <span className="shimmer-text">
                 sucesso no e-commerce
               </span>
             </h1>
@@ -198,10 +190,16 @@ export default function SobrePage() {
               Nascemos da frustração de quem já foi seller e sentiu falta de suporte real. Hoje somos o ecossistema que gostaríamos de ter encontrado no começo.
             </p>
           </div>
+
+          {/* Bottom fade */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none z-[2]"
+            style={{ background: "linear-gradient(to bottom, transparent, #0A0A0F)" }}
+          />
         </section>
 
         {/* ── Story ── */}
-        <section style={{ padding: "96px 0", backgroundColor: "#0A0A0F" }}>
+        <section className="ambient-light" style={{ padding: "96px 0", backgroundColor: "#0A0A0F" }}>
           <div className="container-orbit">
             <div
               style={{
@@ -214,22 +212,21 @@ export default function SobrePage() {
               {/* Visual */}
               <ScrollReveal direction="left">
                 <div
+                  className="glass-card gradient-border"
                   style={{
                     borderRadius: "24px",
                     overflow: "hidden",
                     position: "relative",
                     aspectRatio: "4/3",
-                    background: "linear-gradient(135deg, #0C447C 0%, #1A1A2E 100%)",
-                    border: "1px solid rgba(255,255,255,0.1)",
                   }}
                 >
-                  {/* Decorative grid lines */}
+                  {/* Grid lines */}
                   <div
                     style={{
                       position: "absolute",
                       inset: 0,
                       backgroundImage:
-                        "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+                        "linear-gradient(rgba(255,255,255,0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.03) 1px, transparent 1px)",
                       backgroundSize: "48px 48px",
                     }}
                   />
@@ -249,11 +246,12 @@ export default function SobrePage() {
                         width: "96px",
                         height: "96px",
                         borderRadius: "50%",
-                        background: "linear-gradient(135deg, #185FA5 0%, #378ADD 100%)",
+                        background: "linear-gradient(135deg, #5B3FD8 0%, #9B7BFF 100%)",
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
                         fontSize: "40px",
+                        boxShadow: "0 0 40px rgba(91,63,216,0.3)",
                       }}
                     >
                       🚀
@@ -282,7 +280,7 @@ export default function SobrePage() {
                       fontWeight: 700,
                       letterSpacing: "0.12em",
                       textTransform: "uppercase",
-                      color: "#378ADD",
+                      color: "#9B7BFF",
                       marginBottom: "16px",
                     }}
                   >
@@ -296,6 +294,7 @@ export default function SobrePage() {
                       color: "white",
                       lineHeight: 1.2,
                       marginBottom: "24px",
+                      letterSpacing: "-0.02em",
                     }}
                   >
                     Começou numa planilha.<br />Virou um ecossistema.
@@ -318,7 +317,7 @@ export default function SobrePage() {
         </section>
 
         {/* ── Mission / Vision / Values ── */}
-        <section style={{ padding: "96px 0", backgroundColor: "#1A1A2E" }}>
+        <section className="ambient-light" style={{ padding: "96px 0", backgroundColor: "#1A1A2E" }}>
           <div className="container-orbit">
             <ScrollReveal direction="up" className="text-center mb-14">
               <h2
@@ -328,9 +327,10 @@ export default function SobrePage() {
                   fontWeight: 700,
                   color: "white",
                   marginBottom: "16px",
+                  letterSpacing: "-0.02em",
                 }}
               >
-                O que nos move
+                O que nos <span className="shimmer-text">move</span>
               </h2>
               <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.5)", maxWidth: "480px", margin: "0 auto" }}>
                 Princípios que guiam cada decisão que tomamos.
@@ -341,10 +341,9 @@ export default function SobrePage() {
               {values.map((item, i) => (
                 <ScrollReveal key={item.title} direction="up" index={i} delay={0.1}>
                   <div
+                    className="glass-card gradient-border group hover:scale-[1.02] transition-all duration-300"
                     style={{
-                      backgroundColor: "#16162A",
                       borderRadius: "20px",
-                      border: `1px solid ${item.border}`,
                       padding: "40px 32px",
                       height: "100%",
                     }}
@@ -355,6 +354,7 @@ export default function SobrePage() {
                         height: "56px",
                         borderRadius: "16px",
                         backgroundColor: item.bg,
+                        border: `1px solid ${item.border}`,
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
@@ -383,10 +383,16 @@ export default function SobrePage() {
               ))}
             </div>
           </div>
+
+          {/* Section fade */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+            style={{ background: "linear-gradient(to bottom, transparent, #0A0A0F)" }}
+          />
         </section>
 
         {/* ── Stats ── */}
-        <section style={{ padding: "96px 0", backgroundColor: "#0A0A0F" }}>
+        <section className="ambient-light" style={{ padding: "96px 0", backgroundColor: "#0A0A0F" }}>
           <div className="container-orbit">
             <ScrollReveal direction="up" className="text-center mb-14">
               <h2
@@ -396,22 +402,26 @@ export default function SobrePage() {
                   fontWeight: 700,
                   color: "white",
                   marginBottom: "16px",
+                  letterSpacing: "-0.02em",
                 }}
               >
-                Sellerverse em números
+                Sellerverse em <span className="shimmer-text">números</span>
               </h2>
             </ScrollReveal>
 
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-8">
               {stats.map((stat, i) => (
                 <ScrollReveal key={stat.label} direction="up" index={i} delay={0.1}>
-                  <div className="text-center">
+                  <div
+                    className="text-center glass-card gradient-border hover:scale-[1.02] transition-all duration-300"
+                    style={{ borderRadius: "16px", padding: "32px 16px" }}
+                  >
                     <div
                       style={{
                         fontFamily: "var(--font-display)",
                         fontSize: "clamp(2.5rem, 5vw, 3.5rem)",
                         fontWeight: 800,
-                        background: "linear-gradient(135deg, #378ADD 0%, #B5D4F4 100%)",
+                        background: "linear-gradient(135deg, #ffffff 0%, #C4B5FD 60%, #9B7BFF 100%)",
                         WebkitBackgroundClip: "text",
                         WebkitTextFillColor: "transparent",
                         backgroundClip: "text",
@@ -437,8 +447,16 @@ export default function SobrePage() {
         </section>
 
         {/* ── Team ── */}
-        <section style={{ padding: "96px 0", backgroundColor: "#1A1A2E" }}>
-          <div className="container-orbit">
+        <section className="ambient-light relative" style={{ padding: "96px 0", backgroundColor: "#1A1A2E" }}>
+          {/* Subtle ambient glow */}
+          <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[400px] pointer-events-none"
+            style={{
+              background: "radial-gradient(ellipse at center, rgba(91,63,216,0.06) 0%, transparent 70%)",
+            }}
+          />
+
+          <div className="container-orbit relative z-10">
             <ScrollReveal direction="up" className="text-center mb-14">
               <p
                 style={{
@@ -446,7 +464,7 @@ export default function SobrePage() {
                   fontWeight: 700,
                   letterSpacing: "0.12em",
                   textTransform: "uppercase",
-                  color: "#378ADD",
+                  color: "#9B7BFF",
                   marginBottom: "12px",
                 }}
               >
@@ -459,9 +477,10 @@ export default function SobrePage() {
                   fontWeight: 700,
                   color: "white",
                   marginBottom: "16px",
+                  letterSpacing: "-0.02em",
                 }}
               >
-                Quem está por trás do Sellerverse
+                Quem está por trás do <span className="shimmer-text">Sellerverse</span>
               </h2>
               <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.5)", maxWidth: "480px", margin: "0 auto" }}>
                 Um time pequeno, experiente e completamente focado nos resultados dos nossos membros.
@@ -472,10 +491,9 @@ export default function SobrePage() {
               {team.map((member, i) => (
                 <ScrollReveal key={member.name} direction="up" index={i} delay={0.1}>
                   <div
+                    className="glass-card gradient-border group hover:scale-[1.02] transition-all duration-300"
                     style={{
-                      backgroundColor: "#16162A",
                       borderRadius: "20px",
-                      border: "1px solid rgba(255,255,255,0.08)",
                       padding: "40px 32px",
                       textAlign: "center",
                       width: "100%",
@@ -498,6 +516,7 @@ export default function SobrePage() {
                         fontWeight: 700,
                         color: "white",
                         border: "3px solid rgba(255,255,255,0.1)",
+                        boxShadow: "0 0 30px rgba(91,63,216,0.15)",
                       }}
                     >
                       {member.initials}
@@ -518,7 +537,7 @@ export default function SobrePage() {
                       style={{
                         fontSize: "13px",
                         fontWeight: 600,
-                        color: "#378ADD",
+                        color: "#9B7BFF",
                         marginBottom: "16px",
                       }}
                     >
@@ -536,28 +555,22 @@ export default function SobrePage() {
 
         {/* ── CTA ── */}
         <section
+          className="ambient-light"
           style={{
             padding: "96px 0",
-            background: "linear-gradient(135deg, #0C447C 0%, #1A1A2E 100%)",
+            backgroundColor: "#0A0A0F",
             textAlign: "center",
             position: "relative",
             overflow: "hidden",
           }}
         >
           <div
+            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[600px] h-[600px] pointer-events-none"
             style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "600px",
-              height: "600px",
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(55,138,221,0.12) 0%, transparent 70%)",
-              pointerEvents: "none",
+              background: "radial-gradient(circle, rgba(91,63,216,0.08) 0%, transparent 70%)",
             }}
           />
-          <div className="container-orbit" style={{ position: "relative", zIndex: 1 }}>
+          <div className="container-orbit relative z-10">
             <ScrollReveal direction="up">
               <h2
                 style={{
@@ -566,6 +579,7 @@ export default function SobrePage() {
                   fontWeight: 700,
                   color: "white",
                   marginBottom: "16px",
+                  letterSpacing: "-0.02em",
                 }}
               >
                 Faça parte da comunidade
@@ -584,36 +598,37 @@ export default function SobrePage() {
               <div style={{ display: "flex", gap: "16px", justifyContent: "center", flexWrap: "wrap" }}>
                 <a
                   href="/cadastro"
+                  className="hover:scale-105 transition-transform duration-300"
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
                     gap: "8px",
                     padding: "16px 32px",
                     borderRadius: "12px",
-                    background: "linear-gradient(135deg, #EF9F27 0%, #FAC775 100%)",
-                    color: "#0A0A0F",
+                    background: "linear-gradient(135deg, #5B3FD8 0%, #9B7BFF 100%)",
+                    color: "#ffffff",
                     fontWeight: 700,
                     fontSize: "16px",
                     textDecoration: "none",
-                    transition: "opacity 0.2s",
+                    boxShadow: "0 0 40px rgba(91,63,216,0.3)",
                   }}
                 >
                   Criar conta grátis →
                 </a>
                 <a
                   href="/planos"
+                  className="hover:scale-105 hover:border-white/30 transition-all duration-300"
                   style={{
                     display: "inline-flex",
                     alignItems: "center",
                     gap: "8px",
                     padding: "16px 32px",
                     borderRadius: "12px",
-                    border: "1px solid rgba(255,255,255,0.2)",
+                    border: "1px solid rgba(255,255,255,0.15)",
                     color: "white",
                     fontWeight: 600,
                     fontSize: "16px",
                     textDecoration: "none",
-                    transition: "border-color 0.2s",
                   }}
                 >
                   Ver planos
