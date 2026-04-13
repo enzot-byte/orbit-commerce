@@ -4,6 +4,14 @@ import Footer from "@/components/layout/Footer";
 import Pricing from "@/components/sections/Pricing";
 import ScrollReveal from "@/components/shared/ScrollReveal";
 import PlanosClient from "./PlanosClient";
+import {
+  Users,
+  Wrench,
+  BookOpen,
+  Headphones,
+  Award,
+  BarChart2,
+} from "lucide-react";
 
 export const metadata: Metadata = {
   title: "Planos e Preços",
@@ -101,76 +109,243 @@ export default function PlanosPage() {
 
         {/* ── Hero ── */}
         <section
-          style={{
-            background: "linear-gradient(160deg, #042C53 0%, #1A1A2E 60%, #0A0A0F 100%)",
-            padding: "160px 0 80px",
-            textAlign: "center",
-            position: "relative",
-            overflow: "hidden",
-          }}
+          className="relative overflow-hidden"
+          style={{ padding: "160px 0 60px" }}
         >
+          {/* ── Background layers ── */}
           <div
+            className="absolute inset-0"
             style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "700px",
-              height: "700px",
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(24,95,165,0.12) 0%, transparent 70%)",
-              pointerEvents: "none",
+              background:
+                "linear-gradient(160deg, #042C53 0%, #0C447C 20%, #1A1A2E 55%, #0A0A0F 100%)",
             }}
           />
-          <div className="container-orbit" style={{ position: "relative", zIndex: 1 }}>
-            <p
+
+          {/* Warm gold glow */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              top: "8%",
+              right: "8%",
+              width: 420,
+              height: 420,
+              borderRadius: "50%",
+              background:
+                "radial-gradient(circle, rgba(239,159,39,0.08) 0%, transparent 65%)",
+            }}
+          />
+          {/* Cool blue glow */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              top: "25%",
+              left: "10%",
+              width: 480,
+              height: 480,
+              borderRadius: "50%",
+              background:
+                "radial-gradient(circle, rgba(24,95,165,0.10) 0%, transparent 65%)",
+            }}
+          />
+          {/* Center purple spotlight */}
+          <div
+            className="absolute pointer-events-none"
+            style={{
+              top: "15%",
+              left: "50%",
+              transform: "translateX(-50%)",
+              width: 550,
+              height: 550,
+              borderRadius: "50%",
+              background:
+                "radial-gradient(circle, rgba(91,63,216,0.07) 0%, transparent 60%)",
+            }}
+          />
+
+          {/* 3D Perspective grid floor */}
+          <div className="ft-grid-floor" />
+
+          {/* 3D Orbital rings (desktop) */}
+          <div
+            className="absolute inset-0 hidden md:flex items-center justify-center pointer-events-none overflow-hidden"
+            style={{ perspective: "1000px", perspectiveOrigin: "50% 45%" }}
+          >
+            <div className="pl-ring pl-ring-1">
+              <div
+                className="absolute -top-1 left-1/2 -translate-x-1/2 w-2.5 h-2.5 rounded-full"
+                style={{
+                  background: "rgba(155,123,255,0.45)",
+                  boxShadow: "0 0 10px rgba(155,123,255,0.3)",
+                }}
+              />
+            </div>
+            <div className="pl-ring pl-ring-2">
+              <div
+                className="absolute -top-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full"
+                style={{
+                  background: "rgba(239,159,39,0.35)",
+                  boxShadow: "0 0 8px rgba(239,159,39,0.25)",
+                }}
+              />
+            </div>
+          </div>
+
+          {/* ── Floating feature pills & pricing badges (desktop) ── */}
+          <div className="absolute inset-0 overflow-hidden pointer-events-none hidden md:block">
+            {/* Plan feature pills */}
+            <div
+              className="ft-pill"
               style={{
-                fontSize: "12px",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "#378ADD",
-                marginBottom: "20px",
+                top: "14%",
+                left: "6%",
+                animation: "ft-fa 8s ease-in-out infinite",
               }}
             >
-              Planos e Preços
+              <Users className="w-4 h-4" style={{ color: "#9B7BFF" }} />
+              <span>Comunidade</span>
+            </div>
+            <div
+              className="ft-pill"
+              style={{
+                top: "10%",
+                right: "7%",
+                animation: "ft-fb 10s ease-in-out infinite",
+              }}
+            >
+              <Wrench className="w-4 h-4" style={{ color: "#EF9F27" }} />
+              <span>15+ Ferramentas</span>
+            </div>
+            <div
+              className="ft-pill"
+              style={{
+                top: "42%",
+                left: "3%",
+                animation: "ft-fc 9s ease-in-out infinite",
+              }}
+            >
+              <BookOpen className="w-4 h-4" style={{ color: "#9B7BFF" }} />
+              <span>Cursos ilimitados</span>
+            </div>
+            <div
+              className="ft-pill"
+              style={{
+                top: "44%",
+                right: "4%",
+                animation: "ft-fd 7s ease-in-out infinite",
+              }}
+            >
+              <Award className="w-4 h-4" style={{ color: "#EF9F27" }} />
+              <span>Mentoria 1:1</span>
+            </div>
+            <div
+              className="ft-pill"
+              style={{
+                bottom: "28%",
+                left: "8%",
+                animation: "ft-fe 8.5s ease-in-out infinite",
+              }}
+            >
+              <BarChart2 className="w-4 h-4" style={{ color: "#9B7BFF" }} />
+              <span>Dashboard Pro</span>
+            </div>
+            <div
+              className="ft-pill"
+              style={{
+                bottom: "22%",
+                right: "6%",
+                animation: "ft-ff 9.5s ease-in-out infinite",
+              }}
+            >
+              <Headphones className="w-4 h-4" style={{ color: "#EF9F27" }} />
+              <span>Suporte priorit&aacute;rio</span>
+            </div>
+
+            {/* Pricing highlight badges */}
+            <div
+              className="ft-metric"
+              style={{
+                top: "24%",
+                right: "19%",
+                animation: "ft-fb 11s ease-in-out infinite",
+                background: "rgba(239,159,39,0.10)",
+                border: "1px solid rgba(239,159,39,0.18)",
+                color: "#EF9F27",
+              }}
+            >
+              a partir de R$ 97/m&ecirc;s
+            </div>
+            <div
+              className="ft-metric"
+              style={{
+                top: "56%",
+                left: "7%",
+                animation: "ft-fd 9s ease-in-out infinite",
+                background: "rgba(16,185,129,0.10)",
+                border: "1px solid rgba(16,185,129,0.18)",
+                color: "#34d399",
+              }}
+            >
+              Economize 20% anual
+            </div>
+            <div
+              className="ft-metric"
+              style={{
+                bottom: "32%",
+                right: "5%",
+                animation: "ft-fa 10s ease-in-out infinite",
+                background: "rgba(155,123,255,0.10)",
+                border: "1px solid rgba(155,123,255,0.18)",
+                color: "#C4B5FD",
+              }}
+            >
+              7 dias de garantia
+            </div>
+          </div>
+
+          {/* ── Content ── */}
+          <div className="container-orbit relative z-10 text-center">
+            <p
+              className="text-xs font-bold tracking-[0.12em] uppercase mb-5"
+              style={{ color: "#378ADD" }}
+            >
+              Planos e Pre&ccedil;os
             </p>
             <h1
+              className="font-display font-extrabold text-white leading-[1.1] max-w-3xl mx-auto mb-5"
               style={{
-                fontFamily: "var(--font-display)",
                 fontSize: "clamp(2rem, 5vw, 3.5rem)",
-                fontWeight: 800,
-                color: "white",
-                lineHeight: 1.1,
-                maxWidth: "720px",
-                margin: "0 auto 20px",
                 letterSpacing: "-0.02em",
               }}
             >
               Escolha o plano ideal para o{" "}
               <span
+                className="shimmer-text"
                 style={{
-                  background: "linear-gradient(135deg, #EF9F27 0%, #FAC775 100%)",
+                  WebkitTextFillColor: "unset",
+                  background:
+                    "linear-gradient(90deg, #EF9F27 0%, #FAC775 25%, #EF9F27 50%, #FAC775 75%, #EF9F27 100%)",
+                  backgroundSize: "200% auto",
                   WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
                   backgroundClip: "text",
+                  color: "transparent",
                 }}
               >
-                seu negócio
+                seu neg&oacute;cio
               </span>
             </h1>
-            <p
-              style={{
-                fontSize: "1.1rem",
-                color: "rgba(255,255,255,0.5)",
-                maxWidth: "520px",
-                margin: "0 auto",
-                lineHeight: 1.7,
-              }}
-            >
-              Comece grátis. Faça upgrade quando seu negócio pedir mais.
+            <p className="text-lg text-white/50 max-w-xl mx-auto leading-relaxed">
+              Comece gr&aacute;tis. Fa&ccedil;a upgrade quando seu neg&oacute;cio
+              pedir mais.
             </p>
           </div>
+
+          {/* Bottom fade → Pricing section bg */}
+          <div
+            className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
+            style={{
+              background: "linear-gradient(to bottom, transparent, #1A1A2E)",
+            }}
+          />
         </section>
 
         {/* ── Pricing Component ── */}
