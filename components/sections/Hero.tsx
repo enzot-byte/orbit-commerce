@@ -2,8 +2,11 @@
 
 import { useRef } from "react";
 import { motion, Variants, useScroll, useTransform } from "framer-motion";
-import BlueprintGrid from "@/components/shared/BlueprintGrid";
-import Abstract3DShape from "@/components/shared/Abstract3DShape";
+import dynamic from "next/dynamic";
+
+const Galaxy = dynamic(() => import("@/components/shared/Galaxy"), {
+  ssr: false,
+});
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -40,8 +43,6 @@ export default function Hero() {
 
   const contentY = useTransform(scrollYProgress, [0, 1], [0, -120]);
   const contentOpacity = useTransform(scrollYProgress, [0, 0.8], [1, 0]);
-  const shapeY = useTransform(scrollYProgress, [0, 1], [0, 100]);
-  const shapeOpacity = useTransform(scrollYProgress, [0, 0.6], [0.6, 0]);
 
   return (
     <section
@@ -49,29 +50,40 @@ export default function Hero() {
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
       style={{ backgroundColor: "#0A0A0F" }}
     >
-      {/* Cone of light / spotlight */}
-      <div className="absolute inset-0 hero-spotlight" />
+      {/* Galaxy WebGL background */}
+      <div className="absolute inset-0 z-0">
+        <Galaxy
+          mouseRepulsion
+          mouseInteraction
+          density={0.8}
+          glowIntensity={0.25}
+          saturation={0.1}
+          hueShift={260}
+          twinkleIntensity={0.4}
+          rotationSpeed={0.03}
+          repulsionStrength={1.5}
+          autoCenterRepulsion={0}
+          starSpeed={0.3}
+          speed={0.6}
+          transparent={false}
+        />
+      </div>
 
-      {/* Blueprint grid overlay */}
-      <BlueprintGrid markers cellSize={80} />
-
-      {/* Noise texture */}
-      <div className="noise-overlay absolute inset-0" />
-
-      {/* Abstract 3D shape — right side */}
-      <motion.div
-        style={{ y: shapeY, opacity: shapeOpacity, willChange: "transform" }}
-        className="absolute right-[-60px] top-1/2 -translate-y-1/2 pointer-events-none hidden lg:block"
-      >
-        <Abstract3DShape size={520} />
-      </motion.div>
-
-      {/* Secondary ambient glow — left */}
+      {/* Top gradient overlay for blending */}
       <div
-        className="absolute left-[-200px] top-[30%] w-[500px] h-[500px] rounded-full pointer-events-none"
+        className="absolute inset-0 z-[1] pointer-events-none"
         style={{
-          background: "radial-gradient(circle, rgba(24,95,165,0.08) 0%, transparent 70%)",
-          filter: "blur(40px)",
+          background:
+            "radial-gradient(ellipse 70% 60% at 50% 40%, transparent 0%, rgba(10,10,15,0.4) 70%, rgba(10,10,15,0.85) 100%)",
+        }}
+      />
+
+      {/* Spotlight center glow */}
+      <div
+        className="absolute inset-0 z-[1] pointer-events-none"
+        style={{
+          background:
+            "radial-gradient(ellipse 40% 50% at 50% 45%, rgba(91,63,216,0.08) 0%, transparent 70%)",
         }}
       />
 
@@ -89,32 +101,32 @@ export default function Hero() {
             animate="visible"
             className="mb-8"
           >
-            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white/[0.05] border border-white/[0.08] text-white/80 backdrop-blur-sm">
+            <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white/[0.06] border border-white/[0.1] text-white/80 backdrop-blur-md">
               <span className="w-2 h-2 rounded-full bg-accent-400 animate-pulse-slow" />
               <span>+2.500 sellers j&aacute; fazem parte</span>
             </span>
           </motion.div>
 
-          {/* H1 — dramatic large type */}
+          {/* H1 — proportional sizing */}
           <motion.h1
             custom={1}
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="text-5xl sm:text-6xl md:text-7xl lg:text-8xl xl:text-[110px] font-display font-semibold leading-[1.04] text-white max-w-5xl mb-7"
-            style={{ letterSpacing: "-0.04em" }}
+            className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-display font-semibold leading-[1.06] text-white max-w-4xl mb-7"
+            style={{ letterSpacing: "-0.035em" }}
           >
             O ecossistema para sellers que querem{" "}
             <span className="shimmer-text">escalar</span>
           </motion.h1>
 
-          {/* Subheadline — more muted */}
+          {/* Subheadline */}
           <motion.p
             custom={2}
             variants={fadeUp}
             initial="hidden"
             animate="visible"
-            className="text-lg md:text-xl text-white/45 max-w-2xl mb-12 leading-relaxed"
+            className="text-lg md:text-xl text-white/50 max-w-2xl mb-12 leading-relaxed"
           >
             Comunidade, cursos, ferramentas e mentoria — tudo num s&oacute; lugar.
           </motion.p>
@@ -133,7 +145,7 @@ export default function Hero() {
               style={{
                 background: "linear-gradient(135deg, #5B3FD8 0%, #9B7BFF 100%)",
                 color: "#ffffff",
-                boxShadow: "0 0 40px rgba(91,63,216,0.3)",
+                boxShadow: "0 0 40px rgba(91,63,216,0.35), 0 8px 32px rgba(91,63,216,0.2)",
               }}
             >
               <span className="relative z-10">Começar gratuitamente</span>
@@ -143,7 +155,7 @@ export default function Hero() {
             </a>
             <a
               href="/planos"
-              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-semibold text-white/80 border border-white/[0.12] backdrop-blur-sm transition-all duration-300 hover:border-white/25 hover:bg-white/[0.05] hover:scale-105"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-xl text-base font-semibold text-white/80 border border-white/[0.15] backdrop-blur-sm transition-all duration-300 hover:border-white/30 hover:bg-white/[0.06] hover:scale-105"
             >
               Conhecer os planos
             </a>
@@ -168,26 +180,27 @@ export default function Hero() {
           </motion.div>
         </>
 
-        {/* Feature pills marquee */}
+        {/* Feature pills marquee — pauses on hover */}
         <motion.div
           custom={5}
           variants={fadeUp}
           initial="hidden"
           animate="visible"
-          className="w-full max-w-3xl overflow-hidden relative"
+          className="marquee-wrapper w-full max-w-3xl overflow-hidden relative cursor-default"
         >
           {/* Fade edges */}
-          <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-[#0A0A0F] to-transparent z-10 pointer-events-none" />
-          <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-[#0A0A0F] to-transparent z-10 pointer-events-none" />
+          <div className="absolute left-0 top-0 bottom-0 w-20 bg-gradient-to-r from-[#0A0A0F] to-transparent z-10 pointer-events-none" />
+          <div className="absolute right-0 top-0 bottom-0 w-20 bg-gradient-to-l from-[#0A0A0F] to-transparent z-10 pointer-events-none" />
 
           <div className="marquee-track">
             {[...featurePills, ...featurePills].map((pill, i) => (
               <span
                 key={`pill-${i}`}
-                className="flex-shrink-0 px-5 py-2.5 rounded-full text-sm font-medium text-white/90 whitespace-nowrap transition-all duration-200 hover:scale-105"
+                className="flex-shrink-0 px-5 py-2.5 rounded-full text-sm font-medium text-white/90 whitespace-nowrap transition-all duration-200 hover:scale-105 hover:text-white"
                 style={{
-                  background: "linear-gradient(135deg, rgba(91,63,216,0.15), rgba(155,123,255,0.08))",
-                  border: "1px solid rgba(155,123,255,0.25)",
+                  background:
+                    "linear-gradient(135deg, rgba(91,63,216,0.18), rgba(155,123,255,0.1))",
+                  border: "1px solid rgba(155,123,255,0.3)",
                   boxShadow: "0 0 12px rgba(91,63,216,0.1)",
                 }}
               >
@@ -198,7 +211,7 @@ export default function Hero() {
         </motion.div>
       </motion.div>
 
-      {/* Scroll indicator — minimal line */}
+      {/* Scroll indicator */}
       <motion.div
         className="absolute bottom-10 left-1/2 -translate-x-1/2 flex flex-col items-center gap-3 z-10"
         initial={{ opacity: 0 }}
@@ -215,7 +228,7 @@ export default function Hero() {
 
       {/* Bottom gradient fade to next section */}
       <div
-        className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none z-10"
+        className="absolute bottom-0 left-0 right-0 h-48 pointer-events-none z-10"
         style={{
           background: "linear-gradient(to bottom, transparent, #1A1A2E)",
         }}
