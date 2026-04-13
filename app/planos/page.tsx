@@ -3,7 +3,7 @@ import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import Pricing from "@/components/sections/Pricing";
 import ScrollReveal from "@/components/shared/ScrollReveal";
-import AntigravityBg from "@/components/shared/AntigravityBg";
+import PlanosHero from "@/components/sections/PlanosHero";
 import PlanosClient from "./PlanosClient";
 
 export const metadata: Metadata = {
@@ -100,122 +100,8 @@ export default function PlanosPage() {
       <Navbar />
       <main style={{ backgroundColor: "#0A0A0F" }}>
 
-        {/* ── Hero — full viewport height ── */}
-        <section
-          className="relative overflow-hidden flex items-center justify-center"
-          style={{
-            background: "#0A0A0F",
-            minHeight: "100vh",
-            paddingTop: "80px",
-          }}
-        >
-          {/* Antigravity 3D particle background */}
-          <AntigravityBg
-            count={300}
-            magnetRadius={6}
-            ringRadius={7}
-            waveSpeed={0.4}
-            waveAmplitude={1}
-            particleSize={1.5}
-            lerpSpeed={0.05}
-            color="#5B3FD8"
-            autoAnimate
-            particleVariance={1}
-            rotationSpeed={0}
-            depthFactor={1}
-            pulseSpeed={3}
-            particleShape="capsule"
-            fieldStrength={10}
-          />
-
-          {/* Radial overlay for text readability */}
-          <div
-            className="absolute inset-0 pointer-events-none z-[1]"
-            style={{
-              background:
-                "radial-gradient(ellipse 60% 50% at 50% 50%, rgba(10,10,15,0.5) 0%, rgba(10,10,15,0.2) 60%, transparent 100%)",
-            }}
-          />
-
-          {/* ── Content ── */}
-          <div
-            className="container-orbit text-center"
-            style={{ position: "relative", zIndex: 10 }}
-          >
-            <div
-              style={{
-                display: "inline-flex",
-                alignItems: "center",
-                gap: "8px",
-                padding: "6px 16px",
-                borderRadius: "999px",
-                background: "rgba(255,255,255,0.06)",
-                border: "1px solid rgba(255,255,255,0.1)",
-                marginBottom: "24px",
-              }}
-            >
-              <span
-                style={{
-                  fontSize: "13px",
-                  color: "rgba(255,255,255,0.7)",
-                  fontWeight: 500,
-                }}
-              >
-                Planos e Pre&ccedil;os
-              </span>
-            </div>
-
-            <h1
-              style={{
-                fontFamily: "var(--font-display)",
-                fontSize: "clamp(2.2rem, 5vw, 3.75rem)",
-                fontWeight: 800,
-                color: "white",
-                lineHeight: 1.1,
-                maxWidth: "820px",
-                margin: "0 auto 24px",
-                letterSpacing: "-0.02em",
-              }}
-            >
-              Escolha o plano ideal para o{" "}
-              <span
-                className="shimmer-text"
-                style={{
-                  WebkitTextFillColor: "unset",
-                  background:
-                    "linear-gradient(90deg, #EF9F27 0%, #FAC775 25%, #EF9F27 50%, #FAC775 75%, #EF9F27 100%)",
-                  backgroundSize: "200% auto",
-                  WebkitBackgroundClip: "text",
-                  backgroundClip: "text",
-                  color: "transparent",
-                }}
-              >
-                seu neg&oacute;cio
-              </span>
-            </h1>
-
-            <p
-              style={{
-                fontSize: "18px",
-                color: "rgba(255,255,255,0.45)",
-                maxWidth: "540px",
-                margin: "0 auto",
-                lineHeight: 1.7,
-              }}
-            >
-              Comece gr&aacute;tis. Fa&ccedil;a upgrade quando seu neg&oacute;cio
-              pedir mais.
-            </p>
-          </div>
-
-          {/* Bottom fade → Pricing section bg */}
-          <div
-            className="absolute bottom-0 left-0 right-0 h-40 pointer-events-none z-[2]"
-            style={{
-              background: "linear-gradient(to bottom, transparent, #1A1A2E)",
-            }}
-          />
-        </section>
+        {/* ── Hero — Scroll 3D Parallax ── */}
+        <PlanosHero />
 
         {/* ── Pricing Component ── */}
         <Pricing />

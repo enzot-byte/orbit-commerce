@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollReveal from "@/components/shared/ScrollReveal";
-import FloatingLinesBg from "@/components/shared/FloatingLinesBg";
+import FerramentasHero from "@/components/sections/FerramentasHero";
 import ToolsClient from "./ToolsClient";
 import Link from "next/link";
 
@@ -23,28 +23,15 @@ export default function FerramentasPage() {
           className="relative overflow-hidden"
           style={{ background: "#0A0A0F", padding: "160px 0 96px" }}
         >
-          {/* FloatingLines WebGL background — blue engineering accent */}
-          <FloatingLinesBg
-            className="opacity-55"
-            linesGradient={["#185FA5", "#378ADD", "#5B3FD8", "#9B7BFF"]}
-            enabledWaves={["top", "middle", "bottom"]}
-            lineCount={10}
-            lineDistance={5}
-            bendRadius={5}
-            bendStrength={-0.5}
-            interactive
-            parallax
-            parallaxStrength={0.2}
-            animationSpeed={0.8}
-            mixBlendMode="screen"
-          />
+          {/* Factory conveyor scene background */}
+          <FerramentasHero />
 
-          {/* Dim overlay for text readability */}
+          {/* Subtle gradient overlay for depth */}
           <div
             className="absolute inset-0 pointer-events-none z-[1]"
             style={{
               background:
-                "radial-gradient(ellipse 80% 70% at 50% 40%, transparent 0%, rgba(10,10,15,0.6) 100%)",
+                "radial-gradient(ellipse 70% 60% at 50% 40%, rgba(10,10,15,0.3) 0%, rgba(10,10,15,0.7) 100%)",
             }}
           />
 
