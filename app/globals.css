@@ -1023,3 +1023,350 @@ html {
   .factory-agent-rev { animation: none; }
   .factory-tube-ball { animation: none; }
 }
+
+/* ═══════════════════════════════════════════════════════════════
+   CURSOS — Course Builder Scene
+   Animated "editor + dashboard" background inspired by code editors.
+   Left: learning panels with animated bars.
+   Right: dashboard canvas being assembled.
+   All CSS keyframes — zero JS cost.
+   ═══════════════════════════════════════════════════════════════ */
+
+/* Scene container — centered behind hero text */
+.crs-scene {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0;
+  opacity: 0.18;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* ── Left: Learning Panels ── */
+.crs-panels {
+  display: flex;
+  flex-direction: column;
+  width: 220px;
+  gap: 4px;
+  flex-shrink: 0;
+}
+.crs-panel {
+  background: #1d1f20;
+  border-radius: 4px;
+  overflow: hidden;
+}
+.crs-panel-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: #1a1c1d;
+  border-bottom: 2px solid;
+  font-size: 10px;
+  font-weight: 700;
+  color: #ccc;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+.crs-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.crs-panel-body {
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.crs-row {
+  display: flex;
+  gap: 6px;
+}
+.crs-bar {
+  height: 7px;
+  border-radius: 2px;
+  transform-origin: left;
+  will-change: transform, opacity;
+}
+
+/* ── Divider ── */
+.crs-divider {
+  width: 8px;
+  background: #343436;
+  border-radius: 2px;
+  align-self: stretch;
+  flex-shrink: 0;
+  margin: 0 2px;
+}
+
+/* ── Right: Dashboard Canvas ── */
+.crs-canvas {
+  width: 380px;
+  background: #1d1f20;
+  border-radius: 4px;
+  overflow: hidden;
+  flex-shrink: 0;
+}
+.crs-chrome {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px 10px;
+  background: #2a2a2e;
+  will-change: opacity;
+}
+.crs-wdot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+.crs-chrome-title {
+  font-size: 9px;
+  color: #666;
+  margin-left: auto;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+}
+.crs-dash {
+  display: flex;
+  min-height: 220px;
+}
+.crs-sidebar {
+  width: 36px;
+  background: #16162a;
+  padding: 8px 6px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  will-change: opacity;
+}
+.crs-nav {
+  height: 6px;
+  background: rgba(255,255,255,0.1);
+  border-radius: 2px;
+}
+.crs-nav-active {
+  background: rgba(155,123,255,0.35);
+}
+.crs-main {
+  flex: 1;
+  padding: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.crs-label {
+  font-size: 7px;
+  font-weight: 700;
+  color: rgba(255,255,255,0.35);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  will-change: opacity;
+}
+
+/* Course progress cards */
+.crs-cards {
+  display: flex;
+  gap: 5px;
+  will-change: opacity, transform;
+}
+.crs-ccard {
+  flex: 1;
+  border-radius: 4px;
+  overflow: hidden;
+  background: #0f0f1a;
+}
+.crs-ccard-top {
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.crs-play {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.3);
+  position: relative;
+}
+.crs-play::after {
+  content: '';
+  position: absolute;
+  left: 4px;
+  top: 2.5px;
+  border-style: solid;
+  border-width: 2.5px 0 2.5px 4px;
+  border-color: transparent transparent transparent rgba(255,255,255,0.7);
+}
+.crs-ccard-bot {
+  padding: 4px 5px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.crs-prog {
+  flex: 1;
+  height: 3px;
+  background: rgba(255,255,255,0.08);
+  border-radius: 2px;
+  overflow: hidden;
+}
+.crs-prog-fill {
+  height: 100%;
+  border-radius: 2px;
+}
+.crs-pct {
+  font-size: 7px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
+
+/* Bar chart */
+.crs-chart {
+  display: flex;
+  align-items: flex-end;
+  gap: 4px;
+  height: 50px;
+  padding: 4px;
+  background: #0f0f1a;
+  border-radius: 4px;
+  will-change: opacity, transform;
+}
+.crs-cbar {
+  flex: 1;
+  background: linear-gradient(to top, #5B3FD8, #9B7BFF);
+  border-radius: 2px 2px 0 0;
+  min-height: 2px;
+}
+
+/* Agent celebration */
+.crs-agent {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 8px;
+  background: #0f0f1a;
+  border-radius: 4px;
+  will-change: opacity, transform;
+}
+.crs-avatar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+}
+.crs-cap {
+  width: 16px;
+  height: 3px;
+  background: #EF9F27;
+  border-radius: 1px;
+  margin-bottom: -1px;
+  position: relative;
+}
+.crs-cap::after {
+  content: '';
+  position: absolute;
+  top: -3px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 0;
+  height: 0;
+  border-left: 4px solid transparent;
+  border-right: 4px solid transparent;
+  border-bottom: 3px solid #EF9F27;
+}
+.crs-face {
+  width: 14px;
+  height: 10px;
+  background: #9B7BFF;
+  border-radius: 3px 3px 2px 2px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+}
+.crs-eye {
+  width: 2px;
+  height: 2px;
+  background: #0A0A0F;
+  border-radius: 50%;
+}
+.crs-abody {
+  width: 12px;
+  height: 6px;
+  background: #7c5fd8;
+  border-radius: 0 0 3px 3px;
+  margin-top: -1px;
+}
+.crs-msg {
+  font-size: 7px;
+  color: #b5bc67;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+/* ── Keyframe Animations ── */
+/* 22s cycle · elements appear in sequence · all fade at 82-88% */
+
+@keyframes crs-a1 {
+  0%, 4%   { opacity: 0; transform: scaleX(0); }
+  7%, 80%  { opacity: 1; transform: scaleX(1); }
+  86%, 100%{ opacity: 0; }
+}
+@keyframes crs-a2 {
+  0%, 13%  { opacity: 0; }
+  16%, 80% { opacity: 1; }
+  86%, 100%{ opacity: 0; }
+}
+@keyframes crs-a3 {
+  0%, 24%  { opacity: 0; transform: scaleX(0); }
+  27%, 80% { opacity: 1; transform: scaleX(1); }
+  86%, 100%{ opacity: 0; }
+}
+@keyframes crs-a4 {
+  0%, 35%  { opacity: 0; transform: scale(0.92); }
+  38%, 80% { opacity: 1; transform: scale(1); }
+  86%, 100%{ opacity: 0; }
+}
+@keyframes crs-a5 {
+  0%, 46%  { opacity: 0; transform: scaleX(0); }
+  49%, 80% { opacity: 1; transform: scaleX(1); }
+  86%, 100%{ opacity: 0; }
+}
+@keyframes crs-a6 {
+  0%, 57%  { opacity: 0; transform: scale(0.92); }
+  60%, 80% { opacity: 1; transform: scale(1); }
+  86%, 100%{ opacity: 0; }
+}
+
+.crs-a1 { animation: crs-a1 22s ease-in-out infinite; }
+.crs-a2 { animation: crs-a2 22s ease-in-out infinite; }
+.crs-a3 { animation: crs-a3 22s ease-in-out infinite; }
+.crs-a4 { animation: crs-a4 22s ease-in-out infinite; }
+.crs-a5 { animation: crs-a5 22s ease-in-out infinite; }
+.crs-a6 { animation: crs-a6 22s ease-in-out infinite; }
+
+/* Stagger delays within groups */
+.crs-d1 { animation-delay: 0.4s; }
+.crs-d2 { animation-delay: 0.8s; }
+.crs-d3 { animation-delay: 1.2s; }
+.crs-d4 { animation-delay: 1.6s; }
+
+@media (max-width: 768px) {
+  .crs-scene { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .crs-bar, .crs-chrome, .crs-sidebar,
+  .crs-cards, .crs-chart, .crs-agent, .crs-label {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}

@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 /* ─── Config ────────────────────────────────────────────────────── */
 
 const Z_GAP = 300;
+const Z_START = 1000;
 const CAM_SPEED = 1.1;
 
 function seeded(s: number) {
@@ -15,27 +16,24 @@ function seeded(s: number) {
 /* ─── Real plan features, ordered by tier ───────────────────────── */
 
 const FEATURES = [
-  // Gr&aacute;tis tier — orbit blue
   { tier: "Gr\u00e1tis", title: "Comunidade Geral", desc: "Acesso a +2.500 sellers compartilhando experi\u00eancias reais", color: "#378ADD" },
   { tier: "Gr\u00e1tis", title: "3 Ferramentas", desc: "Calculadora de margem, gerador SEO e simulador de frete", color: "#378ADD" },
   { tier: "Gr\u00e1tis", title: "Conte\u00fado de Cursos", desc: "Acesso ao conte\u00fado introdut\u00f3rio de todos os cursos", color: "#378ADD" },
   { tier: "Gr\u00e1tis", title: "Newsletter Semanal", desc: "Tend\u00eancias e insights do mercado toda semana no seu e-mail", color: "#378ADD" },
 
-  // Pro tier — gold
   { tier: "Pro", title: "Grupo de Mentoria", desc: "Grupo exclusivo com sellers experientes e mentores dedicados", color: "#EF9F27" },
   { tier: "Pro", title: "12+ Ferramentas", desc: "Acesso completo a todas as ferramentas da plataforma", color: "#EF9F27" },
   { tier: "Pro", title: "Dashboard Avan\u00e7ado", desc: "M\u00e9tricas detalhadas e relat\u00f3rios mensais personalizados", color: "#EF9F27" },
   { tier: "Pro", title: "Cursos Completos", desc: "Acesso ilimitado a todos os cursos e materiais exclusivos", color: "#EF9F27" },
   { tier: "Pro", title: "Suporte Priorit\u00e1rio", desc: "Atendimento r\u00e1pido com prioridade na fila de suporte", color: "#EF9F27" },
 
-  // Premium tier — purple
   { tier: "Premium", title: "Mentoria 1:1", desc: "Sess\u00f5es mensais individuais com especialistas s\u00eanior", color: "#9B7BFF" },
   { tier: "Premium", title: "Monitor de Pre\u00e7os", desc: "Acompanhe pre\u00e7os da concorr\u00eancia em tempo real", color: "#9B7BFF" },
   { tier: "Premium", title: "SLA 2 Horas", desc: "Garantia de resposta do suporte em at\u00e9 2 horas", color: "#9B7BFF" },
   { tier: "Premium", title: "Auditoria de Neg\u00f3cio", desc: "Diagn\u00f3stico completo e plano de a\u00e7\u00e3o personalizado", color: "#9B7BFF" },
 ];
 
-/* Gentle alternating positions — subtle offsets */
+/* Gentle alternating positions */
 const POSITIONS = [
   { x: -130, y: -25, rot: -3 },
   { x: 145, y: 35, rot: 2.5 },
@@ -66,12 +64,12 @@ interface FeatureItem {
 const ITEMS: FeatureItem[] = FEATURES.map((f, i) => ({
   ...f,
   ...POSITIONS[i],
-  z: -i * Z_GAP,
+  z: -(i * Z_GAP + Z_START),
 }));
 
-const TOTAL_Z = FEATURES.length * Z_GAP;
+const TOTAL_Z = FEATURES.length * Z_GAP + Z_START;
 
-/* Stars — subtle ambient particles */
+/* Stars */
 const STAR_COUNT = 50;
 const STARS = Array.from({ length: STAR_COUNT }, (_, i) => ({
   x: (seeded(i * 7 + 1) - 0.5) * 2000,
@@ -99,6 +97,7 @@ export default function PlanosHero() {
     let mouseY = 0;
     let tiltX = 0;
     let tiltY = 0;
+    let currentCamZ = 0;
     let rafId: number;
 
     const onMouse = (e: MouseEvent) => {
@@ -113,19 +112,21 @@ export default function PlanosHero() {
       const scrollable = rect.height - window.innerHeight;
       const progress = scrollable > 0 ? Math.max(0, Math.min(1, -rect.top / scrollable)) : 0;
 
-      const camZ = progress * TOTAL_Z * CAM_SPEED;
+      /* Smooth lerp for buttery scroll */
+      const targetCamZ = progress * TOTAL_Z * CAM_SPEED;
+      currentCamZ += (targetCamZ - currentCamZ) * 0.08;
 
       /* Subtle mouse tilt */
       tiltX += (mouseY * 1.5 - tiltX) * 0.04;
       tiltY += (mouseX * 1.5 - tiltY) * 0.04;
 
-      world.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateZ(${camZ}px)`;
+      world.style.transform = `rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateZ(${currentCamZ}px)`;
 
       /* Tight visibility window — 3-4 cards visible at once */
       for (let i = 0; i < ITEMS.length; i++) {
         const el = itemEls.current[i];
         if (!el) continue;
-        const relZ = ITEMS[i].z + camZ;
+        const relZ = ITEMS[i].z + currentCamZ;
         let a = 1;
         if (relZ < -1200) a = 0;
         else if (relZ < -400) a = (relZ + 1200) / 800;
@@ -133,8 +134,8 @@ export default function PlanosHero() {
         el.style.opacity = String(Math.max(0, Math.min(1, a)));
       }
 
-      /* Overlay fades out as user begins scrolling */
-      overlay.style.opacity = String(progress < 0.06 ? 1 - progress / 0.06 : 0);
+      /* Overlay fades out — extended range so title is readable longer */
+      overlay.style.opacity = String(progress < 0.10 ? 1 - progress / 0.10 : 0);
     };
 
     window.addEventListener("mousemove", onMouse, { passive: true });
@@ -147,11 +148,9 @@ export default function PlanosHero() {
   }, []);
 
   return (
-    <section ref={sectionRef} style={{ height: "280vh", position: "relative" }}>
+    <section ref={sectionRef} style={{ height: "300vh", position: "relative" }}>
       <div className="hyper-viewport">
-        {/* 3D world */}
         <div className="hyper-world" ref={worldRef}>
-          {/* Stars */}
           {STARS.map((s, i) => (
             <div
               key={`s${i}`}
@@ -165,7 +164,6 @@ export default function PlanosHero() {
             />
           ))}
 
-          {/* Feature cards — tier-coded */}
           {ITEMS.map((item, i) => (
             <div
               key={`f${i}`}
@@ -269,7 +267,6 @@ export default function PlanosHero() {
           </div>
         </div>
 
-        {/* Vignette for depth */}
         <div className="hyper-vignette" />
       </div>
     </section>

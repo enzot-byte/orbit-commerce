@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollReveal from "@/components/shared/ScrollReveal";
+import CursosHero from "@/components/sections/CursosHero";
 import CoursesClient from "./CoursesClient";
 import Link from "next/link";
 
@@ -19,40 +20,26 @@ export default function CursosPage() {
 
         {/* ── Hero ── */}
         <section
+          className="relative overflow-hidden"
           style={{
             background: "linear-gradient(160deg, #1a0533 0%, #1A1A2E 55%, #0A0A0F 100%)",
             padding: "160px 0 80px",
-            position: "relative",
-            overflow: "hidden",
             textAlign: "center",
           }}
         >
+          {/* Course Builder animated background */}
+          <CursosHero />
+
+          {/* Gradient overlay for readability */}
           <div
+            className="absolute inset-0 pointer-events-none z-[1]"
             style={{
-              position: "absolute",
-              top: "50%",
-              left: "50%",
-              transform: "translate(-50%, -50%)",
-              width: "800px",
-              height: "800px",
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(124,58,237,0.1) 0%, transparent 65%)",
-              pointerEvents: "none",
+              background:
+                "radial-gradient(ellipse 70% 60% at 50% 40%, rgba(26,5,51,0.35) 0%, rgba(10,10,15,0.7) 100%)",
             }}
           />
-          <div
-            style={{
-              position: "absolute",
-              bottom: "-100px",
-              right: "-80px",
-              width: "400px",
-              height: "400px",
-              borderRadius: "50%",
-              background: "radial-gradient(circle, rgba(239,159,39,0.07) 0%, transparent 65%)",
-              pointerEvents: "none",
-            }}
-          />
-          <div className="container-orbit" style={{ position: "relative", zIndex: 1 }}>
+
+          <div className="container-orbit" style={{ position: "relative", zIndex: 2 }}>
             <p
               style={{
                 fontSize: "12px",
