@@ -5,24 +5,20 @@
  * `next/dynamic` actually splits each section into its own chunk (per Next 16
  * lazy-loading docs: Server-Component dynamic() doesn't auto-split).
  *
- * Each section is wrapped in DeferredSection so:
- *  1) the chunk fetch is delayed until the section is ~600px from the
- *     viewport — the hero gets the main thread and the network for itself;
- *  2) framer-motion / IntersectionObservers / scroll listeners inside each
- *     section don't boot up before they're needed.
+ * Note: a previous iteration also wrapped each section in <DeferredSection>
+ * to gate mount on IntersectionObserver. That caused a layout-shift bug in
+ * sections with scroll-linked animations (HowItWorks / Pricing use
+ * useScroll + useTransform): the placeholder's `minHeight` was an eyeball
+ * estimate, so when the real section mounted, the page jumped by hundreds
+ * of px and earlier steps' fade-in animations didn't trigger because the
+ * user had already "scrolled past" them in absolute Y.
  *
- * The trade-off is that the section's HTML isn't in the initial document.
- * For the home page that's fine — the SEO-anchor pages (/, /planos, /blog,
- * etc.) keep their own SSR; the home page's role is to funnel users into
- * those pages, not to rank for individual section copy.
- *
- * `minHeight` values are eyeballed estimates that reserve roughly the right
- * vertical space so the placeholder doesn't cause CLS when the real content
- * mounts. Tune after a visual pass.
+ * The current design keeps chunk splitting (real perf win) but mounts each
+ * section through normal SSR + hydration. We lose the deferred-mount JS
+ * savings but gain back the integrity of every section's scroll behavior.
  */
 
 import dynamic from "next/dynamic";
-import { DeferredSection } from "@/components/shared/DeferredSection";
 
 const HowItWorks = dynamic(() => import("@/components/sections/HowItWorks"));
 const ToolsPreview = dynamic(() => import("@/components/sections/ToolsPreview"));
@@ -37,28 +33,13 @@ export function HomeBelowFold({
 }) {
   return (
     <>
-      <DeferredSection minHeight={720} label="Carregando seção 'Como funciona'">
-        <HowItWorks />
-      </DeferredSection>
-
-      <DeferredSection minHeight={760} label="Carregando ferramentas">
-        <ToolsPreview />
-      </DeferredSection>
-
+      <HowItWorks />
+      <ToolsPreview />
       {/* CoursesPreview is server-rendered (no client deps) — pass through. */}
       {coursesPreview}
-
-      <DeferredSection minHeight={640} label="Carregando depoimentos">
-        <Testimonials />
-      </DeferredSection>
-
-      <DeferredSection minHeight={800} label="Carregando planos">
-        <Pricing />
-      </DeferredSection>
-
-      <DeferredSection minHeight={420} label="Carregando captura de ebook">
-        <EbookCapture />
-      </DeferredSection>
+      <Testimonials />
+      <Pricing />
+      <EbookCapture />
     </>
   );
 }
