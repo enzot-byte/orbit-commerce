@@ -1,7 +1,7 @@
 "use client";
 
-import React, { useEffect, useState, useCallback } from "react";
-import { motion, AnimatePresence } from "framer-motion";
+import React, { useEffect, useState, useCallback, useRef } from "react";
+import { motion } from "framer-motion";
 import { Menu, X, Sun, Moon } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
@@ -20,151 +20,219 @@ const NAV_LINKS = [
   { label: "Redes", href: "/redes" },
 ] as const;
 
-// ─── Theme Toggle ─────────────────────────────────────────────────────────────
+// ─── Theme Toggle (CSS-only, no framer-motion) ────────────────────────────────
 
 function ThemeToggle({ compact = false }: { compact?: boolean }) {
   const { theme, toggleTheme } = useTheme();
   const isDark = theme === "dark";
   return (
-    <motion.button
+    <button
       type="button"
       aria-label={isDark ? "Ativar modo claro" : "Ativar modo escuro"}
       onClick={toggleTheme}
-      whileTap={{ scale: 0.9 }}
-      whileHover={{ scale: 1.05 }}
-      transition={{ type: "spring", stiffness: 400, damping: 25 }}
       className={cn(
-        "relative flex items-center justify-center rounded-xl transition-colors",
+        "relative flex items-center justify-center rounded-xl transition-all duration-200",
         "text-gray-600 dark:text-white/70",
         "hover:bg-gray-100 dark:hover:bg-white/10",
+        "active:scale-95 hover:scale-105",
         "focus:outline-none focus-visible:ring-2 focus-visible:ring-orbit-400",
         compact ? "w-8 h-8" : "w-9 h-9"
       )}
     >
-      <AnimatePresence mode="wait" initial={false}>
-        {isDark ? (
-          <motion.span key="sun" initial={{ rotate: -90, opacity: 0, scale: 0.7 }} animate={{ rotate: 0, opacity: 1, scale: 1 }} exit={{ rotate: 90, opacity: 0, scale: 0.7 }} transition={{ duration: 0.2 }}>
-            <Sun className="w-4 h-4" />
-          </motion.span>
-        ) : (
-          <motion.span key="moon" initial={{ rotate: 90, opacity: 0, scale: 0.7 }} animate={{ rotate: 0, opacity: 1, scale: 1 }} exit={{ rotate: -90, opacity: 0, scale: 0.7 }} transition={{ duration: 0.2 }}>
-            <Moon className="w-4 h-4" />
-          </motion.span>
+      {/* Both icons rendered, fade/rotate between them based on theme. The
+          previous AnimatePresence + 2 motion.span layers cost more than the
+          icon swap itself. */}
+      <Sun
+        className={cn(
+          "absolute w-4 h-4 transition-all duration-200",
+          isDark ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-50"
         )}
-      </AnimatePresence>
-    </motion.button>
+      />
+      <Moon
+        className={cn(
+          "absolute w-4 h-4 transition-all duration-200",
+          isDark ? "opacity-0 rotate-90 scale-50" : "opacity-100 rotate-0 scale-100"
+        )}
+      />
+    </button>
   );
 }
 
-// ─── Mobile Drawer ────────────────────────────────────────────────────────────
+// ─── Mobile Drawer (CSS transforms, no AnimatePresence) ──────────────────────
 
-function MobileDrawer({ open, onClose, pathname }: { open: boolean; onClose: () => void; pathname: string }) {
+function MobileDrawer({
+  open,
+  onClose,
+  pathname,
+  triggerRef,
+}: {
+  open: boolean;
+  onClose: () => void;
+  pathname: string;
+  /** Hamburger button to send focus back to on close. */
+  triggerRef: React.RefObject<HTMLButtonElement | null>;
+}) {
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+  const drawerRef = useRef<HTMLElement>(null);
+
+  // Esc closes
   useEffect(() => {
     if (!open) return;
-    const handler = (e: KeyboardEvent) => { if (e.key === "Escape") onClose(); };
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === "Escape") onClose();
+    };
     window.addEventListener("keydown", handler);
     return () => window.removeEventListener("keydown", handler);
   }, [open, onClose]);
 
+  // Scroll lock on body
   useEffect(() => {
     document.body.style.overflow = open ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [open]);
 
+  // Focus management: move focus to the close button when drawer opens,
+  // and return to the hamburger when it closes. Without this, keyboard /
+  // screen reader users land back at the top of the page after each toggle.
+  const wasOpenRef = useRef(false);
+  useEffect(() => {
+    if (open && !wasOpenRef.current) {
+      // Wait one frame for the drawer to be rendered + transitioned in.
+      requestAnimationFrame(() => closeBtnRef.current?.focus());
+    } else if (!open && wasOpenRef.current) {
+      triggerRef.current?.focus();
+    }
+    wasOpenRef.current = open;
+  }, [open, triggerRef]);
+
+  // Lightweight focus trap — when Tab/Shift+Tab is pressed inside the drawer
+  // and we're at the end/start of the focusable elements, wrap around. Stops
+  // the user from tabbing out into the hidden page underneath.
+  const onKeyDown = useCallback(
+    (e: React.KeyboardEvent<HTMLElement>) => {
+      if (e.key !== "Tab" || !drawerRef.current) return;
+      const focusables = drawerRef.current.querySelectorAll<HTMLElement>(
+        'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"]), input, select, textarea'
+      );
+      if (focusables.length === 0) return;
+      const first = focusables[0];
+      const last = focusables[focusables.length - 1];
+      const active = document.activeElement;
+      if (e.shiftKey && active === first) {
+        e.preventDefault();
+        last.focus();
+      } else if (!e.shiftKey && active === last) {
+        e.preventDefault();
+        first.focus();
+      }
+    },
+    []
+  );
+
+  // Backdrop + drawer are always mounted (so transitions fire on close too).
+  // We pair pointer-events suppression with `inert` on the drawer when
+  // closed — that takes the entire subtree out of the focus/AT order so
+  // links can't be tabbed to behind the scenes.
   return (
-    <AnimatePresence>
-      {open && (
-        <>
-          <motion.div
-            key="backdrop"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ duration: 0.25 }}
-            className="fixed inset-0 z-40 bg-black/50 backdrop-blur-sm"
+    <>
+      <div
+        className={cn(
+          "fixed inset-0 z-40 bg-black/50 backdrop-blur-sm transition-opacity duration-200",
+          open ? "opacity-100 pointer-events-auto" : "opacity-0 pointer-events-none"
+        )}
+        onClick={onClose}
+        aria-hidden="true"
+      />
+      <aside
+        ref={drawerRef}
+        id="primary-mobile-drawer"
+        // React 19+ ships `inert` as a first-class prop; when true the
+        // browser refuses focus + AT events for the entire subtree. Pair
+        // it with `aria-hidden` for older AT that doesn't yet honor inert.
+        inert={!open}
+        onKeyDown={onKeyDown}
+        className={cn(
+          "fixed right-0 top-0 bottom-0 z-50 w-72 max-w-[85vw] bg-white dark:bg-dark-surface",
+          "border-l border-gray-100 dark:border-white/10 flex flex-col shadow-2xl",
+          "transition-transform duration-300 ease-out",
+          open ? "translate-x-0" : "translate-x-full"
+        )}
+        role="dialog"
+        aria-modal="true"
+        aria-label="Menu de navegação"
+        aria-hidden={!open}
+      >
+        {/* Header */}
+        <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-white/10">
+          <Logo size="sm" variant="full" />
+          <button
+            ref={closeBtnRef}
+            type="button"
             onClick={onClose}
-            aria-hidden="true"
-          />
-          <motion.div
-            key="drawer"
-            initial={{ x: "100%" }}
-            animate={{ x: 0 }}
-            exit={{ x: "100%" }}
-            transition={{ type: "spring", stiffness: 350, damping: 35 }}
-            className="fixed right-0 top-0 bottom-0 z-50 w-72 max-w-[85vw] bg-white dark:bg-dark-surface border-l border-gray-100 dark:border-white/10 flex flex-col shadow-2xl"
-            role="dialog"
-            aria-modal="true"
-            aria-label="Menu de navegação"
+            aria-label="Fechar menu"
+            className="flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 hover:text-gray-700 dark:text-white/60 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
           >
-            {/* Header */}
-            <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 dark:border-white/10">
-              <Logo size="sm" variant="full" />
-              <button
-                type="button"
-                onClick={onClose}
-                aria-label="Fechar menu"
-                className="flex items-center justify-center w-8 h-8 rounded-lg text-gray-500 hover:text-gray-700 dark:text-white/60 dark:hover:text-white hover:bg-gray-100 dark:hover:bg-white/10 transition-colors"
-              >
-                <X className="w-5 h-5" />
-              </button>
-            </div>
+            <X className="w-5 h-5" />
+          </button>
+        </div>
 
-            {/* Links */}
-            <nav className="flex-1 overflow-y-auto px-4 py-6">
-              <ul className="space-y-1">
-                {NAV_LINKS.map((link, i) => {
-                  const isActive = pathname === link.href;
-                  return (
-                    <motion.li
-                      key={link.href}
-                      initial={{ opacity: 0, x: 24 }}
-                      animate={{ opacity: 1, x: 0 }}
-                      transition={{ delay: i * 0.06, duration: 0.25 }}
-                    >
-                      <Link
-                        href={link.href}
-                        onClick={onClose}
-                        className={cn(
-                          "flex items-center h-11 px-4 rounded-xl text-sm font-medium transition-colors",
-                          isActive
-                            ? "bg-orbit-50 text-orbit-600 dark:bg-orbit-900/40 dark:text-orbit-400"
-                            : "text-gray-700 dark:text-white/80 hover:bg-gray-50 dark:hover:bg-white/5"
-                        )}
-                      >
-                        {link.label}
-                        {isActive && <span className="ml-auto w-1.5 h-1.5 rounded-full bg-orbit-600 dark:bg-orbit-400" />}
-                      </Link>
-                    </motion.li>
-                  );
-                })}
-              </ul>
-            </nav>
+        {/* Links */}
+        <nav className="flex-1 overflow-y-auto px-4 py-6">
+          <ul className="space-y-1">
+            {NAV_LINKS.map((link, i) => {
+              const isActive = pathname === link.href;
+              return (
+                <li
+                  key={link.href}
+                  className="drawer-link-item"
+                  style={{ animationDelay: `${i * 60}ms` }}
+                >
+                  <Link
+                    href={link.href}
+                    onClick={onClose}
+                    className={cn(
+                      "flex items-center h-11 px-4 rounded-xl text-sm font-medium transition-colors",
+                      isActive
+                        ? "bg-orbit-50 text-orbit-600 dark:bg-orbit-900/40 dark:text-orbit-400"
+                        : "text-gray-700 dark:text-white/80 hover:bg-gray-50 dark:hover:bg-white/5"
+                    )}
+                  >
+                    {link.label}
+                    {isActive && (
+                      <span className="ml-auto w-1.5 h-1.5 rounded-full bg-orbit-600 dark:bg-orbit-400" />
+                    )}
+                  </Link>
+                </li>
+              );
+            })}
+          </ul>
+        </nav>
 
-            {/* Footer CTAs */}
-            <div className="px-4 pb-8 pt-4 border-t border-gray-100 dark:border-white/10 space-y-3">
-              <div className="flex items-center justify-between px-1 mb-2">
-                <span className="text-xs text-gray-400 dark:text-white/40">Aparência</span>
-                <ThemeToggle compact />
-              </div>
-              <Link
-                href="/login"
-                onClick={onClose}
-                className="flex items-center justify-center w-full h-10 px-5 rounded-xl text-sm font-medium text-orbit-600 dark:text-orbit-400 hover:bg-orbit-50 dark:hover:bg-orbit-900/30 transition-colors"
-              >
-                Entrar
-              </Link>
-              <Link
-                href="/cadastro"
-                onClick={onClose}
-                className="flex items-center justify-center w-full h-10 px-5 rounded-xl text-sm font-semibold bg-accent-400 text-dark hover:bg-accent-600 transition-colors"
-              >
-                Começar grátis
-              </Link>
-            </div>
-          </motion.div>
-        </>
-      )}
-    </AnimatePresence>
+        {/* Footer CTAs */}
+        <div className="px-4 pb-8 pt-4 border-t border-gray-100 dark:border-white/10 space-y-3">
+          <div className="flex items-center justify-between px-1 mb-2">
+            <span className="text-xs text-gray-400 dark:text-white/40">Aparência</span>
+            <ThemeToggle compact />
+          </div>
+          <Link
+            href="/login"
+            onClick={onClose}
+            className="flex items-center justify-center w-full h-10 px-5 rounded-xl text-sm font-medium text-orbit-600 dark:text-orbit-400 hover:bg-orbit-50 dark:hover:bg-orbit-900/30 transition-colors"
+          >
+            Entrar
+          </Link>
+          <Link
+            href="/cadastro"
+            onClick={onClose}
+            className="flex items-center justify-center w-full h-10 px-5 rounded-xl text-sm font-semibold bg-accent-400 text-dark hover:bg-accent-600 transition-colors"
+          >
+            Começar grátis
+          </Link>
+        </div>
+      </aside>
+    </>
   );
 }
 
@@ -175,22 +243,38 @@ export function Navbar() {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const pathname = usePathname();
   const { theme } = useTheme();
+  const hamburgerRef = useRef<HTMLButtonElement>(null);
 
+  // Throttle scroll handler with rAF and short-circuit when the boolean
+  // doesn't actually change. Previously this called setState on every scroll
+  // event (~once per frame at minimum), forcing React to re-evaluate the
+  // header tree even when the visible state was the same.
   useEffect(() => {
-    const handler = () => setScrolled(window.scrollY > 16);
+    let raf = 0;
+    let last = false;
+    const tick = () => {
+      raf = 0;
+      const next = window.scrollY > 16;
+      if (next !== last) {
+        last = next;
+        setScrolled(next);
+      }
+    };
+    const handler = () => {
+      if (raf) return;
+      raf = requestAnimationFrame(tick);
+    };
+    tick();
     window.addEventListener("scroll", handler, { passive: true });
-    handler();
-    return () => window.removeEventListener("scroll", handler);
+    return () => {
+      window.removeEventListener("scroll", handler);
+      if (raf) cancelAnimationFrame(raf);
+    };
   }, []);
 
   const closeDrawer = useCallback(() => setDrawerOpen(false), []);
 
   // ── Automatic theme-aware chrome ────────────────────────────────────────
-  // Rule: the navbar ALWAYS has a soft backdrop so text is legible over any
-  // page background (dark hero, white panels, half-and-half layouts).
-  // It just gets slightly more opaque once the user scrolls. Color follows
-  // the active theme, not the pathname — this avoids the "invisible header"
-  // flash during dark/light transitions.
   const isDark = theme === "dark";
   const bgColor = isDark
     ? scrolled
@@ -214,7 +298,7 @@ export function Navbar() {
 
   return (
     <>
-      <motion.header
+      <header
         className="fixed top-0 left-0 right-0 z-30"
         style={{
           backgroundColor: bgColor,
@@ -231,7 +315,9 @@ export function Navbar() {
               <Logo size="md" variant="full" />
             </Link>
 
-            {/* Desktop nav */}
+            {/* Desktop nav — active pill keeps framer-motion for layoutId
+                shared-element transition (worth the dep here since CSS can't
+                cleanly animate position between sibling DOM nodes) */}
             <nav className="hidden md:flex items-center gap-1" aria-label="Navegação principal">
               {NAV_LINKS.map((link) => {
                 const isActive = pathname === link.href;
@@ -292,6 +378,7 @@ export function Navbar() {
 
             {/* Mobile hamburger */}
             <button
+              ref={hamburgerRef}
               type="button"
               className={cn(
                 "md:hidden flex items-center justify-center w-9 h-9 rounded-xl transition-colors",
@@ -303,14 +390,20 @@ export function Navbar() {
               onClick={() => setDrawerOpen(true)}
               aria-label="Abrir menu de navegação"
               aria-expanded={drawerOpen}
+              aria-controls="primary-mobile-drawer"
             >
               <Menu className="w-5 h-5" />
             </button>
           </div>
         </div>
-      </motion.header>
+      </header>
 
-      <MobileDrawer open={drawerOpen} onClose={closeDrawer} pathname={pathname} />
+      <MobileDrawer
+        open={drawerOpen}
+        onClose={closeDrawer}
+        pathname={pathname}
+        triggerRef={hamburgerRef}
+      />
     </>
   );
 }

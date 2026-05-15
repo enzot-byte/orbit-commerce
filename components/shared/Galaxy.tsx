@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { getDeviceTier, getRenderDpr } from "@/lib/perf";
 
 const vertexShader = `
 attribute vec2 uv;
@@ -210,24 +211,67 @@ export default function Galaxy({
   const smoothMousePos = useRef({ x: 0.5, y: 0.5 });
   const targetMouseActive = useRef(0.0);
   const smoothMouseActive = useRef(0.0);
-  const isVisibleRef = useRef(true);
-
-  // Pause rendering when off-screen
-  useEffect(() => {
-    if (!ctnDom.current) return;
-    const observer = new IntersectionObserver(
-      ([entry]) => { isVisibleRef.current = entry.isIntersecting; },
-      { threshold: 0, rootMargin: "200px" }
-    );
-    observer.observe(ctnDom.current);
-    return () => observer.disconnect();
-  }, []);
 
   useEffect(() => {
     if (!ctnDom.current) return;
+
+    // Honor reduced motion — skip WebGL entirely
+    if (typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const tier: ReturnType<typeof getDeviceTier> = getDeviceTier();
+    // Auto-tune density on weaker devices so the fragment shader does less
+    // work per pixel (the `for` loop over NUM_LAYER × 9 cells is O(density)).
+    const effectiveDensity = tier === "low" ? density * 0.5 : tier === "mid" ? density * 0.75 : density;
+    const dprCap = getRenderDpr(tier);
 
     let cancelled = false;
     const ctn = ctnDom.current;
+
+    // Lifecycle state — both must be true for the render loop to be scheduled.
+    // Previously we kept rAF running and skipped renderer.render(); now we
+    // actually cancelAnimationFrame and stop scheduling so the JS engine has
+    // nothing to wake up for.
+    let inView = false;
+    let tabVisible =
+      typeof document !== "undefined" && document.visibilityState === "visible";
+    let animateId: number | null = null;
+    let tick: ((t: number) => void) | null = null;
+
+    const startLoop = () => {
+      if (cancelled || animateId !== null || tick === null) return;
+      if (!inView || !tabVisible) return;
+      animateId = requestAnimationFrame(tick);
+    };
+    const stopLoop = () => {
+      if (animateId !== null) {
+        cancelAnimationFrame(animateId);
+        animateId = null;
+      }
+    };
+    const syncLoopState = () => {
+      if (inView && tabVisible) startLoop();
+      else stopLoop();
+    };
+
+    // Observe viewport + tab visibility outside the OGL .then() so we don't
+    // miss state changes during the async import.
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        syncLoopState();
+      },
+      { threshold: 0, rootMargin: "200px" }
+    );
+    io.observe(ctn);
+
+    const onVisibility = () => {
+      tabVisible = document.visibilityState === "visible";
+      syncLoopState();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
 
     // Dynamic import OGL to avoid SSR issues
     import("ogl").then(({ Renderer, Program, Mesh, Color, Triangle }) => {
@@ -236,6 +280,8 @@ export default function Galaxy({
       const renderer = new Renderer({
         alpha: transparent,
         premultipliedAlpha: false,
+        // Cap DPR — on a 2x Retina display this halves shaded pixels
+        dpr: dprCap,
       });
       const gl = renderer.gl;
 
@@ -278,7 +324,7 @@ export default function Galaxy({
           uFocal: { value: new Float32Array(focal) },
           uRotation: { value: new Float32Array(rotation) },
           uStarSpeed: { value: starSpeed },
-          uDensity: { value: density },
+          uDensity: { value: effectiveDensity },
           uHueShift: { value: hueShift },
           uSpeed: { value: speed },
           uMouse: {
@@ -300,13 +346,16 @@ export default function Galaxy({
       });
 
       const mesh = new Mesh(gl, { geometry, program });
-      let animateId: number;
 
-      function update(t: number) {
-        if (cancelled) return;
-        animateId = requestAnimationFrame(update);
-        // Skip GPU work when off-screen
-        if (!isVisibleRef.current) return;
+      // Bind the rAF-driven tick to the outer-scope lifecycle controllers.
+      // When inView or tabVisible flip to false, the loop is fully cancelled
+      // (no rAF scheduled at all). When they flip back to true, syncLoopState
+      // calls startLoop which reschedules a single rAF.
+      tick = (t: number) => {
+        if (cancelled) {
+          animateId = null;
+          return;
+        }
         if (!disableAnimation) {
           program.uniforms.uTime.value = t * 0.001;
           program.uniforms.uStarSpeed.value = (t * 0.001 * starSpeed) / 10.0;
@@ -325,9 +374,17 @@ export default function Galaxy({
         program.uniforms.uMouseActiveFactor.value = smoothMouseActive.current;
 
         renderer.render({ scene: mesh });
-      }
-      animateId = requestAnimationFrame(update);
+        // Reschedule for the next frame as long as we should still be running.
+        if (!cancelled && inView && tabVisible) {
+          animateId = requestAnimationFrame(tick!);
+        } else {
+          animateId = null;
+        }
+      };
       ctn.appendChild(gl.canvas);
+      // If the element was already in the viewport when OGL finished loading,
+      // kick the loop now.
+      syncLoopState();
 
       function handleMouseMove(e: MouseEvent) {
         const rect = ctn.getBoundingClientRect();
@@ -348,7 +405,7 @@ export default function Galaxy({
 
       // Cleanup
       const cleanupFn = () => {
-        cancelAnimationFrame(animateId);
+        stopLoop();
         window.removeEventListener("resize", resize);
         if (mouseInteraction) {
           ctn.removeEventListener("mousemove", handleMouseMove);
@@ -366,6 +423,9 @@ export default function Galaxy({
 
     return () => {
       cancelled = true;
+      stopLoop();
+      io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
       const cleanup = (ctn as HTMLDivElement & { _galaxyCleanup?: () => void })._galaxyCleanup;
       if (cleanup) cleanup();
     };

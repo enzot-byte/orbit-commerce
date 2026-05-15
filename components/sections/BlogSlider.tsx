@@ -13,6 +13,7 @@ import type { Swiper as SwiperType } from "swiper";
 
 import "swiper/css";
 import "swiper/css/navigation";
+import "./BlogSlider.css";
 import "swiper/css/pagination";
 
 interface SlideData {
@@ -29,6 +30,8 @@ interface SlideData {
   catColor: string;
   catBg: string;
   highlights: string[];
+  /** Slug of the matching article on /blog/[slug]. Omit to hide the CTA. */
+  slug?: string;
 }
 
 const slides: SlideData[] = [
@@ -79,6 +82,9 @@ const slides: SlideData[] = [
     catColor: "#a78bfa",
     catBg: "rgba(167,139,250,0.15)",
     highlights: ["Pricing dinâmico na prática", "Monitoramento de concorrentes", "Template de planilha grátis"],
+    // Maps thematically to the one real article currently in /blog/[slug].
+    // Other slides have no destination yet → their CTAs are suppressed.
+    slug: "como-precificar-mercado-livre",
   },
 ];
 
@@ -265,16 +271,18 @@ export default function BlogSlider() {
                     </div>
                   </div>
 
-                  {/* CTA */}
-                  <a
-                    href="#"
-                    className="blog-slide-cta"
-                    style={{
-                      background: slide.gradient,
-                    }}
-                  >
-                    Ler artigo completo →
-                  </a>
+                  {/* CTA — only when this slide has a real article slug.
+                      Suppressing the button entirely is preferable to a dead
+                      `href="#"` link. */}
+                  {slide.slug && (
+                    <a
+                      href={`/blog/${slide.slug}`}
+                      className="blog-slide-cta"
+                      style={{ background: slide.gradient }}
+                    >
+                      Ler artigo completo →
+                    </a>
+                  )}
                 </div>
               </article>
             </SwiperSlide>

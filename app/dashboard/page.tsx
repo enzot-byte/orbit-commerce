@@ -1,5 +1,3 @@
-"use client";
-
 import React from "react";
 import Link from "next/link";
 import {
@@ -18,7 +16,8 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import ScrollReveal from "@/components/shared/ScrollReveal";
-import { useAuth } from "@/lib/useAuth";
+import { DashboardWelcome } from "./DashboardWelcome";
+import { DashboardUpgradeBanner } from "./DashboardUpgradeBanner";
 
 const stats = [
   { label: "Cursos em andamento", value: "2", icon: BookOpen, color: "text-orbit-400", bg: "bg-orbit-900/30" },
@@ -51,30 +50,11 @@ const updates = [
 ];
 
 export default function DashboardPage() {
-  const { user } = useAuth();
-  const firstName = (user?.name ?? "").split(" ")[0] || "Seller";
-  const plan = user?.plan ?? "Grátis";
-  const isPro = plan === "Pro";
-  const isGratis = plan === "Grátis";
-  const showUpgradeBanner = isPro || isGratis;
-
   return (
     <div className="p-6 lg:p-8 space-y-8 max-w-7xl mx-auto">
-      {/* Welcome header */}
+      {/* Welcome header — client island (uses auth) */}
       <ScrollReveal direction="up">
-        <div className="flex items-start justify-between flex-wrap gap-4">
-          <div>
-            <h1 className="text-2xl lg:text-3xl font-bold text-white font-display">
-              Olá, {firstName}! 🚀 Pronto para vender mais hoje?
-            </h1>
-            <p className="text-white/50 mt-1 text-sm">
-              Aqui está um resumo da sua jornada na plataforma.
-            </p>
-          </div>
-          <Badge variant="accent" size="lg">
-            Plano {plan}
-          </Badge>
-        </div>
+        <DashboardWelcome />
       </ScrollReveal>
 
       {/* Stats row */}
@@ -194,33 +174,10 @@ export default function DashboardPage() {
         </section>
       </ScrollReveal>
 
-      {/* Upgrade banner */}
-      {showUpgradeBanner && (
-        <ScrollReveal direction="up" delay={0.1}>
-          <Card variant="glass" padding="lg" className="bg-gradient-to-br from-orbit-900/60 to-accent-800/20 border border-accent-400/20 relative overflow-hidden">
-            <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(239,159,39,0.15),transparent_60%)]" />
-            <div className="relative z-10 flex flex-col sm:flex-row items-start sm:items-center gap-4">
-              <div className="flex-1">
-                <Badge variant="accent" size="sm" className="mb-2">
-                  {isPro ? "Upgrade disponível" : "Desbloqueie tudo"}
-                </Badge>
-                <h3 className="text-white font-bold text-lg font-display">
-                  {isPro ? "Upgrade para Premium e acesse tudo" : "Faça upgrade para Pro e acelere suas vendas"}
-                </h3>
-                <p className="text-white/60 text-sm mt-1">
-                  {isPro ? "Monitor de preços, kit de templates, suporte prioritário e muito mais." : "Ferramentas avançadas, comunidade exclusiva e mais de 20 cursos."}
-                </p>
-              </div>
-              <Link href="/dashboard/plano">
-                <Button variant="accent" size="lg">
-                  Upgrade para {isPro ? "Premium" : "Pro"}
-                  <ArrowRight size={16} />
-                </Button>
-              </Link>
-            </div>
-          </Card>
-        </ScrollReveal>
-      )}
+      {/* Upgrade banner — client island (plan-aware) */}
+      <ScrollReveal direction="up" delay={0.1}>
+        <DashboardUpgradeBanner />
+      </ScrollReveal>
 
       {/* Platform updates */}
       <ScrollReveal direction="up" delay={0.1}>

@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useRef, useCallback } from "react";
-import { motion, type MotionStyle, type Transition } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 // ─── Variant map ──────────────────────────────────────────────────────────────
@@ -44,9 +43,8 @@ export interface CardProps {
   rounded?: "md" | "lg" | "xl" | "2xl";
   padding?: "none" | "sm" | "md" | "lg" | "xl";
   className?: string;
-  style?: MotionStyle;
+  style?: React.CSSProperties;
   children?: React.ReactNode;
-  /** Forward DOM event handlers */
   onClick?: React.MouseEventHandler<HTMLDivElement>;
   id?: string;
   "aria-label"?: string;
@@ -69,9 +67,11 @@ const paddingMap = {
   xl: "p-8",
 };
 
-// ─── Hover animation ─────────────────────────────────────────────────────────
-
-const hoverTransition: Transition = { type: "spring", stiffness: 300, damping: 20 };
+// Hover lift previously used framer-motion's spring animation. CSS transition
+// gives an indistinguishable result for a -6px translate + shadow swap, and
+// avoids dragging framer-motion into every page that renders a Card.
+const hoverClasses =
+  "transition-[transform,box-shadow] duration-200 ease-out shadow-[0_4px_16px_rgba(0,0,0,0.08)] hover:-translate-y-1.5 hover:shadow-[0_16px_40px_rgba(0,0,0,0.16)] motion-reduce:hover:translate-y-0";
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
@@ -111,7 +111,7 @@ export function Card({
   }, [spotlight]);
 
   return (
-    <motion.div
+    <div
       ref={cardRef}
       id={id}
       role={role}
@@ -122,39 +122,27 @@ export function Card({
         variantClasses[variant],
         roundedMap[rounded],
         paddingMap[padding],
+        hover && hoverClasses,
         className
       )}
       style={style}
       onClick={onClick}
       onMouseMove={spotlight ? handleMouseMove : undefined}
       onMouseLeave={spotlight ? handleMouseLeave : undefined}
-      initial={hover ? { y: 0, boxShadow: "0 4px 16px rgba(0,0,0,0.08)" } : undefined}
-      whileHover={
-        hover
-          ? {
-              y: -6,
-              boxShadow:
-                "0 16px 40px rgba(0,0,0,0.16), 0 0 0 1px rgba(24,95,165,0.2)",
-              transition: hoverTransition,
-            }
-          : undefined
-      }
     >
-      {/* Spotlight radial overlay */}
       {spotlight && (
         <div
           className="pointer-events-none absolute inset-0 rounded-[inherit] transition-opacity duration-300"
           style={{
             background:
               "radial-gradient(circle 180px at var(--spotlight-x, 50%) var(--spotlight-y, 50%), rgba(24,95,165,0.1), transparent 70%)",
-            // CSS custom property cast is safe here — it's a plain DOM div
             opacity: "var(--spotlight-opacity, 0)" as unknown as number,
           }}
           aria-hidden="true"
         />
       )}
       {children}
-    </motion.div>
+    </div>
   );
 }
 

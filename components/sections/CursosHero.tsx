@@ -8,6 +8,8 @@
    All CSS animations — zero JS per-frame cost.
    ═══════════════════════════════════════════════════════════════════ */
 
+import "./CursosHero.css";
+
 export default function CursosHero() {
   return (
     <div className="crs-scene" aria-hidden="true">

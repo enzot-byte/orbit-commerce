@@ -1,7 +1,4 @@
-"use client";
-
 import React, { forwardRef } from "react";
-import { motion, HTMLMotionProps } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 // ─── Variant + Size maps ──────────────────────────────────────────────────────
@@ -63,14 +60,12 @@ type ButtonBaseProps = {
   children?: React.ReactNode;
 };
 
-// When `asChild` is false (default) — renders as <motion.button>
 type ButtonAsButton = ButtonBaseProps &
   Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, keyof ButtonBaseProps> & {
     asChild?: false;
     href?: never;
   };
 
-// When used with href — renders as <motion.a>
 type ButtonAsAnchor = ButtonBaseProps &
   Omit<React.AnchorHTMLAttributes<HTMLAnchorElement>, keyof ButtonBaseProps> & {
     asChild?: true;
@@ -109,6 +104,12 @@ function Spinner() {
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
+// hover:scale & active:scale below replace framer-motion's whileHover/whileTap —
+// the transition curve here mimics the previous spring (stiff/damped → ~150ms
+// ease-out) closely enough that the visual feel is unchanged.
+const baseInteract =
+  "transition-transform duration-150 ease-out hover:scale-[1.02] active:scale-[0.96] motion-reduce:hover:scale-100 motion-reduce:active:scale-100";
+
 export const Button = forwardRef<
   HTMLButtonElement | HTMLAnchorElement,
   ButtonProps
@@ -126,24 +127,15 @@ export const Button = forwardRef<
   } = props;
 
   const baseClasses = cn(
-    // Layout
     "inline-flex items-center justify-center font-medium",
     "select-none cursor-pointer",
-    // Focus
     "focus:outline-none focus-visible:ring-2 focus-visible:ring-offset-2",
-    // Disabled
     "disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none",
-    // Variant + size
+    baseInteract,
     variantClasses[variant],
     sizeClasses[size],
     className
   );
-
-  const tapAnimation = {
-    whileTap: { scale: 0.96 },
-    whileHover: { scale: 1.02 },
-    transition: { type: "spring", stiffness: 400, damping: 25 },
-  };
 
   const content = (
     <>
@@ -159,54 +151,41 @@ export const Button = forwardRef<
     </>
   );
 
+  // Spread the rest of the props directly so consumers can pass any native
+  // attribute the underlying element supports — aria-*, data-*, id, title,
+  // tabIndex, onMouseEnter, onFocus, etc. Previously this component only
+  // forwarded a handful of explicit fields and silently dropped everything
+  // else, which made it impossible to add things like a tooltip `title`
+  // or analytics `data-*` attributes without forking the component.
+
   if (asChild && (rest as ButtonAsAnchor).href) {
-    const { href, target, rel, onClick, onMouseEnter, onMouseLeave, ...anchorRest } =
-      rest as ButtonAsAnchor;
-    void anchorRest; // unused spread — explicit props only
+    const { className: _ignored, ...anchorRest } = rest as ButtonAsAnchor;
+    void _ignored; // we own className
     return (
-      <motion.a
+      <a
         ref={ref as React.Ref<HTMLAnchorElement>}
-        href={href}
-        target={target}
-        rel={rel}
+        {...anchorRest}
         className={baseClasses}
-        whileTap={{ scale: 0.96 }}
-        whileHover={{ scale: 1.02 }}
-        transition={{ type: "spring", stiffness: 400, damping: 25 }}
-        onClick={onClick as React.MouseEventHandler<HTMLAnchorElement>}
       >
         {content}
-      </motion.a>
+      </a>
     );
   }
 
-  const {
-    onClick,
-    onMouseEnter,
-    onMouseLeave,
-    type: btnType,
-    disabled: btnDisabled,
-    form,
-    name,
-    value,
-  } = rest as ButtonAsButton;
+  const { className: _ignoredBtn, type: btnType, disabled: btnDisabled, ...btnRest } =
+    rest as ButtonAsButton;
+  void _ignoredBtn;
 
   return (
-    <motion.button
+    <button
       ref={ref as React.Ref<HTMLButtonElement>}
-      className={baseClasses}
+      {...btnRest}
       type={btnType ?? "button"}
       disabled={isLoading || btnDisabled}
-      form={form}
-      name={name}
-      value={value as string | number | readonly string[] | undefined}
-      whileTap={{ scale: 0.96 }}
-      whileHover={{ scale: 1.02 }}
-      transition={{ type: "spring", stiffness: 400, damping: 25 }}
-      onClick={onClick as React.MouseEventHandler<HTMLButtonElement>}
+      className={baseClasses}
     >
       {content}
-    </motion.button>
+    </button>
   );
 });
 

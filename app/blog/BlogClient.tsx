@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 
 type Category = "Todos" | "Mercado Livre" | "Shopee" | "Amazon" | "Precificação" | "Marketing";
 
@@ -17,7 +18,14 @@ interface Article {
   author: string;
   gradient: string;
   emoji: string;
+  /** Slug on /blog/[slug] when the article exists; otherwise card is non-clickable. */
+  slug?: string;
 }
+
+// Slugs that currently resolve in app/blog/[slug]/page.tsx ARTICLES.
+// As more articles are written, add their slug to the relevant entry below
+// and the card will become clickable automatically.
+const PUBLISHED_SLUGS = new Set(["como-precificar-mercado-livre"]);
 
 const articles: Article[] = [
   {
@@ -55,14 +63,15 @@ const articles: Article[] = [
   },
   {
     id: 4,
-    title: "Precificação dinâmica: como ajustar preços sem perder margem",
-    excerpt: "Estratégias avançadas de precificação que permitem você competir no preço sem destruir sua lucratividade.",
+    title: "Como precificar produtos no Mercado Livre e ainda ter lucro",
+    excerpt: "Descubra a fórmula de markup reverso e o custo total de servir que sellers de alto volume usam para manter margem líquida positiva mesmo em mercados competitivos.",
     category: "Precificação",
-    date: "25 mar 2025",
-    readTime: "7 min",
-    author: "Lucas Ferreira",
+    date: "07 abr 2025",
+    readTime: "14 min",
+    author: "Rafael Mendes",
     gradient: "linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%)",
     emoji: "💹",
+    slug: "como-precificar-mercado-livre",
   },
   {
     id: 5,
@@ -142,6 +151,11 @@ export default function BlogClient() {
         >
           {filtered.map((article) => {
             const catStyle = categoryColors[article.category];
+            const isPublished =
+              article.slug !== undefined && PUBLISHED_SLUGS.has(article.slug);
+            // Card is interactive only when the destination actually exists.
+            // Previously every card had `cursor: pointer` + hover lift but no
+            // link wrapper → looked clickable, navigated nowhere.
             return (
               <motion.article
                 key={article.id}
@@ -157,10 +171,14 @@ export default function BlogClient() {
                   overflow: "hidden",
                   display: "flex",
                   flexDirection: "column",
-                  cursor: "pointer",
+                  cursor: isPublished ? "pointer" : "default",
                   transition: "border-color 0.2s",
                 }}
-                whileHover={{ borderColor: "rgba(255,255,255,0.2)", y: -4 }}
+                whileHover={
+                  isPublished
+                    ? { borderColor: "rgba(255,255,255,0.2)", y: -4 }
+                    : undefined
+                }
               >
                 {/* Thumbnail */}
                 <div
@@ -272,6 +290,41 @@ export default function BlogClient() {
                       </span>
                     </div>
                   </div>
+
+                  {/* Read link only when the article actually has a slug
+                      that resolves on /blog/[slug]; otherwise show a
+                      discreet "em breve" so users aren't misled. */}
+                  {isPublished && article.slug ? (
+                    <Link
+                      href={`/blog/${article.slug}`}
+                      style={{
+                        marginTop: "16px",
+                        display: "inline-flex",
+                        alignItems: "center",
+                        gap: "6px",
+                        fontSize: "12px",
+                        fontWeight: 700,
+                        color: "#378ADD",
+                        textDecoration: "none",
+                      }}
+                    >
+                      Ler artigo
+                      <span aria-hidden="true">→</span>
+                    </Link>
+                  ) : (
+                    <span
+                      style={{
+                        marginTop: "16px",
+                        fontSize: "11px",
+                        fontWeight: 600,
+                        color: "rgba(255,255,255,0.3)",
+                        letterSpacing: "0.04em",
+                        textTransform: "uppercase",
+                      }}
+                    >
+                      Em breve
+                    </span>
+                  )}
                 </div>
               </motion.article>
             );

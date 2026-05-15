@@ -2,49 +2,58 @@ import React from "react";
 import { Logo } from "@/components/ui/Logo";
 
 // ─── Link columns data ────────────────────────────────────────────────────────
+//
+// `href` is optional. When omitted, the entry renders as muted plain text
+// instead of an anchor — so we never ship a `href="#"` that looks clickable
+// but goes nowhere. As destinations are built, just add the href.
 
-const COLUMNS = [
+interface FooterLink {
+  label: string;
+  href?: string;
+}
+
+const COLUMNS: ReadonlyArray<{ title: string; links: readonly FooterLink[] }> = [
   {
     title: "Produto",
     links: [
-      { label: "Visão geral", href: "#" },
-      { label: "Funcionalidades", href: "#" },
-      { label: "Planos e preços", href: "#" },
-      { label: "Changelog", href: "#" },
-      { label: "Roadmap", href: "#" },
+      { label: "Visão geral", href: "/" },
+      { label: "Funcionalidades", href: "/ferramentas" },
+      { label: "Planos e preços", href: "/planos" },
+      { label: "Changelog" },
+      { label: "Roadmap" },
     ],
   },
   {
     title: "Plataforma",
     links: [
-      { label: "Integrações", href: "#" },
-      { label: "API", href: "#" },
-      { label: "Status", href: "#" },
-      { label: "Documentação", href: "#" },
-      { label: "Ferramentas gratuitas", href: "#" },
+      { label: "Integrações" },
+      { label: "API" },
+      { label: "Status" },
+      { label: "Documentação" },
+      { label: "Ferramentas gratuitas", href: "/ferramentas" },
     ],
   },
   {
     title: "Empresa",
     links: [
-      { label: "Sobre nós", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Imprensa", href: "#" },
-      { label: "Carreiras", href: "#" },
-      { label: "Contato", href: "#" },
+      { label: "Sobre nós", href: "/sobre" },
+      { label: "Blog", href: "/blog" },
+      { label: "Imprensa" },
+      { label: "Carreiras" },
+      { label: "Contato", href: "/redes" },
     ],
   },
   {
     title: "Comunidade",
     links: [
-      { label: "Cursos", href: "#" },
-      { label: "Comunidade Discord", href: "#" },
-      { label: "Afiliados", href: "#" },
-      { label: "Parceiros", href: "#" },
-      { label: "Cases de sucesso", href: "#" },
+      { label: "Cursos", href: "/cursos" },
+      { label: "Comunidade Discord" },
+      { label: "Afiliados" },
+      { label: "Parceiros" },
+      { label: "Cases de sucesso" },
     ],
   },
-] as const;
+];
 
 // ─── Social icons (inline SVG — brand-accurate, no icon lib dependency) ──────
 
@@ -102,26 +111,8 @@ const SOCIALS = [
       </svg>
     ),
   },
-  {
-    label: "LinkedIn",
-    href: "#",
-    icon: (
-      <svg
-        viewBox="0 0 24 24"
-        fill="none"
-        stroke="currentColor"
-        strokeWidth="1.8"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        aria-hidden="true"
-        className="w-4 h-4"
-      >
-        <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-2-2 2 2 0 0 0-2 2v7h-4v-7a6 6 0 0 1 6-6z" />
-        <rect x="2" y="9" width="4" height="12" />
-        <circle cx="4" cy="4" r="2" />
-      </svg>
-    ),
-  },
+  // LinkedIn omitted — no brand URL set yet (was pointing to "#"). Reinstate
+  // here once @sellerverse has a LinkedIn page.
 ] as const;
 
 // ─── Marketplace logos (text-based) ──────────────────────────────────────────
@@ -141,7 +132,7 @@ function FooterLinkColumn({
   links,
 }: {
   title: string;
-  links: readonly { label: string; href: string }[];
+  links: readonly FooterLink[];
 }) {
   return (
     <div>
@@ -151,12 +142,24 @@ function FooterLinkColumn({
       <ul className="space-y-3">
         {links.map((link) => (
           <li key={link.label}>
-            <a
-              href={link.href}
-              className="text-sm font-body text-white/40 hover:text-[#9B7BFF] transition-colors duration-150"
-            >
-              {link.label}
-            </a>
+            {link.href ? (
+              <a
+                href={link.href}
+                className="text-sm font-body text-white/40 hover:text-[#9B7BFF] transition-colors duration-150"
+              >
+                {link.label}
+              </a>
+            ) : (
+              // No destination yet — render as muted text rather than a dead
+              // `href="#"`. Keeps the column visually balanced without faking
+              // a clickable link.
+              <span
+                className="text-sm font-body text-white/25 cursor-default select-none"
+                aria-disabled="true"
+              >
+                {link.label}
+              </span>
+            )}
           </li>
         ))}
       </ul>
@@ -272,20 +275,17 @@ export function Footer() {
               &copy; {year} Sellerverse. Todos os direitos reservados.
             </p>
 
-            {/* Legal links */}
+            {/* Legal links — rendered as muted text until dedicated pages
+                exist. Previously these were `href="#"` and looked clickable. */}
             <div className="flex items-center gap-4">
-              {[
-                { label: "Privacidade", href: "#" },
-                { label: "Termos de uso", href: "#" },
-                { label: "Cookies", href: "#" },
-              ].map((item) => (
-                <a
-                  key={item.label}
-                  href={item.href}
-                  className="text-xs text-white/25 hover:text-[#9B7BFF] transition-colors"
+              {["Privacidade", "Termos de uso", "Cookies"].map((label) => (
+                <span
+                  key={label}
+                  className="text-xs text-white/25 cursor-default select-none"
+                  aria-disabled="true"
                 >
-                  {item.label}
-                </a>
+                  {label}
+                </span>
               ))}
             </div>
 

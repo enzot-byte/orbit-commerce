@@ -3,7 +3,6 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { motion, AnimatePresence } from "framer-motion";
 import {
   LayoutDashboard,
   BookOpen,
@@ -17,8 +16,9 @@ import {
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/Badge";
+import { Logo } from "@/components/ui/Logo";
 import { supabase } from "@/lib/supabase";
-import { useAuth } from "@/lib/useAuth";
+import { useAuth } from "@/lib/AuthProvider";
 
 async function handleSignOut() {
   try {
@@ -44,7 +44,46 @@ const planVariant: Record<string, "primary" | "accent" | "success"> = {
   Premium: "success",
 };
 
-function UserAvatar({ name, plan, collapsed }: { name: string; plan: string; collapsed: boolean }) {
+/**
+ * Collapsible text wrapper — CSS-only replacement for the framer-motion
+ * AnimatePresence + animated width that previously fronted every label here.
+ * Width is `0` when collapsed and `auto` (capped by max-width) when expanded;
+ * opacity fades in sync.
+ */
+function CollapseText({
+  collapsed,
+  children,
+  className,
+}: {
+  collapsed: boolean;
+  children: React.ReactNode;
+  className?: string;
+}) {
+  return (
+    <span
+      aria-hidden={collapsed}
+      className={cn(
+        "inline-block overflow-hidden whitespace-nowrap transition-all duration-200 ease-out",
+        collapsed
+          ? "opacity-0 max-w-0"
+          : "opacity-100 max-w-[200px]",
+        className
+      )}
+    >
+      {children}
+    </span>
+  );
+}
+
+function UserAvatar({
+  name,
+  plan,
+  collapsed,
+}: {
+  name: string;
+  plan: string;
+  collapsed: boolean;
+}) {
   const initials = name
     .split(" ")
     .map((n) => n[0])
@@ -62,22 +101,14 @@ function UserAvatar({ name, plan, collapsed }: { name: string; plan: string; col
       <div className="w-9 h-9 rounded-full bg-orbit-600 flex items-center justify-center text-white text-sm font-bold shrink-0">
         {initials}
       </div>
-      <AnimatePresence initial={false}>
-        {!collapsed && (
-          <motion.div
-            initial={{ opacity: 0, width: 0 }}
-            animate={{ opacity: 1, width: "auto" }}
-            exit={{ opacity: 0, width: 0 }}
-            transition={{ duration: 0.2 }}
-            className="overflow-hidden min-w-0"
-          >
-            <p className="text-sm font-semibold text-white truncate">{name}</p>
-            <Badge variant={planVariant[plan] ?? "primary"} size="sm">
-              {plan}
-            </Badge>
-          </motion.div>
-        )}
-      </AnimatePresence>
+      <CollapseText collapsed={collapsed} className="min-w-0">
+        <span className="block text-sm font-semibold text-white truncate">
+          {name}
+        </span>
+        <Badge variant={planVariant[plan] ?? "primary"} size="sm">
+          {plan}
+        </Badge>
+      </CollapseText>
     </div>
   );
 }
@@ -112,19 +143,9 @@ function NavItem({
           active ? "text-white" : "text-white/60 group-hover:text-white"
         )}
       />
-      <AnimatePresence initial={false}>
-        {!collapsed && (
-          <motion.span
-            initial={{ opacity: 0, width: 0 }}
-            animate={{ opacity: 1, width: "auto" }}
-            exit={{ opacity: 0, width: 0 }}
-            transition={{ duration: 0.2 }}
-            className="text-sm font-medium whitespace-nowrap overflow-hidden"
-          >
-            {item.label}
-          </motion.span>
-        )}
-      </AnimatePresence>
+      <CollapseText collapsed={collapsed} className="text-sm font-medium">
+        {item.label}
+      </CollapseText>
       {collapsed && active && (
         <span className="absolute left-0 top-1/2 -translate-y-1/2 w-1 h-6 bg-accent-400 rounded-r-full" />
       )}
@@ -146,35 +167,30 @@ export function DashboardSidebar() {
   };
 
   return (
-    <motion.aside
-      animate={{ width: collapsed ? 64 : 256 }}
-      transition={{ type: "spring", stiffness: 300, damping: 30 }}
-      className="hidden lg:flex flex-col h-screen bg-dark-surface border-r border-white/10 shrink-0 overflow-hidden relative"
+    <aside
+      // Width transitions via plain CSS — previously this was `motion.aside`
+      // with a spring animation. The eye barely distinguishes the spring from
+      // a 200ms ease-out at this scale, and we drop the framer-motion runtime
+      // for this entire surface.
+      style={{ width: collapsed ? 64 : 256 }}
+      className="hidden lg:flex flex-col h-screen bg-dark-surface border-r border-white/10 shrink-0 overflow-hidden relative transition-[width] duration-200 ease-out"
     >
-      {/* Logo */}
-      <div
+      {/* Logo — uses the canonical OrbitIcon mark; previously had a hardcoded
+          "OC" badge that was a leftover from the orbit-commerce naming and
+          gave a wrong impression of the brand. */}
+      <Link
+        href="/dashboard"
+        aria-label="Sellerverse — voltar para o dashboard"
         className={cn(
-          "flex items-center gap-2 px-4 py-4 border-b border-white/10",
+          "flex items-center gap-2 px-4 py-4 border-b border-white/10 hover:bg-white/[0.02] transition-colors",
           collapsed && "justify-center px-2"
         )}
       >
-        <div className="w-8 h-8 rounded-lg bg-orbit-600 flex items-center justify-center shrink-0">
-          <span className="text-white font-bold text-sm">OC</span>
-        </div>
-        <AnimatePresence initial={false}>
-          {!collapsed && (
-            <motion.span
-              initial={{ opacity: 0, width: 0 }}
-              animate={{ opacity: 1, width: "auto" }}
-              exit={{ opacity: 0, width: 0 }}
-              transition={{ duration: 0.2 }}
-              className="text-white font-bold text-base whitespace-nowrap overflow-hidden"
-            >
-              Sellerverse
-            </motion.span>
-          )}
-        </AnimatePresence>
-      </div>
+        <Logo size="sm" variant="icon" />
+        <CollapseText collapsed={collapsed} className="text-white font-bold text-base">
+          Sellerverse
+        </CollapseText>
+      </Link>
 
       {/* User section */}
       <UserAvatar name={displayName} plan={displayPlan} collapsed={collapsed} />
@@ -203,19 +219,9 @@ export function DashboardSidebar() {
           title={collapsed ? "Sair" : undefined}
         >
           <LogOut size={20} className="shrink-0" />
-          <AnimatePresence initial={false}>
-            {!collapsed && (
-              <motion.span
-                initial={{ opacity: 0, width: 0 }}
-                animate={{ opacity: 1, width: "auto" }}
-                exit={{ opacity: 0, width: 0 }}
-                transition={{ duration: 0.2 }}
-                className="text-sm font-medium whitespace-nowrap overflow-hidden"
-              >
-                Sair
-              </motion.span>
-            )}
-          </AnimatePresence>
+          <CollapseText collapsed={collapsed} className="text-sm font-medium">
+            Sair
+          </CollapseText>
         </button>
       </div>
 
@@ -227,6 +233,6 @@ export function DashboardSidebar() {
       >
         {collapsed ? <ChevronRight size={12} /> : <ChevronLeft size={12} />}
       </button>
-    </motion.aside>
+    </aside>
   );
 }

@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, Calendar, User, BookOpen, ChevronRight } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
+import { NewsletterForm } from "./NewsletterForm";
 
 // ─── Article data ──────────────────────────────────────────────────────────────
 
@@ -63,87 +65,45 @@ const ARTICLES: Record<string, {
   },
 };
 
-// Default article for unknown slugs
-const DEFAULT_ARTICLE = {
-  title: "Guia completo de precificação para sellers de marketplace",
-  category: "Estratégia",
-  author: "Equipe Sellerverse",
-  authorRole: "Time editorial",
-  authorBio:
-    "O time editorial do Sellerverse é formado por sellers experientes e especialistas em e-commerce brasileiro com mais de 10 anos de mercado.",
-  date: "07 abr 2025",
-  readTime: "12 min",
-  gradient: "linear-gradient(135deg, #185FA5 0%, #378ADD 100%)",
-  body: {
-    intro:
-      "Entender como precificar corretamente é a diferença entre um negócio sustentável e uma operação que consome capital sem gerar retorno.",
-    sections: [
-      {
-        heading: "Fundamentos de precificação",
-        content:
-          "A precificação estratégica começa com o mapeamento completo dos custos. Isso inclui o custo do produto, frete, comissões, impostos e todos os custos indiretos da operação.",
-      },
-      {
-        heading: "Como aplicar na prática",
-        content:
-          "Use ferramentas de análise para acompanhar o mercado em tempo real. O Sellerverse oferece dashboards completos para monitorar preços da concorrência e sua própria margem por produto.",
-      },
-    ],
-  },
-};
-
 function getArticle(slug: string) {
-  return ARTICLES[slug] ?? { ...DEFAULT_ARTICLE, slug };
+  // Return null for unknown slugs — page handler calls notFound() in that
+  // case. Previously this fell back to a generic placeholder article, which
+  // produced a 200 OK with duplicated/thin content for every garbage URL and
+  // is a known SEO hazard.
+  return ARTICLES[slug] ?? null;
 }
 
-// ─── Related Posts ─────────────────────────────────────────────────────────────
+// Pre-build the known slugs and 404 anything else (no on-demand rendering
+// for non-existent articles).
+export async function generateStaticParams() {
+  return Object.keys(ARTICLES).map((slug) => ({ slug }));
+}
+export const dynamicParams = false;
 
-const RELATED_POSTS = [
-  {
-    title: "ROI de ads no Mercado Livre: quando investir e quando parar",
-    category: "Anúncios",
-    date: "02 abr 2025",
-    readTime: "9 min",
-    slug: "roi-ads-mercado-livre",
-  },
-  {
-    title: "Gestão de estoque para sellers: o método ABC adaptado",
-    category: "Gestão",
-    date: "28 mar 2025",
-    readTime: "11 min",
-    slug: "gestao-estoque-abc",
-  },
-  {
-    title: "SEO no Mercado Livre: títulos e descrições que convertem",
-    category: "SEO",
-    date: "21 mar 2025",
-    readTime: "8 min",
-    slug: "seo-mercado-livre",
-  },
+// ─── Related & Popular Posts ──────────────────────────────────────────────────
+//
+// Source-of-truth pool. Only entries whose `slug` exists in ARTICLES are
+// surfaced — anything else would 404 (dynamicParams = false) and was breaking
+// internal-link integrity. As the article catalog grows, just add slugs that
+// resolve in ARTICLES above.
+
+const RELATED_POOL = [
+  { title: "ROI de ads no Mercado Livre: quando investir e quando parar", category: "Anúncios", date: "02 abr 2025", readTime: "9 min", slug: "roi-ads-mercado-livre" },
+  { title: "Gestão de estoque para sellers: o método ABC adaptado", category: "Gestão", date: "28 mar 2025", readTime: "11 min", slug: "gestao-estoque-abc" },
+  { title: "SEO no Mercado Livre: títulos e descrições que convertem", category: "SEO", date: "21 mar 2025", readTime: "8 min", slug: "seo-mercado-livre" },
+  { title: "Como precificar produtos no Mercado Livre e ainda ter lucro", category: "Mercado Livre", date: "07 abr 2025", readTime: "14 min", slug: "como-precificar-mercado-livre" },
 ];
 
-// ─── TOC Items ─────────────────────────────────────────────────────────────────
-
-const POPULAR_POSTS = [
-  {
-    title: "O guia definitivo para escalar vendas no ML em 2025",
-    date: "07 abr 2025",
-    readTime: "18 min",
-    slug: "escalar-vendas-ml-2025",
-  },
-  {
-    title: "Shopee vs Mercado Livre: onde vender em 2025?",
-    date: "01 abr 2025",
-    readTime: "10 min",
-    slug: "shopee-vs-ml-2025",
-  },
-  {
-    title: "Como calcular a margem real de cada produto",
-    date: "25 mar 2025",
-    readTime: "7 min",
-    slug: "calcular-margem-produto",
-  },
+const POPULAR_POOL = [
+  { title: "O guia definitivo para escalar vendas no ML em 2025", date: "07 abr 2025", readTime: "18 min", slug: "escalar-vendas-ml-2025" },
+  { title: "Shopee vs Mercado Livre: onde vender em 2025?", date: "01 abr 2025", readTime: "10 min", slug: "shopee-vs-ml-2025" },
+  { title: "Como calcular a margem real de cada produto", date: "25 mar 2025", readTime: "7 min", slug: "calcular-margem-produto" },
+  { title: "Como precificar produtos no Mercado Livre e ainda ter lucro", date: "07 abr 2025", readTime: "14 min", slug: "como-precificar-mercado-livre" },
 ];
+
+function pickReal<T extends { slug: string }>(pool: T[], excludeSlug: string): T[] {
+  return pool.filter((p) => p.slug !== excludeSlug && p.slug in ARTICLES);
+}
 
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
@@ -154,9 +114,18 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const article = getArticle(slug);
+  if (!article) {
+    return { title: "Artigo não encontrado | Blog Sellerverse" };
+  }
   return {
     title: `${article.title} | Blog Sellerverse`,
     description: article.body.intro.slice(0, 160),
+    openGraph: {
+      title: article.title,
+      description: article.body.intro.slice(0, 160),
+      type: "article",
+      authors: [article.author],
+    },
   };
 }
 
@@ -169,6 +138,12 @@ export default async function BlogArticlePage({
 }) {
   const { slug } = await params;
   const article = getArticle(slug);
+  if (!article) notFound();
+
+  // Filter to slugs that actually exist — dynamicParams=false means anything
+  // else 404s, and we'd rather hide a sidebar block than ship broken links.
+  const relatedPosts = pickReal(RELATED_POOL, slug);
+  const popularPosts = pickReal(POPULAR_POOL, slug);
 
   return (
     <>
@@ -422,36 +397,38 @@ export default async function BlogArticlePage({
                   </ol>
                 </div>
 
-                {/* Popular posts */}
-                <div
-                  className="rounded-2xl border border-white/10 p-5"
-                  style={{ backgroundColor: "rgba(26,26,46,0.7)" }}
-                >
-                  <h3
-                    className="text-sm font-bold text-white mb-4"
-                    style={{ fontFamily: "var(--font-display)" }}
+                {/* Popular posts — hidden when there's nothing real to link to */}
+                {popularPosts.length > 0 && (
+                  <div
+                    className="rounded-2xl border border-white/10 p-5"
+                    style={{ backgroundColor: "rgba(26,26,46,0.7)" }}
                   >
-                    Artigos populares
-                  </h3>
-                  <div className="space-y-3">
-                    {POPULAR_POSTS.map((post) => (
-                      <Link
-                        key={post.slug}
-                        href={`/blog/${post.slug}`}
-                        className="block group"
-                      >
-                        <p className="text-xs text-white/70 group-hover:text-orbit-400 transition-colors font-body leading-relaxed mb-1">
-                          {post.title}
-                        </p>
-                        <div className="flex items-center gap-2 text-white/30 text-xs font-body">
-                          <span>{post.date}</span>
-                          <span>·</span>
-                          <span>{post.readTime}</span>
-                        </div>
-                      </Link>
-                    ))}
+                    <h3
+                      className="text-sm font-bold text-white mb-4"
+                      style={{ fontFamily: "var(--font-display)" }}
+                    >
+                      Artigos populares
+                    </h3>
+                    <div className="space-y-3">
+                      {popularPosts.map((post) => (
+                        <Link
+                          key={post.slug}
+                          href={`/blog/${post.slug}`}
+                          className="block group"
+                        >
+                          <p className="text-xs text-white/70 group-hover:text-orbit-400 transition-colors font-body leading-relaxed mb-1">
+                            {post.title}
+                          </p>
+                          <div className="flex items-center gap-2 text-white/30 text-xs font-body">
+                            <span>{post.date}</span>
+                            <span>·</span>
+                            <span>{post.readTime}</span>
+                          </div>
+                        </Link>
+                      ))}
+                    </div>
                   </div>
-                </div>
+                )}
 
                 {/* Ebook CTA */}
                 <div
@@ -486,45 +463,47 @@ export default async function BlogArticlePage({
               </aside>
             </div>
 
-            {/* ── Related Posts ── */}
-            <div className="mt-16">
-              <h2
-                className="text-xl font-bold text-white mb-8"
-                style={{ fontFamily: "var(--font-display)" }}
-              >
-                Artigos relacionados
-              </h2>
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                {RELATED_POSTS.map((post) => (
-                  <Link key={post.slug} href={`/blog/${post.slug}`} className="group">
-                    <div
-                      className="rounded-2xl border border-white/10 p-6 h-full transition-all duration-300"
-                      style={{ backgroundColor: "rgba(26,26,46,0.5)" }}
-                    >
-                      <span
-                        className="inline-block text-xs font-bold text-orbit-400 uppercase tracking-wider mb-3 font-body"
-                        style={{ letterSpacing: "0.08em" }}
+            {/* ── Related Posts — hidden when no real slugs to link to ── */}
+            {relatedPosts.length > 0 && (
+              <div className="mt-16">
+                <h2
+                  className="text-xl font-bold text-white mb-8"
+                  style={{ fontFamily: "var(--font-display)" }}
+                >
+                  Artigos relacionados
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  {relatedPosts.map((post) => (
+                    <Link key={post.slug} href={`/blog/${post.slug}`} className="group">
+                      <div
+                        className="rounded-2xl border border-white/10 p-6 h-full transition-all duration-300"
+                        style={{ backgroundColor: "rgba(26,26,46,0.5)" }}
                       >
-                        {post.category}
-                      </span>
-                      <h3
-                        className="text-sm font-bold text-white group-hover:text-orbit-400 transition-colors mb-3 leading-snug"
-                        style={{ fontFamily: "var(--font-display)" }}
-                      >
-                        {post.title}
-                      </h3>
-                      <div className="flex items-center gap-2 text-white/30 text-xs font-body">
-                        <Calendar className="w-3 h-3" />
-                        <span>{post.date}</span>
-                        <span>·</span>
-                        <Clock className="w-3 h-3" />
-                        <span>{post.readTime}</span>
+                        <span
+                          className="inline-block text-xs font-bold text-orbit-400 uppercase tracking-wider mb-3 font-body"
+                          style={{ letterSpacing: "0.08em" }}
+                        >
+                          {post.category}
+                        </span>
+                        <h3
+                          className="text-sm font-bold text-white group-hover:text-orbit-400 transition-colors mb-3 leading-snug"
+                          style={{ fontFamily: "var(--font-display)" }}
+                        >
+                          {post.title}
+                        </h3>
+                        <div className="flex items-center gap-2 text-white/30 text-xs font-body">
+                          <Calendar className="w-3 h-3" />
+                          <span>{post.date}</span>
+                          <span>·</span>
+                          <Clock className="w-3 h-3" />
+                          <span>{post.readTime}</span>
+                        </div>
                       </div>
-                    </div>
-                  </Link>
-                ))}
+                    </Link>
+                  ))}
+                </div>
               </div>
-            </div>
+            )}
 
             {/* ── Newsletter CTA ── */}
             <div
@@ -546,20 +525,7 @@ export default async function BlogArticlePage({
               <p className="text-white/50 font-body text-sm mb-6 max-w-md mx-auto leading-relaxed">
                 Estratégias, análises e dicas exclusivas para sellers. Sem spam. Cancele quando quiser.
               </p>
-              <form className="flex flex-col sm:flex-row gap-3 max-w-md mx-auto" onSubmit={(e) => e.preventDefault()}>
-                <input
-                  type="email"
-                  placeholder="seu@email.com"
-                  className="flex-1 px-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder:text-white/30 text-sm font-body focus:outline-none focus:ring-2 focus:ring-orbit-400/50"
-                />
-                <button
-                  type="submit"
-                  className="px-6 py-3 rounded-xl text-sm font-bold text-white font-body transition-all hover:opacity-90 shrink-0"
-                  style={{ background: "linear-gradient(135deg, #185FA5, #378ADD)" }}
-                >
-                  Assinar
-                </button>
-              </form>
+              <NewsletterForm />
             </div>
           </div>
         </section>

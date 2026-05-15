@@ -1,7 +1,6 @@
 "use client";
 
 import { useRef, useEffect, useState } from "react";
-import { useInView } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface AnimatedCounterProps {
@@ -17,6 +16,12 @@ function easeOutQuart(t: number): number {
   return 1 - Math.pow(1 - t, 4);
 }
 
+/**
+ * Counter that animates 0 → value once the element scrolls into view.
+ * Previously used framer-motion's `useInView`; swapping that for a one-shot
+ * IntersectionObserver drops the framer dependency from this leaf component.
+ * The rAF counter logic is unchanged.
+ */
 export default function AnimatedCounter({
   value,
   prefix = "",
@@ -27,12 +32,28 @@ export default function AnimatedCounter({
 }: AnimatedCounterProps) {
   const [displayValue, setDisplayValue] = useState(0);
   const ref = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(ref, { once: true, margin: "-40px 0px" });
+  const [inView, setInView] = useState(false);
   const hasAnimated = useRef(false);
   const rafRef = useRef<number | null>(null);
 
   useEffect(() => {
-    if (!isInView || hasAnimated.current) return;
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setInView(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "-40px 0px" }
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  useEffect(() => {
+    if (!inView || hasAnimated.current) return;
     hasAnimated.current = true;
 
     const start = performance.now();
@@ -57,7 +78,7 @@ export default function AnimatedCounter({
     return () => {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
     };
-  }, [isInView, value, duration]);
+  }, [inView, value, duration]);
 
   const formatted =
     decimals > 0

@@ -3,6 +3,7 @@
 import { useRef } from "react";
 import { motion, useScroll, useTransform } from "framer-motion";
 import AnimatedCounter from "@/components/shared/AnimatedCounter";
+import ScrollReveal from "@/components/shared/ScrollReveal";
 
 const stats = [
   {
@@ -97,12 +98,10 @@ export default function SocialProof() {
           className="grid grid-cols-1 sm:grid-cols-3 gap-6 sm:gap-8 mb-16"
         >
           {stats.map((stat, i) => (
-            <motion.div
+            <ScrollReveal
               key={stat.label}
-              initial={{ opacity: 0, y: 30 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true, margin: "-50px" }}
-              transition={{ delay: i * 0.1, duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+              direction="up"
+              index={i}
               className="group relative"
             >
               <div
@@ -166,7 +165,7 @@ export default function SocialProof() {
                   }}
                 />
               </div>
-            </motion.div>
+            </ScrollReveal>
           ))}
         </motion.div>
 

@@ -8,6 +8,7 @@
  */
 
 import { useEffect, useRef } from "react";
+import { getDeviceTier, getRenderDpr } from "@/lib/perf";
 
 interface Star {
   x: number;
@@ -25,31 +26,68 @@ interface Star {
 
 export default function StarField() {
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const visibleRef = useRef(false);
 
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
+
+    // Honor reduced motion — render once then bail out (globals.css already
+    // hides canvas elements under prefers-reduced-motion, but skip the rAF
+    // loop too so we don't burn CPU painting an invisible canvas)
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Pause canvas rendering when off-screen
+    const tier = getDeviceTier();
+    // 300 stars × 2 draws per frame × 60fps was ~36k ctx calls/sec. On
+    // weaker laptops this jitters the scroll. Auto-scale the count.
+    const STAR_COUNT = tier === "low" ? 90 : tier === "mid" ? 180 : 300;
+    const HUES = [217, 230, 260, 36, 200];
+
+    // Lifecycle: rAF only runs while inView && tabVisible. When either flips
+    // false, cancelAnimationFrame stops the loop completely (no scheduled
+    // callbacks at all). Flipping back on schedules exactly one rAF.
+    let inView = false;
+    let tabVisible = document.visibilityState === "visible";
+    let raf: number | null = null;
+
+    const startLoop = () => {
+      if (raf !== null || !inView || !tabVisible) return;
+      raf = requestAnimationFrame(draw);
+    };
+    const stopLoop = () => {
+      if (raf !== null) {
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+    };
+    const syncLoop = () => {
+      if (inView && tabVisible) startLoop();
+      else stopLoop();
+    };
+
     const io = new IntersectionObserver(
-      ([entry]) => { visibleRef.current = entry.isIntersecting; },
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        syncLoop();
+      },
       { threshold: 0 }
     );
     io.observe(canvas);
 
+    const onVisibility = () => {
+      tabVisible = document.visibilityState === "visible";
+      syncLoop();
+    };
+    document.addEventListener("visibilitychange", onVisibility);
+
     let w = 0;
     let h = 0;
     let stars: Star[] = [];
-    let raf = 0;
-
-    const STAR_COUNT = 300;
-    const HUES = [217, 230, 260, 36, 200]; // blue, light-blue, purple, gold, cyan
 
     function resize() {
-      const dpr = Math.min(window.devicePixelRatio, 2);
+      const dpr = getRenderDpr(tier);
       const rect = canvas!.getBoundingClientRect();
       w = rect.width;
       h = rect.height;
@@ -91,8 +129,11 @@ export default function StarField() {
     let time = 0;
 
     function draw() {
-      raf = requestAnimationFrame(draw);
-      if (!visibleRef.current) return;
+      // Recheck — gated states may have flipped between schedule and tick.
+      if (!inView || !tabVisible) {
+        raf = null;
+        return;
+      }
 
       ctx!.clearRect(0, 0, w, h);
 
@@ -134,11 +175,14 @@ export default function StarField() {
         ctx!.ellipse(cx, cy, r, r * 0.6, 0, 0, Math.PI * 2);
         ctx!.stroke();
       }
+
+      raf = requestAnimationFrame(draw);
     }
 
     resize();
     createStars();
-    draw();
+    // No initial draw — the IntersectionObserver will fire on first measurement
+    // and start the loop via syncLoop if the canvas is in the viewport.
 
     const onResize = () => {
       resize();
@@ -147,8 +191,9 @@ export default function StarField() {
     window.addEventListener("resize", onResize);
 
     return () => {
-      cancelAnimationFrame(raf);
+      stopLoop();
       io.disconnect();
+      document.removeEventListener("visibilitychange", onVisibility);
       window.removeEventListener("resize", onResize);
     };
   }, []);

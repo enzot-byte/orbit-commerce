@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { getDeviceTier, getRenderDpr } from "@/lib/perf";
 
 const vertexShader = `
 precision highp float;
@@ -266,15 +267,54 @@ export default function FloatingLines({
     const container = containerRef.current;
     if (!container) return;
 
-    let active = true;
-    let raf = 0;
+    // Honor reduced-motion — skip the WebGL renderer entirely
+    if (typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
 
-    // Pause WebGL rendering when off-screen
+    const tier = getDeviceTier();
+    const dprCap = getRenderDpr(tier);
+
+    let active = true;
+    // Lifecycle: rAF only runs while inView && tabVisible. Both states must
+    // be tracked in closure scope so the OGL .then() callback can read them
+    // without staleness.
+    let inView = false;
+    let tabVisible = document.visibilityState === "visible";
+    let raf: number | null = null;
+    let renderLoop: (() => void) | null = null;
+
+    const startLoop = () => {
+      if (raf !== null || !active || !inView || !tabVisible || !renderLoop) return;
+      raf = requestAnimationFrame(renderLoop);
+    };
+    const stopLoop = () => {
+      if (raf !== null) {
+        cancelAnimationFrame(raf);
+        raf = null;
+      }
+    };
+    const syncLoop = () => {
+      if (active && inView && tabVisible) startLoop();
+      else stopLoop();
+    };
+
     const io = new IntersectionObserver(
-      ([entry]) => { visibleRef.current = entry.isIntersecting; },
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        visibleRef.current = entry.isIntersecting;
+        syncLoop();
+      },
       { threshold: 0 }
     );
     io.observe(container);
+
+    const onTabVisibility = () => {
+      tabVisible = document.visibilityState === "visible";
+      syncLoop();
+    };
+    document.addEventListener("visibilitychange", onTabVisibility);
 
     import("three").then(
       ({
@@ -294,8 +334,11 @@ export default function FloatingLines({
         const camera = new OrthographicCamera(-1, 1, 1, -1, 0, 1);
         camera.position.z = 1;
 
-        const renderer = new WebGLRenderer({ antialias: true, alpha: false });
-        renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+        // antialias off on low-tier devices — MSAA costs a noticeable chunk
+        // of fragment work and the wave lines look fine without it on small
+        // viewports
+        const renderer = new WebGLRenderer({ antialias: tier !== "low", alpha: false });
+        renderer.setPixelRatio(dprCap);
         renderer.domElement.style.width = "100%";
         renderer.domElement.style.height = "100%";
         container.appendChild(renderer.domElement);
@@ -420,10 +463,11 @@ export default function FloatingLines({
           renderer.domElement.addEventListener("pointerleave", handlePointerLeave);
         }
 
-        const renderLoop = () => {
-          if (!active) return;
-          raf = requestAnimationFrame(renderLoop);
-          if (!visibleRef.current) return;
+        renderLoop = () => {
+          if (!active || !inView || !tabVisible) {
+            raf = null;
+            return;
+          }
           uniforms.iTime.value = clock.getElapsedTime();
 
           if (interactive) {
@@ -443,11 +487,18 @@ export default function FloatingLines({
           }
 
           renderer.render(scene, camera);
+          // Schedule next frame only if we should keep running.
+          if (active && inView && tabVisible) {
+            raf = requestAnimationFrame(renderLoop!);
+          } else {
+            raf = null;
+          }
         };
-        renderLoop();
+        // Kick the loop if we're already in viewport when WebGL finished init.
+        syncLoop();
 
         (container as HTMLDivElement & { _flCleanup?: () => void })._flCleanup = () => {
-          cancelAnimationFrame(raf);
+          stopLoop();
           if (ro) ro.disconnect();
           if (interactive) {
             renderer.domElement.removeEventListener("pointermove", handlePointerMove);
@@ -466,8 +517,9 @@ export default function FloatingLines({
 
     return () => {
       active = false;
-      cancelAnimationFrame(raf);
+      stopLoop();
       io.disconnect();
+      document.removeEventListener("visibilitychange", onTabVisibility);
       const cleanup = (container as HTMLDivElement & { _flCleanup?: () => void })._flCleanup;
       if (cleanup) cleanup();
     };

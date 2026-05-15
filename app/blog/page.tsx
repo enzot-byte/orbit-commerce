@@ -1,18 +1,13 @@
 import type { Metadata } from "next";
-import dynamic from "next/dynamic";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
 import ScrollReveal from "@/components/shared/ScrollReveal";
-import BlogClient from "./BlogClient";
+import {
+  LazyStarField as StarField,
+  LazyBlogSlider as BlogSlider,
+  LazyBlogClient as BlogClient,
+} from "./BlogLazy";
 import Link from "next/link";
-
-// Canvas/Swiper — lazy loaded, not needed for first paint
-const StarField = dynamic(
-  () => import("@/components/shared/StarField")
-);
-const BlogSlider = dynamic(
-  () => import("@/components/sections/BlogSlider")
-);
 
 export const metadata: Metadata = {
   title: "Blog",

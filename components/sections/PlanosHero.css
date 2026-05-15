@@ -1,0 +1,156 @@
+/* ═══════════════════════════════════════════════════════════════
+   PLANOS — Hyper Scroll 3D Parallax Hero
+   ═══════════════════════════════════════════════════════════════ */
+
+.hyper-viewport {
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  overflow: hidden;
+  perspective: 1000px;
+  perspective-origin: 50% 50%;
+  background: #0A0A0F;
+}
+.hyper-world {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+.hyper-item {
+  position: absolute;
+  left: 0;
+  top: 0;
+  backface-visibility: hidden;
+  will-change: transform, opacity;
+}
+
+/* Feature cards — tier-coded */
+.hyper-feature-card {
+  width: 280px;
+  padding: 22px 20px;
+  background: rgba(15, 15, 30, 0.72);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-top: 2px solid var(--tier-color, #378ADD);
+  border-radius: 16px;
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  transform: translate(-50%, -50%);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.4);
+  position: relative;
+}
+/* Illustrated variant — wider with scene header */
+.hyper-feature-card--illustrated {
+  width: 320px;
+}
+.hyper-feature-scene {
+  width: calc(100% + 40px);
+  margin: -22px -20px 8px;
+  height: 100px;
+  position: relative;
+  overflow: hidden;
+  border-radius: 14px 14px 0 0;
+  background: linear-gradient(180deg, rgba(255,255,255,0.03) 0%, transparent 100%);
+}
+.hyper-scene-svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  padding: 4px 8px;
+}
+.hyper-scene-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.015) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.015) 1px, transparent 1px);
+  background-size: 20px 20px;
+  pointer-events: none;
+}
+.hyper-feature-badge {
+  display: inline-flex;
+  align-self: flex-start;
+  padding: 3px 10px;
+  border-radius: 999px;
+  border: 1px solid;
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+.hyper-feature-title {
+  font-family: var(--font-display);
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  line-height: 1.2;
+  margin: 0;
+}
+.hyper-feature-desc {
+  font-size: 12.5px;
+  color: rgba(255, 255, 255, 0.4);
+  line-height: 1.55;
+  margin: 0;
+}
+@media (max-width: 640px) {
+  .hyper-feature-card {
+    width: 230px;
+    padding: 18px 16px;
+  }
+  .hyper-feature-card--illustrated {
+    width: 260px;
+  }
+  .hyper-feature-scene {
+    width: calc(100% + 32px);
+    margin: -18px -16px 6px;
+    height: 80px;
+  }
+  .hyper-feature-title {
+    font-size: 0.95rem;
+  }
+  .hyper-feature-desc {
+    font-size: 12px;
+  }
+}
+
+/* Stars */
+.hyper-star {
+  position: absolute;
+  background: white;
+  border-radius: 50%;
+}
+
+/* Title overlay */
+.hyper-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  z-index: 10;
+  pointer-events: none;
+  will-change: opacity;
+  padding: 0 1rem;
+}
+
+/* Vignette for depth */
+.hyper-vignette {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, transparent 30%, rgba(10,10,15,0.8) 100%);
+  pointer-events: none;
+  z-index: 5;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hyper-world { transform: none !important; }
+  .hyper-item { opacity: 1 !important; }
+}
+

@@ -3,31 +3,30 @@ import { Plus_Jakarta_Sans, Manrope, JetBrains_Mono } from "next/font/google";
 import dynamic from "next/dynamic";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
-import SmoothScrollProvider from "@/components/shared/SmoothScrollProvider";
 
 // Lazy load CustomCursor — non-critical, desktop-only
 const CustomCursor = dynamic(
   () => import("@/components/shared/CustomCursor")
 );
 
+// All three fonts ship variable weight axes (200–800). Omitting `weight`
+// makes next/font fetch ONE variable font file per family instead of one
+// file per weight — replaces 9 weight files with 3 variable files.
 const plusJakarta = Plus_Jakarta_Sans({
   variable: "--font-display",
   subsets: ["latin"],
-  weight: ["500", "600", "700", "800"],
   display: "swap",
 });
 
 const manrope = Manrope({
   variable: "--font-body",
   subsets: ["latin"],
-  weight: ["400", "500", "600", "700"],
   display: "swap",
 });
 
 const jetbrainsMono = JetBrains_Mono({
   variable: "--font-mono",
   subsets: ["latin"],
-  weight: ["400"],
   display: "swap",
 });
 
@@ -90,10 +89,8 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col" style={{ fontFamily: "var(--font-body)" }}>
         <ThemeProvider>
-          <SmoothScrollProvider>
-            <CustomCursor />
-            {children}
-          </SmoothScrollProvider>
+          <CustomCursor />
+          {children}
         </ThemeProvider>
       </body>
     </html>

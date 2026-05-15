@@ -1,18 +1,19 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { getDeviceTier } from "@/lib/perf";
 
 /**
- * Cursor orbit — a dashed ring and 3 satellites orbiting the pointer,
- * locked 1:1 to the mouse position (zero delay). Driven by a single rAF
- * loop writing directly to element refs, no React state, no re-renders.
+ * Cursor orbit — a dashed ring and 3 satellites orbiting the pointer.
+ * Single rAF loop, writes directly to element refs, no React state.
  *
- * IMPORTANT implementation note:
- *   Previously we gated mounting behind `useState(enabled)`. That introduced
- *   a race: the effect ran once before the DOM nodes existed, found them
- *   `null`, and bailed out — leaving a stale ring in the top-left corner.
- *   Now elements are ALWAYS mounted via refs, and the effect just attaches
- *   the rAF loop.
+ * Perf gates:
+ *   - Skipped entirely on touch, reduced-motion, and low-tier devices
+ *   - Loop pauses while the tab is hidden (visibilitychange)
+ *   - Loop pauses ~600ms after the last mouse movement (cursor isn't moving →
+ *     no need to redraw the orbit ring/satellites at 60fps)
+ *   - When active but mouse idle, orbits keep spinning but at 30fps instead
+ *     of 60 — the user won't notice and CPU drops by half
  */
 export default function CustomCursor() {
   const rootRef = useRef<HTMLDivElement>(null);
@@ -32,6 +33,11 @@ export default function CustomCursor() {
     const reduced = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
     if (isTouch || reduced) return;
 
+    // Skip the decorative cursor entirely on low-tier hardware — these are
+    // the machines where partners report jank, and a 60fps rAF loop on top
+    // of WebGL backgrounds is the cheapest thing to cut.
+    if (getDeviceTier() === "low") return;
+
     const root = rootRef.current;
     const glow = glowRef.current;
     const ring = ringRef.current;
@@ -40,52 +46,86 @@ export default function CustomCursor() {
     const sat3 = sat3Ref.current;
     if (!root || !glow || !ring || !sat1 || !sat2 || !sat3) return;
 
-    // Reveal — elements are hidden until the pointer actually moves so
-    // we don't flash anything at (0,0) on initial paint.
     let revealed = false;
-
     let mx = -9999;
     let my = -9999;
     let raf = 0;
+    let lastMoveAt = 0;
+    let lastFrameAt = 0;
+    let paused = false;
     const start = performance.now();
 
-    const onMove = (e: MouseEvent) => {
-      mx = e.clientX;
-      my = e.clientY;
-      if (!revealed) {
-        revealed = true;
-        root.style.opacity = "1";
-      }
-    };
+    // Capture in const aliases so TS keeps the non-null narrowing inside
+    // the closure (we already null-checked above).
+    const _glow = glow;
+    const _ring = ring;
+    const _sat1 = sat1;
+    const _sat2 = sat2;
+    const _sat3 = sat3;
 
     const loop = (t: number) => {
-      // 1:1 follow — zero delay
+      if (paused) return;
+
+      // When the mouse has been still for >600ms, drop to ~30fps. The dashed
+      // ring + 3 satellites keep orbiting (visual coherence) but at half
+      // the framerate — invisible to the user, halves the CPU draw cost.
+      const idle = t - lastMoveAt > 600;
+      const minFrameGap = idle ? 33 : 0;
+      if (t - lastFrameAt < minFrameGap) {
+        raf = requestAnimationFrame(loop);
+        return;
+      }
+      lastFrameAt = t;
+
       const x = mx;
       const y = my;
 
-      // Soft halo (offset by half its 300px box)
-      glow.style.transform = `translate3d(${x - 150}px, ${y - 150}px, 0)`;
-      // Dashed orbit ring centered on cursor (60px box, radius 30)
-      ring.style.transform = `translate3d(${x - 30}px, ${y - 30}px, 0) rotate(${t * 0.08}deg)`;
+      _glow.style.transform = `translate3d(${x - 150}px, ${y - 150}px, 0)`;
+      _ring.style.transform = `translate3d(${x - 30}px, ${y - 30}px, 0) rotate(${t * 0.08}deg)`;
 
-      // Three satellites at different speeds + phase offsets
       const elapsed = (t - start) / 1000;
       const R = 26;
       const a1 = elapsed * 2.0;
       const a2 = elapsed * 1.6 + (Math.PI * 2) / 3;
       const a3 = elapsed * 2.4 + (Math.PI * 4) / 3;
-      sat1.style.transform = `translate3d(${x + Math.cos(a1) * R - 3}px, ${y + Math.sin(a1) * R * 0.65 - 3}px, 0)`;
-      sat2.style.transform = `translate3d(${x + Math.cos(a2) * R - 2.5}px, ${y + Math.sin(a2) * R * 0.65 - 2.5}px, 0)`;
-      sat3.style.transform = `translate3d(${x + Math.cos(a3) * (R * 0.8) - 2}px, ${y + Math.sin(a3) * (R * 0.8) * 0.6 - 2}px, 0)`;
+      _sat1.style.transform = `translate3d(${x + Math.cos(a1) * R - 3}px, ${y + Math.sin(a1) * R * 0.65 - 3}px, 0)`;
+      _sat2.style.transform = `translate3d(${x + Math.cos(a2) * R - 2.5}px, ${y + Math.sin(a2) * R * 0.65 - 2.5}px, 0)`;
+      _sat3.style.transform = `translate3d(${x + Math.cos(a3) * (R * 0.8) - 2}px, ${y + Math.sin(a3) * (R * 0.8) * 0.6 - 2}px, 0)`;
 
       raf = requestAnimationFrame(loop);
     };
 
+    const onMove = (e: MouseEvent) => {
+      mx = e.clientX;
+      my = e.clientY;
+      lastMoveAt = performance.now();
+      if (!revealed) {
+        revealed = true;
+        root.style.opacity = "1";
+      }
+      if (paused) {
+        paused = false;
+        raf = requestAnimationFrame(loop);
+      }
+    };
+
+    const onVisibility = () => {
+      if (document.visibilityState !== "visible") {
+        paused = true;
+        cancelAnimationFrame(raf);
+      } else if (paused) {
+        paused = false;
+        raf = requestAnimationFrame(loop);
+      }
+    };
+
     window.addEventListener("mousemove", onMove, { passive: true });
+    document.addEventListener("visibilitychange", onVisibility);
     raf = requestAnimationFrame(loop);
 
     return () => {
       window.removeEventListener("mousemove", onMove);
+      document.removeEventListener("visibilitychange", onVisibility);
       cancelAnimationFrame(raf);
     };
   }, []);

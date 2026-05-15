@@ -7,6 +7,8 @@
  * Pure CSS animations — zero JS per-frame cost.
  */
 
+import "./FerramentasHero.css";
+
 const LEVELS = [
   {
     y: "18%",

@@ -45,6 +45,14 @@ const PLANS = {
 
 type PlanSlug = keyof typeof PLANS;
 
+// Declare the known plan slugs. The route is server-rendered on demand
+// because it reads `searchParams.period`, so we can't statically prerender
+// — but listing the params still helps Next.js prefetch + bound the
+// expected URLs, and `notFound()` below guards anything not in PLANS.
+export async function generateStaticParams() {
+  return Object.keys(PLANS).map((plano) => ({ plano }));
+}
+
 // ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({

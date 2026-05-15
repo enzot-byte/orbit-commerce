@@ -3,7 +3,19 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+
+/**
+ * Read the `?next=…` query so we can bounce users back to the dashboard
+ * route they were trying to hit after the proxy.ts guard redirected them.
+ * Only allow same-origin paths — never trust an external URL from the query.
+ */
+function safeNextPath(raw: string | null): string {
+  if (!raw) return "/dashboard";
+  if (!raw.startsWith("/") || raw.startsWith("//")) return "/dashboard";
+  return raw;
+}
 
 const EASE: [number, number, number, number] = [0.22, 1, 0.36, 1];
 
@@ -37,6 +49,7 @@ export default function LoginForm() {
   const [googleLoading, setGoogleLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const next = safeNextPath(useSearchParams().get("next"));
 
   const handleGoogle = async () => {
     setError(null);
@@ -50,7 +63,7 @@ export default function LoginForm() {
     const { error: oauthError } = await supabase.auth.signInWithOAuth({
       provider: "google",
       options: {
-        redirectTo: `${window.location.origin}/api/auth/callback?next=/dashboard`,
+        redirectTo: `${window.location.origin}/api/auth/callback?next=${encodeURIComponent(next)}`,
       },
     });
     if (oauthError) {
@@ -67,7 +80,7 @@ export default function LoginForm() {
     if (!isSupabaseConfigured || !supabase) {
       // Dev mode fallback — lets you test the UI without a backend
       await new Promise((r) => setTimeout(r, 800));
-      window.location.href = "/dashboard";
+      window.location.href = next;
       return;
     }
 
@@ -80,7 +93,7 @@ export default function LoginForm() {
       setIsLoading(false);
       return;
     }
-    window.location.href = "/dashboard";
+    window.location.href = next;
   };
 
   const inputStyle = {

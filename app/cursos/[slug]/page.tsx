@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { notFound } from "next/navigation";
 import Link from "next/link";
 import {
   ArrowLeft,
@@ -134,54 +135,17 @@ const COURSES: Record<string, {
   },
 };
 
-const DEFAULT_COURSE = {
-  title: "Curso de Estratégia para Sellers",
-  subtitle: "Aprenda a escalar suas vendas no e-commerce brasileiro",
-  category: "Estratégia",
-  rating: 4.8,
-  reviewCount: 189,
-  enrollmentCount: 1240,
-  lastUpdate: "Abril 2025",
-  instructor: {
-    name: "Equipe Sellerverse",
-    role: "Especialistas em e-commerce brasileiro",
-    bio: "Nossa equipe reúne sellers com experiência real em Mercado Livre, Shopee, Amazon e outros marketplaces brasileiros.",
-    avatar: "O",
-  },
-  price: null,
-  description: "Um curso completo para quem quer levar suas vendas em marketplaces para o próximo nível.",
-  requirements: ["Conta ativa em algum marketplace", "Motivação para crescer"],
-  learningOutcomes: [
-    "Entender o mercado de e-commerce brasileiro",
-    "Aplicar estratégias de crescimento comprovadas",
-    "Usar dados para tomar melhores decisões",
-  ],
-  hours: 5,
-  modules: 6,
-  hasCertificate: true,
-  gradient: "linear-gradient(135deg, #185FA5 0%, #378ADD 100%)",
-  curriculum: [
-    {
-      title: "Módulo 1 — Introdução",
-      lessons: [
-        { title: "Boas-vindas ao curso", duration: "5:00", free: true as const },
-        { title: "Visão geral do mercado", duration: "20:00" },
-      ],
-    },
-  ],
-  reviews: [
-    {
-      author: "João P.",
-      rating: 5,
-      text: "Conteúdo excelente e muito prático.",
-      date: "10 abr 2025",
-    },
-  ],
-};
-
 function getCourse(slug: string) {
-  return COURSES[slug] ?? DEFAULT_COURSE;
+  // Return null for unknown slugs — page handler will 404.
+  // Previously this returned a generic placeholder course which generated
+  // duplicate/thin content for every invalid URL.
+  return COURSES[slug] ?? null;
 }
+
+export async function generateStaticParams() {
+  return Object.keys(COURSES).map((slug) => ({ slug }));
+}
+export const dynamicParams = false;
 
 // ─── Star Rating ──────────────────────────────────────────────────────────────
 
@@ -208,9 +172,17 @@ export async function generateMetadata({
 }): Promise<Metadata> {
   const { slug } = await params;
   const course = getCourse(slug);
+  if (!course) {
+    return { title: "Curso não encontrado | Sellerverse Cursos" };
+  }
   return {
     title: `${course.title} | Sellerverse Cursos`,
     description: course.description,
+    openGraph: {
+      title: course.title,
+      description: course.description,
+      type: "website",
+    },
   };
 }
 
@@ -223,6 +195,7 @@ export default async function CourseDetailPage({
 }) {
   const { slug } = await params;
   const course = getCourse(slug);
+  if (!course) notFound();
 
   return (
     <>

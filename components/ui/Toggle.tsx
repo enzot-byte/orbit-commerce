@@ -1,7 +1,6 @@
 "use client";
 
 import React, { useId } from "react";
-import { motion } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 // ─── Types ────────────────────────────────────────────────────────────────────
@@ -26,7 +25,7 @@ const sizeConfig = {
   sm: {
     track: "w-8 h-4",
     thumb: "w-3 h-3",
-    thumbTranslate: 16, // px
+    thumbTranslate: 16,
     label: "text-xs",
     padding: "p-0.5",
   },
@@ -46,18 +45,20 @@ const sizeConfig = {
   },
 };
 
-// ─── Color scheme ─────────────────────────────────────────────────────────────
-
 const colorOn = {
   orbit: "bg-orbit-600",
   accent: "bg-accent-400",
   success: "bg-success",
 };
 
-const colorOff =
-  "bg-gray-200 dark:bg-white/15";
+const colorOff = "bg-gray-200 dark:bg-white/15";
 
 // ─── Component ────────────────────────────────────────────────────────────────
+
+// Thumb transition cubic-bezier approximates the previous framer-motion spring
+// (stiffness 500 / damping 30) — overshoot is barely perceptible at this scale
+// so a single ease-out feels identical and costs zero JS.
+const THUMB_EASE = "cubic-bezier(0.34, 1.56, 0.64, 1)";
 
 export function Toggle({
   checked,
@@ -94,7 +95,7 @@ export function Toggle({
   );
 
   const track = (
-    <motion.button
+    <button
       type="button"
       id={toggleId}
       role="switch"
@@ -105,29 +106,22 @@ export function Toggle({
       onClick={() => !disabled && onChange(!checked)}
       onKeyDown={handleKeyDown}
       className={trackClasses}
-      animate={{ backgroundColor: checked ? getComputedColor(colorScheme) : "#E5E7EB" }}
-      transition={{ duration: 0.2 }}
     >
-      {/* Thumb */}
-      <motion.span
+      <span
         className={cn(
-          "block rounded-full bg-white shadow-md",
+          "block rounded-full bg-white shadow-md motion-reduce:transition-none",
           cfg.thumb
         )}
-        animate={{
-          x: checked ? cfg.thumbTranslate : 0,
-        }}
-        transition={{
-          type: "spring",
-          stiffness: 500,
-          damping: 30,
+        style={{
+          transform: `translateX(${checked ? cfg.thumbTranslate : 0}px)`,
+          transition: `transform 220ms ${THUMB_EASE}`,
+          willChange: "transform",
         }}
         aria-hidden="true"
       />
-    </motion.button>
+    </button>
   );
 
-  // If there are bilateral labels or a single label above/beside
   if (labelLeft || labelRight) {
     return (
       <div
@@ -186,16 +180,4 @@ export function Toggle({
   }
 
   return <div className={className}>{track}</div>;
-}
-
-// Helper — returns actual CSS color values for framer-motion animate
-function getComputedColor(scheme: "orbit" | "accent" | "success") {
-  switch (scheme) {
-    case "orbit":
-      return "#185FA5";
-    case "accent":
-      return "#EF9F27";
-    case "success":
-      return "#0F6E56";
-  }
 }

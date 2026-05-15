@@ -2,6 +2,7 @@
 
 import { Mesh, Program, Renderer, Triangle, Vec3 } from "ogl";
 import { useEffect, useRef } from "react";
+import { getDeviceTier, getRenderDpr } from "@/lib/perf";
 
 /* ─── Color utilities ──────────────────────────────────────────────── */
 
@@ -250,20 +251,57 @@ export default function Orb({
   backgroundColor = "#000000",
 }: OrbProps) {
   const ctnDom = useRef<HTMLDivElement>(null);
-  const visibleRef = useRef(false);
 
   useEffect(() => {
     const container = ctnDom.current;
     if (!container) return;
 
-    // Pause WebGL rendering when off-screen
+    // Honor reduced-motion preference — bail out before allocating GL context
+    if (typeof window !== "undefined" &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const tier = getDeviceTier();
+    const dprCap = getRenderDpr(tier);
+
+    // Lifecycle gates — both must be true for rAF to be scheduled.
+    let inView = false;
+    let tabVisible = document.visibilityState === "visible";
+    let rafId: number | null = null;
+    let update: ((t: number) => void) | null = null;
+
+    const startLoop = () => {
+      if (rafId !== null || !update || !inView || !tabVisible) return;
+      rafId = requestAnimationFrame(update);
+    };
+    const stopLoop = () => {
+      if (rafId !== null) {
+        cancelAnimationFrame(rafId);
+        rafId = null;
+      }
+    };
+    const syncLoop = () => {
+      if (inView && tabVisible) startLoop();
+      else stopLoop();
+    };
+
     const io = new IntersectionObserver(
-      ([entry]) => { visibleRef.current = entry.isIntersecting; },
+      ([entry]) => {
+        inView = entry.isIntersecting;
+        syncLoop();
+      },
       { threshold: 0 }
     );
     io.observe(container);
 
-    const renderer = new Renderer({ alpha: true, premultipliedAlpha: false });
+    const onTabVisibility = () => {
+      tabVisible = document.visibilityState === "visible";
+      syncLoop();
+    };
+    document.addEventListener("visibilitychange", onTabVisibility);
+
+    const renderer = new Renderer({ alpha: true, premultipliedAlpha: false, dpr: dprCap });
     const gl = renderer.gl;
     gl.clearColor(0, 0, 0, 0);
     container.appendChild(gl.canvas);
@@ -293,12 +331,9 @@ export default function Orb({
 
     function resize() {
       if (!container) return;
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
       const width = container.clientWidth;
       const height = container.clientHeight;
-      renderer.setSize(width * dpr, height * dpr);
-      gl.canvas.style.width = width + "px";
-      gl.canvas.style.height = height + "px";
+      renderer.setSize(width, height);
       program.uniforms.iResolution.value.set(
         gl.canvas.width,
         gl.canvas.height,
@@ -335,10 +370,11 @@ export default function Orb({
     container.addEventListener("mousemove", handleMouseMove);
     container.addEventListener("mouseleave", handleMouseLeave);
 
-    let rafId: number;
-    const update = (t: number) => {
-      rafId = requestAnimationFrame(update);
-      if (!visibleRef.current) return;
+    update = (t: number) => {
+      if (!inView || !tabVisible) {
+        rafId = null;
+        return;
+      }
       const dt = (t - lastTime) * 0.001;
       lastTime = t;
 
@@ -357,12 +393,20 @@ export default function Orb({
       program.uniforms.rot.value = currentRot;
 
       renderer.render({ scene: mesh });
+
+      if (inView && tabVisible) {
+        rafId = requestAnimationFrame(update!);
+      } else {
+        rafId = null;
+      }
     };
-    rafId = requestAnimationFrame(update);
+    // Schedule the first frame only when IO confirms visibility.
+    syncLoop();
 
     return () => {
-      cancelAnimationFrame(rafId);
+      stopLoop();
       io.disconnect();
+      document.removeEventListener("visibilitychange", onTabVisibility);
       window.removeEventListener("resize", resize);
       container.removeEventListener("mousemove", handleMouseMove);
       container.removeEventListener("mouseleave", handleMouseLeave);
