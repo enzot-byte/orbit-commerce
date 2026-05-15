@@ -691,7 +691,12 @@ html {
   transition: opacity 0.35s ease, transform 0.35s cubic-bezier(0.22,1,0.36,1), filter 0.35s ease;
 }
 
-/* Tool card — CSS-only hover for zero React re-renders */
+/* Tool card — CSS-only hover for zero React re-renders.
+   NOTE: `backdrop-filter: blur(12px)` was removed intentionally — the cards
+   already use a ~96% opaque gradient background, so the blur had no visible
+   effect, but it forced the GPU compositor to rebuild the backdrop on every
+   frame while 6 cards orbit via offset-distance animation. That was the
+   single biggest source of jank on the home page. */
 .tool-card {
   position: relative;
   display: flex;
@@ -700,8 +705,7 @@ html {
   cursor: pointer;
   overflow: hidden;
   width: 280px;
-  background: linear-gradient(180deg, rgba(22,22,44,0.96) 0%, rgba(16,16,34,0.95) 100%);
-  backdrop-filter: blur(12px);
+  background: linear-gradient(180deg, rgba(22,22,44,0.98) 0%, rgba(16,16,34,0.97) 100%);
   box-shadow: 0 12px 40px rgba(0,0,0,0.35), inset 0 1px 0 rgba(255,255,255,0.04);
   transition: background 0.35s cubic-bezier(0.22,1,0.36,1),
               border-color 0.35s cubic-bezier(0.22,1,0.36,1),

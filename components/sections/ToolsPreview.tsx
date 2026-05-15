@@ -2,6 +2,7 @@
 
 import { useMemo, useEffect, useRef, useState } from "react";
 import { type MotionValue, motion, useMotionValue, useTransform } from "framer-motion";
+import { getDeviceTier } from "@/lib/perf";
 import {
   Calculator,
   Search,
@@ -359,17 +360,29 @@ export default function ToolsPreview() {
     return () => ro.disconnect();
   }, []);
 
-  // Orbit loop
+  // Orbit loop — frame-rate-capped per device tier. 6 cards each running a
+  // `progress.on("change", …)` listener that does Math.sin + 4 DOM mutations
+  // means every tick costs ~30 style writes; combined with the orbiting
+  // offset-distance animation that was previously starving the compositor
+  // thread on mid/low hardware. Targeting 30fps on those tiers cuts the
+  // cost in half with no perceivable difference at this orbit speed.
   useEffect(() => {
     if (isPaused) return;
+    const tier = getDeviceTier();
+    const targetFps = tier === "low" ? 20 : tier === "mid" ? 30 : 60;
+    const minFrameGap = 1000 / targetFps;
     let last: number | null = null;
+    let lastTickAt = 0;
     let raf: number;
     const loop = (now: number) => {
-      if (last !== null) {
-        const dt = (now - last) / 1000;
-        progress.set((progress.get() + (dt / DUR) * 100) % 100);
+      if (now - lastTickAt >= minFrameGap) {
+        if (last !== null) {
+          const dt = (now - last) / 1000;
+          progress.set((progress.get() + (dt / DUR) * 100) % 100);
+        }
+        last = now;
+        lastTickAt = now;
       }
-      last = now;
       raf = requestAnimationFrame(loop);
     };
     raf = requestAnimationFrame(loop);
