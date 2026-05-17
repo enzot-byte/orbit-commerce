@@ -388,29 +388,30 @@ export default function ToolsPreview() {
               </svg>
             </div>
 
-            {/* Rotating orbit cage — CSS @keyframes only. The container
-                spins; each card inside counter-rotates so its text stays
-                upright. Browser does this on the GPU compositor, ~free. */}
-            <div className="tools-orbit-cage absolute inset-0">
-              {tools.map((tool, i) => {
-                const slot = SLOTS[i];
-                return (
-                  <div
-                    key={tool.name}
-                    className="tools-orbit-slot"
-                    style={{
-                      position: "absolute",
-                      left: `calc(50% + ${slot.x}px)`,
-                      top: `calc(50% + ${slot.y}px)`,
-                      transform: "translate(-50%, -50%)",
-                    }}
-                  >
-                    <div className="tools-orbit-counter">
-                      <ToolCard tool={tool} />
-                    </div>
-                  </div>
-                );
-              })}
+            {/* Cards traveling the ellipse via CSS `offset-path` — the
+                browser slides each card EXACTLY along the SVG path, so it
+                tracks the dashed orbit pixel-perfect. Previous version
+                used `transform: rotate()` on a container, which moves all
+                children in a circle — but our orbit is an ellipse, so
+                cards drifted off the rail. Each card has its own
+                `offset-distance` animation with staggered negative delays
+                so the 6 cards are evenly spaced on the orbit at all
+                times. All GPU-handled, zero JS per frame. */}
+            <div className="absolute inset-0 tools-orbit-cards">
+              {tools.map((tool, i) => (
+                <div
+                  key={tool.name}
+                  className="tools-orbit-traveler"
+                  style={{
+                    // Stagger each card to a different starting offset on
+                    // the same 60s animation. Card 0 starts at 0%, card 1
+                    // at -16.67% (1/6 of duration), etc.
+                    animationDelay: `${-(i * 60) / tools.length}s`,
+                  }}
+                >
+                  <ToolCard tool={tool} />
+                </div>
+              ))}
             </div>
           </div>
         </div>
