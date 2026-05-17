@@ -20,7 +20,7 @@
  * Mobile keeps a simple swipe-scroll carousel (no infinite marquee).
  */
 
-import { useMemo, useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import {
   Calculator,
   Search,
@@ -269,29 +269,6 @@ export default function ToolsPreview() {
     return () => ro.disconnect();
   }, []);
 
-  const cardElements = useMemo(
-    () =>
-      tools.map((tool, i) => {
-        const slot = SLOTS[i];
-        return (
-          <div
-            key={tool.name}
-            className="orbit-card-slot"
-            style={{
-              position: "absolute",
-              left: `calc(50% + ${slot.x}px)`,
-              top: `calc(50% + ${slot.y}px)`,
-              transform: "translate(-50%, -50%)",
-              zIndex: 10,
-            }}
-          >
-            <ToolCard tool={tool} />
-          </div>
-        );
-      }),
-    []
-  );
-
   return (
     <section
       className="relative overflow-hidden ambient-light"
@@ -327,13 +304,18 @@ export default function ToolsPreview() {
           </p>
         </ScrollReveal>
 
-        {/* ─── Desktop / tablet: static orbital ─── */}
+        {/* ─── Desktop / tablet: CSS-only spinning orbit ───
+            The whole orbit rotates via a single `@keyframes orbit-spin`
+            on the wrapper. Each card counter-rotates with the same
+            keyframe in reverse so the CARD stays upright while moving
+            around the ellipse. This is ALL handled by the browser's
+            compositor on the GPU — zero JS per frame, zero rAF, zero
+            React re-render. Pauses on `prefers-reduced-motion`. */}
         <div
           ref={containerRef}
           className="hidden md:block relative mx-auto"
           style={{ width: "100%", maxWidth: "1100px", aspectRatio: "1.65 / 1" }}
         >
-          {/* Scale-to-fit wrapper */}
           <div
             className="absolute"
             style={{
@@ -345,7 +327,7 @@ export default function ToolsPreview() {
               transformOrigin: "center center",
             }}
           >
-            {/* Static dashed orbit ellipse */}
+            {/* Static dashed orbit ellipse — guide rail, never rotates */}
             <svg
               className="absolute inset-0 pointer-events-none"
               viewBox={`0 0 ${BASE} ${BASE}`}
@@ -358,24 +340,10 @@ export default function ToolsPreview() {
                 strokeWidth={1.5}
                 strokeDasharray="8 6"
               />
-              {/* Faint force lines from center to each slot */}
-              {SLOTS.map((s, i) => (
-                <line
-                  key={i}
-                  x1={BASE / 2}
-                  y1={BASE / 2}
-                  x2={BASE / 2 + s.x}
-                  y2={BASE / 2 + s.y}
-                  stroke="rgba(155,123,255,0.05)"
-                  strokeWidth={1}
-                  strokeDasharray="4 8"
-                />
-              ))}
             </svg>
 
-            {/* Central node — static gradient sphere with S monogram. No
-                spin, no wireframe meridians, no atom rings, no glow pulse.
-                Just a still ball. */}
+            {/* Central node — static gradient sphere with S monogram.
+                Sphere itself doesn't spin. */}
             <div
               className="absolute pointer-events-none"
               style={{
@@ -386,7 +354,6 @@ export default function ToolsPreview() {
                 transform: "translate(-50%, -50%)",
               }}
             >
-              {/* Soft outer halo — static, no animation */}
               <div
                 className="absolute"
                 style={{
@@ -396,7 +363,6 @@ export default function ToolsPreview() {
                     "radial-gradient(circle, rgba(91,63,216,0.28) 0%, rgba(155,123,255,0.10) 30%, transparent 60%)",
                 }}
               />
-              {/* Sphere body */}
               <div
                 className="absolute inset-0 rounded-full"
                 style={{
@@ -407,7 +373,6 @@ export default function ToolsPreview() {
                     "inset 0 0 50px rgba(91,63,216,0.20), 0 0 80px rgba(91,63,216,0.16)",
                 }}
               />
-              {/* S monogram */}
               <svg
                 viewBox="0 0 200 200"
                 fill="none"
@@ -423,9 +388,30 @@ export default function ToolsPreview() {
               </svg>
             </div>
 
-            {/* Cards positioned around the ellipse — pre-computed, never
-                move. Hover effects still work via .tool-card CSS. */}
-            {cardElements}
+            {/* Rotating orbit cage — CSS @keyframes only. The container
+                spins; each card inside counter-rotates so its text stays
+                upright. Browser does this on the GPU compositor, ~free. */}
+            <div className="tools-orbit-cage absolute inset-0">
+              {tools.map((tool, i) => {
+                const slot = SLOTS[i];
+                return (
+                  <div
+                    key={tool.name}
+                    className="tools-orbit-slot"
+                    style={{
+                      position: "absolute",
+                      left: `calc(50% + ${slot.x}px)`,
+                      top: `calc(50% + ${slot.y}px)`,
+                      transform: "translate(-50%, -50%)",
+                    }}
+                  >
+                    <div className="tools-orbit-counter">
+                      <ToolCard tool={tool} />
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
           </div>
         </div>
 

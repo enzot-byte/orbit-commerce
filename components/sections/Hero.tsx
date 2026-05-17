@@ -67,16 +67,16 @@ export default function Hero() {
           <Galaxy
             mouseRepulsion
             mouseInteraction
-            density={0.45}
-            glowIntensity={0.2}
+            density={0.32}
+            glowIntensity={0.18}
             saturation={0.1}
             hueShift={260}
-            twinkleIntensity={0.25}
-            rotationSpeed={0.025}
-            repulsionStrength={1.2}
+            twinkleIntensity={0.22}
+            rotationSpeed={0.02}
+            repulsionStrength={1.1}
             autoCenterRepulsion={0}
-            starSpeed={0.22}
-            speed={0.45}
+            starSpeed={0.2}
+            speed={0.4}
             transparent={false}
           />
         ) : (

@@ -45,9 +45,13 @@ export function getDeviceTier(): DeviceTier {
 export function getRenderDpr(tier: DeviceTier = getDeviceTier()): number {
   if (typeof window === "undefined") return 1;
   const native = window.devicePixelRatio || 1;
-  if (tier === "low") return Math.min(native, 1);
-  if (tier === "mid") return Math.min(native, 1.5);
-  return Math.min(native, 2);
+  // Aggressive caps: WebGL fragment shaders scale quadratically with pixel
+  // count, so even mid-tier hardware suffers on a Retina display where
+  // native DPR is 2 or 3 (4-9× more shaded pixels). 1× on Retina is still
+  // sharp enough for a decorative starfield; the user can't tell.
+  if (tier === "low") return 1;
+  if (tier === "mid") return Math.min(native, 1.25);
+  return Math.min(native, 1.5);
 }
 
 /** True if document is currently visible (rAF loops should gate on this). */

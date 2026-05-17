@@ -951,6 +951,41 @@ html {
   }
 }
 
+/* ─── ToolsPreview orbit — CSS-only spin (no rAF, no JS per frame) ───
+   Container rotates infinitely; each card counter-rotates with the same
+   keyframe in reverse to stay upright. Browser handles it 100% on the
+   compositor — zero main-thread work. */
+@keyframes tools-orbit-spin {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(360deg); }
+}
+@keyframes tools-orbit-counter {
+  from { transform: rotate(0deg); }
+  to   { transform: rotate(-360deg); }
+}
+.tools-orbit-cage {
+  animation: tools-orbit-spin 60s linear infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+.tools-orbit-counter {
+  animation: tools-orbit-counter 60s linear infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+/* Pause both layers on hover so the user can read a card without it
+   sliding away. Single `:hover` on the cage paints state to both. */
+.tools-orbit-cage:hover,
+.tools-orbit-cage:hover .tools-orbit-counter {
+  animation-play-state: paused;
+}
+@media (prefers-reduced-motion: reduce) {
+  .tools-orbit-cage,
+  .tools-orbit-counter {
+    animation: none;
+  }
+}
+
 /* ─── Hero entrance — replaces 6× framer motion.div fadeUp on the LCP ─── */
 @keyframes hero-fade-up {
   from { opacity: 0; transform: translateY(32px); }
