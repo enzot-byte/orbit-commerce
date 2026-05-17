@@ -935,6 +935,31 @@ html {
   }
 }
 
+/* ─── Hero entrance — replaces 6× framer motion.div fadeUp on the LCP ─── */
+@keyframes hero-fade-up {
+  from { opacity: 0; transform: translateY(32px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.hero-fade-up {
+  opacity: 0;
+  animation: hero-fade-up 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes hero-scroll-indicator-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+.hero-scroll-indicator {
+  opacity: 0;
+  animation: hero-scroll-indicator-in 0.6s ease-out 2s forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-fade-up,
+  .hero-scroll-indicator {
+    opacity: 1;
+    animation: none;
+  }
+}
+
 /* ─── DeferredSection placeholder (gated by IntersectionObserver) ─── */
 /* Subtle shimmer so the area doesn't look totally empty during the few ms
    before its chunk arrives. Reduced-motion users get a flat panel. */

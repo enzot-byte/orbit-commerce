@@ -1,12 +1,21 @@
 "use client";
 
-import { useRef } from "react";
-import {
-  motion,
-  useScroll,
-  useTransform,
-  useInView,
-} from "framer-motion";
+/**
+ * HowItWorks — 3-step timeline.
+ *
+ * Previously this surface ran:
+ *   - useScroll + useTransform on the section to drive a scaleY gradient line
+ *   - useInView per step (3 separate IntersectionObservers + framer machinery)
+ *   - per-step motion.div fadeUp/slideIn with spring animations
+ *   - 3 illustration components (CommunityViz, ToolsViz, GrowthViz) each
+ *     with their own framer entry animations across many sub-elements
+ *
+ * Now: gradient line is a static CSS gradient (no scroll listener), each
+ * step uses the shared CSS-only ScrollReveal for one-shot fade-in, and the
+ * illustrations render in their final state with no entry animation. Same
+ * 3-step narrative, ~zero framer-motion overhead on this section.
+ */
+
 import { Users, LayoutGrid, TrendingUp, MessageSquare } from "lucide-react";
 import ScrollReveal from "@/components/shared/ScrollReveal";
 
@@ -44,20 +53,15 @@ const steps = [
 
 /* ─── Illustration: Community (step 1) ──────────────────────────────── */
 
-function CommunityViz({ active }: { active: boolean }) {
+function CommunityViz() {
   const messages = [
-    { name: "Rafael M.", initials: "R", text: "Acabei de fechar R$12k no ML esse mês!", delay: 0.3, color: "#9B7BFF" },
-    { name: "Carla V.", initials: "C", text: "Quem testou a nova calculadora de frete?", delay: 0.5, color: "#C4B5FD" },
-    { name: "Lucas F.", initials: "L", text: "ROI subiu 34% com a estratégia do curso!", delay: 0.7, color: "#EF9F27" },
+    { name: "Rafael M.", initials: "R", text: "Acabei de fechar R$12k no ML esse mês!", color: "#9B7BFF" },
+    { name: "Carla V.", initials: "C", text: "Quem testou a nova calculadora de frete?", color: "#C4B5FD" },
+    { name: "Lucas F.", initials: "L", text: "ROI subiu 34% com a estratégia do curso!", color: "#EF9F27" },
   ];
 
   return (
-    <motion.div
-      className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden w-full max-w-sm mx-auto"
-      initial={{ opacity: 0, y: 24 }}
-      animate={active ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-    >
+    <div className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden w-full max-w-sm mx-auto">
       {/* Header */}
       <div className="px-5 py-3 border-b border-white/5 flex items-center gap-3">
         <div className="w-6 h-6 rounded-full bg-purple-500/20 flex items-center justify-center">
@@ -66,36 +70,20 @@ function CommunityViz({ active }: { active: boolean }) {
         <span className="text-xs text-white/40 font-medium">Comunidade Sellerverse</span>
         <div className="ml-auto flex -space-x-1.5">
           {[0, 1, 2].map((i) => (
-            <motion.div
+            <div
               key={i}
               className="w-5 h-5 rounded-full border border-[#0F0F1A]"
               style={{ background: `hsl(${260 + i * 20}, 60%, ${55 + i * 10}%)` }}
-              initial={{ scale: 0 }}
-              animate={active ? { scale: 1 } : {}}
-              transition={{ delay: 0.4 + i * 0.1, type: "spring", stiffness: 300 }}
             />
           ))}
-          <motion.span
-            className="text-[9px] text-white/30 pl-2.5 self-center"
-            initial={{ opacity: 0 }}
-            animate={active ? { opacity: 1 } : {}}
-            transition={{ delay: 0.7 }}
-          >
-            +2.4k online
-          </motion.span>
+          <span className="text-[9px] text-white/30 pl-2.5 self-center">+2.4k online</span>
         </div>
       </div>
 
       {/* Messages */}
       <div className="p-4 space-y-3">
         {messages.map((msg, i) => (
-          <motion.div
-            key={i}
-            className="flex gap-3 items-start"
-            initial={{ opacity: 0, x: -16 }}
-            animate={active ? { opacity: 1, x: 0 } : {}}
-            transition={{ delay: msg.delay, duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
-          >
+          <div key={i} className="flex gap-3 items-start">
             <div
               className="w-7 h-7 rounded-full flex-shrink-0 flex items-center justify-center text-[9px] font-bold"
               style={{ backgroundColor: msg.color + "25", color: msg.color }}
@@ -106,50 +94,39 @@ function CommunityViz({ active }: { active: boolean }) {
               <p className="text-[10px] font-semibold text-white/60">{msg.name}</p>
               <p className="text-[11px] text-white/35 mt-0.5 leading-relaxed">{msg.text}</p>
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
 
-      {/* Typing indicator */}
-      <motion.div
-        className="px-5 py-2.5 border-t border-white/5 flex items-center gap-2"
-        initial={{ opacity: 0 }}
-        animate={active ? { opacity: 1 } : {}}
-        transition={{ delay: 1 }}
-      >
+      {/* Typing indicator — single CSS pulse animation, no JS, no per-dot animation */}
+      <div className="px-5 py-2.5 border-t border-white/5 flex items-center gap-2">
         <div className="flex gap-1">
           {[0, 1, 2].map((i) => (
-            <motion.div
+            <div
               key={i}
-              className="w-1.5 h-1.5 rounded-full bg-purple-400/40"
-              animate={active ? { opacity: [0.3, 1, 0.3] } : {}}
-              transition={{ delay: 1.2 + i * 0.15, duration: 1.2, repeat: Infinity }}
+              className="w-1.5 h-1.5 rounded-full bg-purple-400/40 animate-pulse-slow"
+              style={{ animationDelay: `${i * 150}ms` }}
             />
           ))}
         </div>
         <span className="text-[9px] text-white/20">3 sellers digitando...</span>
-      </motion.div>
-    </motion.div>
+      </div>
+    </div>
   );
 }
 
 /* ─── Illustration: Tools & Courses (step 2) ────────────────────────── */
 
-function ToolsViz({ active }: { active: boolean }) {
+function ToolsViz() {
   const tools = [
     { emoji: "\u{1F4CA}", name: "Calculadora ML", pct: 55, color: "#9B7BFF" },
-    { emoji: "\u26A1",    name: "Gerador SEO",    pct: 70, color: "#C4B5FD" },
+    { emoji: "⚡",    name: "Gerador SEO",    pct: 70, color: "#C4B5FD" },
     { emoji: "\u{1F4CB}", name: "Templates",      pct: 82, color: "#5B3FD8" },
     { emoji: "\u{1F4C8}", name: "Analytics",       pct: 92, color: "#EF9F27" },
   ];
 
   return (
-    <motion.div
-      className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden w-full max-w-sm mx-auto"
-      initial={{ opacity: 0, y: 24 }}
-      animate={active ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-    >
+    <div className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden w-full max-w-sm mx-auto">
       {/* Window chrome */}
       <div className="flex items-center gap-2 px-5 py-3 border-b border-white/5">
         <div className="flex gap-1.5">
@@ -162,92 +139,60 @@ function ToolsViz({ active }: { active: boolean }) {
 
       {/* Tool grid */}
       <div className="grid grid-cols-2 gap-3 p-4">
-        {tools.map((tool, i) => (
-          <motion.div
+        {tools.map((tool) => (
+          <div
             key={tool.name}
             className="p-3.5 rounded-xl bg-white/[0.03] border border-white/[0.06]"
-            initial={{ opacity: 0, scale: 0.85 }}
-            animate={active ? { opacity: 1, scale: 1 } : {}}
-            transition={{
-              delay: 0.3 + i * 0.12,
-              duration: 0.5,
-              type: "spring",
-              stiffness: 200,
-            }}
           >
             <span className="text-lg block mb-2">{tool.emoji}</span>
             <p className="text-[11px] text-white/50 font-medium">{tool.name}</p>
             <div className="mt-2.5 h-1 rounded-full bg-white/5 overflow-hidden">
-              <motion.div
+              <div
                 className="h-full rounded-full"
-                style={{ backgroundColor: tool.color }}
-                initial={{ width: 0 }}
-                animate={active ? { width: `${tool.pct}%` } : {}}
-                transition={{ delay: 0.6 + i * 0.1, duration: 0.9, ease: "easeOut" }}
+                style={{ width: `${tool.pct}%`, backgroundColor: tool.color }}
               />
             </div>
-          </motion.div>
+          </div>
         ))}
       </div>
-    </motion.div>
+    </div>
   );
 }
 
 /* ─── Illustration: Growth chart (step 3) ───────────────────────────── */
 
-function GrowthViz({ active }: { active: boolean }) {
+function GrowthViz() {
   const bars = [30, 42, 38, 50, 58, 52, 68, 75, 70, 88, 82, 96];
 
   return (
-    <motion.div
-      className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden p-5 w-full max-w-sm mx-auto"
-      initial={{ opacity: 0, y: 24 }}
-      animate={active ? { opacity: 1, y: 0 } : {}}
-      transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-    >
+    <div className="rounded-2xl border border-white/10 bg-white/[0.02] overflow-hidden p-5 w-full max-w-sm mx-auto">
       {/* Header */}
       <div className="flex items-center justify-between mb-5">
         <div>
           <p className="text-[10px] text-white/25 uppercase tracking-wider">Faturamento</p>
-          <motion.p
-            className="text-2xl font-display font-bold text-white mt-0.5"
-            initial={{ opacity: 0 }}
-            animate={active ? { opacity: 1 } : {}}
-            transition={{ delay: 1.2 }}
-          >
-            +247%
-          </motion.p>
+          <p className="text-2xl font-display font-bold text-white mt-0.5">+247%</p>
         </div>
-        <motion.div
+        <div
           className="flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-medium"
           style={{ backgroundColor: "rgba(16,185,129,0.12)", color: "#10b981" }}
-          initial={{ opacity: 0, x: 10 }}
-          animate={active ? { opacity: 1, x: 0 } : {}}
-          transition={{ delay: 1.3 }}
         >
           <TrendingUp className="w-3 h-3" />
           Crescendo
-        </motion.div>
+        </div>
       </div>
 
-      {/* Bar chart */}
+      {/* Bar chart — static, final state. No staggered entry animation. */}
       <div className="flex items-end gap-1 h-28">
         {bars.map((h, i) => (
-          <motion.div
+          <div
             key={i}
             className="flex-1 rounded-t-sm"
             style={{
+              height: `${h}%`,
               background:
                 i >= bars.length - 3
                   ? "linear-gradient(to top, #5B3FD8, #9B7BFF)"
                   : "rgba(155,123,255,0.12)",
-            }}
-            initial={{ height: 0 }}
-            animate={active ? { height: `${h}%` } : {}}
-            transition={{
-              delay: 0.3 + i * 0.06,
-              duration: 0.6,
-              ease: [0.22, 1, 0.36, 1],
             }}
           />
         ))}
@@ -259,11 +204,9 @@ function GrowthViz({ active }: { active: boolean }) {
         <span className="text-[9px] text-white/15">Jun</span>
         <span className="text-[9px] text-white/15">Dez</span>
       </div>
-    </motion.div>
+    </div>
   );
 }
-
-/* ─── Vizualization components map ──────────────────────────────────── */
 
 const vizComponents = [CommunityViz, ToolsViz, GrowthViz];
 
@@ -276,41 +219,31 @@ function TimelineStep({
   step: (typeof steps)[number];
   index: number;
 }) {
-  const ref = useRef<HTMLDivElement>(null);
-  const inView = useInView(ref, { once: true, margin: "-80px 0px" });
   const even = index % 2 === 0;
   const Viz = vizComponents[index];
   const Icon = step.icon;
 
   return (
-    <div ref={ref} className="relative py-12 md:py-20">
-      {/* ── Node on timeline ── */}
-      <motion.div
-        className="absolute z-20 left-6 top-12 md:left-1/2 md:top-20 w-11 h-11 rounded-full flex items-center justify-center"
+    <div className="relative py-12 md:py-20">
+      {/* Node on timeline — always lit. Previously animated scale+color
+          via useInView; the static accent is fine and skips a per-step IO. */}
+      <div
+        className="absolute z-20 left-6 top-12 md:left-1/2 md:top-20 w-11 h-11 rounded-full flex items-center justify-center -translate-x-1/2"
         style={{
-          x: "-50%",
-          backgroundColor: inView ? step.accentBg : "rgba(255,255,255,0.03)",
-          border: `2px solid ${inView ? step.accent : "rgba(255,255,255,0.08)"}`,
-          boxShadow: inView ? `0 0 24px ${step.accent}40` : "none",
-          transition: "background-color 0.6s, border-color 0.6s, box-shadow 0.6s",
+          backgroundColor: step.accentBg,
+          border: `2px solid ${step.accent}`,
+          boxShadow: `0 0 24px ${step.accent}40`,
         }}
-        initial={{ scale: 0 }}
-        animate={inView ? { scale: 1 } : { scale: 0 }}
-        transition={{ duration: 0.5, type: "spring", stiffness: 250, damping: 20 }}
       >
         <Icon className="w-4 h-4" style={{ color: step.accent }} />
-      </motion.div>
+      </div>
 
-      {/* ── Content row ── */}
+      {/* Content row */}
       <div className="pl-16 md:pl-0 md:grid md:grid-cols-2 md:items-center">
-        {/* Text side */}
-        <motion.div
-          className={`${
-            even ? "md:pr-16 md:text-right" : "md:pl-16 md:order-2"
-          } mb-8 md:mb-0`}
-          initial={{ opacity: 0, x: even ? -24 : 24 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.15 }}
+        {/* Text side — uses CSS ScrollReveal (one-shot, IO-shared) */}
+        <ScrollReveal
+          direction={even ? "left" : "right"}
+          className={`${even ? "md:pr-16 md:text-right" : "md:pl-16 md:order-2"} mb-8 md:mb-0`}
         >
           <span
             className="text-xs font-bold tracking-[0.2em] uppercase block mb-2"
@@ -330,17 +263,15 @@ function TimelineStep({
           >
             {step.description}
           </p>
-        </motion.div>
+        </ScrollReveal>
 
         {/* Illustration side */}
-        <motion.div
+        <ScrollReveal
+          direction={even ? "right" : "left"}
           className={even ? "md:pl-16" : "md:pr-16 md:order-1"}
-          initial={{ opacity: 0, x: even ? 24 : -24 }}
-          animate={inView ? { opacity: 1, x: 0 } : {}}
-          transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1], delay: 0.25 }}
         >
-          <Viz active={inView} />
-        </motion.div>
+          <Viz />
+        </ScrollReveal>
       </div>
     </div>
   );
@@ -349,15 +280,6 @@ function TimelineStep({
 /* ─── Main Component ────────────────────────────────────────────────── */
 
 export default function HowItWorks() {
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const { scrollYProgress } = useScroll({
-    target: sectionRef,
-    offset: ["start center", "end center"],
-  });
-
-  // Clamp the progress so the line never overflows
-  const lineProgress = useTransform(scrollYProgress, [0, 1], [0, 1]);
-
   return (
     <section
       className="relative overflow-hidden ambient-light"
@@ -385,31 +307,25 @@ export default function HowItWorks() {
             className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white leading-tight"
             style={{ letterSpacing: "-0.02em" }}
           >
-            Simples, r&aacute;pido e{" "}
+            Simples, rápido e{" "}
             <span className="shimmer-text">eficiente</span>
           </h2>
           <p className="mt-4 text-lg text-white/40 max-w-xl mx-auto">
-            Tr&ecirc;s passos para transformar seu neg&oacute;cio de e-commerce.
+            Três passos para transformar seu negócio de e-commerce.
           </p>
         </ScrollReveal>
 
         {/* Timeline */}
-        <div ref={sectionRef} className="relative max-w-5xl mx-auto">
-          {/* Static grey line (background) */}
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px bg-white/[0.06] -translate-x-1/2" />
-
-          {/* Active gradient line (fills with scroll) — wrapper holds position,
-              inner motion.div handles scaleY to avoid CSS/framer transform conflict */}
-          <div className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px -translate-x-1/2">
-            <motion.div
-              className="w-full h-full origin-top"
-              style={{
-                scaleY: lineProgress,
-                background:
-                  "linear-gradient(to bottom, #9B7BFF, #C4B5FD, #EF9F27)",
-              }}
-            />
-          </div>
+        <div className="relative max-w-5xl mx-auto">
+          {/* Static gradient line — replaces useScroll-driven scaleY of the
+              previous version. Same visual feel without a scroll listener. */}
+          <div
+            className="absolute left-6 md:left-1/2 top-0 bottom-0 w-px -translate-x-1/2"
+            style={{
+              background:
+                "linear-gradient(to bottom, rgba(155,123,255,0.05) 0%, #9B7BFF 15%, #C4B5FD 50%, #EF9F27 85%, rgba(239,159,39,0.05) 100%)",
+            }}
+          />
 
           {/* Steps */}
           {steps.map((step, i) => (
