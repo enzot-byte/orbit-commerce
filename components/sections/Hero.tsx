@@ -19,10 +19,27 @@
  */
 
 import dynamic from "next/dynamic";
+import { useEffect, useState } from "react";
+import { getDeviceTier } from "@/lib/perf";
 
 const Galaxy = dynamic(() => import("@/components/shared/Galaxy"), {
   ssr: false,
 });
+
+/**
+ * On low-tier hardware (≤4 cores or ≤4GB RAM or save-data on or
+ * reduced-motion preference), skip the WebGL Galaxy entirely. A static
+ * dark background with a subtle radial gradient takes its place — the
+ * page still looks composed but doesn't burn ~30% of a frame budget on
+ * the fragment shader.
+ */
+function useShouldRenderGalaxy() {
+  const [enabled, setEnabled] = useState(false);
+  useEffect(() => {
+    setEnabled(getDeviceTier() !== "low");
+  }, []);
+  return enabled;
+}
 
 const featurePills = [
   "Calculadora de Lucro",
@@ -36,28 +53,43 @@ const featurePills = [
 ];
 
 export default function Hero() {
+  const renderGalaxy = useShouldRenderGalaxy();
   return (
     <section
       className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden"
       style={{ backgroundColor: "#0A0A0F" }}
     >
-      {/* Galaxy WebGL background */}
+      {/* Galaxy WebGL background — only rendered on mid/high-tier devices.
+          On low-tier the background stays solid dark with the static glow
+          overlays below filling the space. */}
       <div className="absolute inset-0 z-0">
-        <Galaxy
-          mouseRepulsion
-          mouseInteraction
-          density={0.6}
-          glowIntensity={0.22}
-          saturation={0.1}
-          hueShift={260}
-          twinkleIntensity={0.3}
-          rotationSpeed={0.03}
-          repulsionStrength={1.3}
-          autoCenterRepulsion={0}
-          starSpeed={0.25}
-          speed={0.5}
-          transparent={false}
-        />
+        {renderGalaxy ? (
+          <Galaxy
+            mouseRepulsion
+            mouseInteraction
+            density={0.45}
+            glowIntensity={0.2}
+            saturation={0.1}
+            hueShift={260}
+            twinkleIntensity={0.25}
+            rotationSpeed={0.025}
+            repulsionStrength={1.2}
+            autoCenterRepulsion={0}
+            starSpeed={0.22}
+            speed={0.45}
+            transparent={false}
+          />
+        ) : (
+          // Static low-tier fallback: a deep radial gradient that hints at
+          // depth without any GPU work.
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "radial-gradient(ellipse 80% 80% at 50% 50%, rgba(28,18,60,0.6) 0%, rgba(10,10,15,1) 75%)",
+            }}
+          />
+        )}
       </div>
 
       {/* Top gradient overlay for blending */}

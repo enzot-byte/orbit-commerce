@@ -1,26 +1,26 @@
 "use client";
 
 /**
- * ToolsPreview — premium grid of marketplace tools.
+ * ToolsPreview — premium orbital layout.
  *
- * Replaces a previous orbit-elliptical-with-central-globe layout that ran:
- *   - 1 rAF loop driving a MotionValue every frame
- *   - 6 motion.div with offsetDistance + change listeners → ~24 DOM writes/frame
- *   - 3 CSS @keyframes infinite atom-ring 3D rotations (rotateX/Y/Z)
- *   - 6 CSS @keyframes infinite micro-tool float animations
- *   - 1 globe central wireframe with spin (35s infinite)
- *   - 1 globe pulse glow (5s infinite)
+ * The first version of this file ran a rAF loop driving a MotionValue,
+ * 6 motion.divs orbiting via `offsetDistance`, 3 atom-ring 3D rotations
+ * (`rotateX/Y/Z` infinite), 6 floating micro-tools, a spinning globe
+ * wireframe (35s infinite) and a pulsing glow (5s infinite). Constant
+ * compositor work, even when the section was just sitting in the viewport.
  *
- * That whole machinery rendered, hydrated, and ran constantly while the
- * section was on-screen. On mid/low-tier hardware it was the heaviest
- * non-WebGL surface on the home page. The visual was a manjado "orbital"
- * decoration that added little compared to the simpler grid below.
+ * We then collapsed it to a flat grid — but the user liked the orbital
+ * shape. This version keeps the orbital visual (ellipse + central node +
+ * cards positioned around it) but makes it 100% static: cards are
+ * positioned with `cos()`/`sin()` ONCE on mount, the central node is a
+ * static gradient ball with the "S" monogram (no spin, no wireframe), the
+ * ellipse path is plain SVG, and NOTHING runs infinitely while the
+ * section is on-screen. Hover effects still work — they're CSS-only.
  *
- * The grid keeps the premium hover-spotlight cards (CSS-only, no JS hover
- * listeners), the gradient borders, the illustration headers, and the
- * Free/Pro badges — same brand feel, ~98% less work per frame.
+ * Mobile keeps a simple swipe-scroll carousel (no infinite marquee).
  */
 
+import { useMemo, useState, useEffect, useRef } from "react";
 import {
   Calculator,
   Search,
@@ -190,13 +190,9 @@ function ToolCard({ tool }: { tool: (typeof tools)[number] }) {
       data-type={tool.type}
       style={{ "--tc-header-bg": tool.headerBg } as React.CSSProperties}
     >
-      {/* Hover spotlight glow — pure CSS, .tool-card:hover handles it */}
       <div className="tool-card-glow" />
-
-      {/* Illustration header */}
       <div className="tool-card-header">
         <div className="tool-card-illustration">{tool.illustration}</div>
-        {/* Faint grid overlay */}
         <div
           className="absolute inset-0 pointer-events-none"
           style={{
@@ -218,8 +214,6 @@ function ToolCard({ tool }: { tool: (typeof tools)[number] }) {
           </span>
         </div>
       </div>
-
-      {/* Body */}
       <div className="px-5 py-4 relative z-[2]">
         <div className="flex items-center gap-2.5 mb-2">
           <div
@@ -240,13 +234,70 @@ function ToolCard({ tool }: { tool: (typeof tools)[number] }) {
 
 /* ─── Section ────────────────────────────────────────────────────────────── */
 
+// Ellipse SVG path — built once at module scope, never recomputed.
+function ellipsePath(cx: number, cy: number, rx: number, ry: number) {
+  return `M ${cx - rx} ${cy} a ${rx} ${ry} 0 1 0 ${rx * 2} 0 a ${rx} ${ry} 0 1 0 -${rx * 2} 0`;
+}
+
+// Card slot positions on the ellipse — pre-computed, never animated.
+function cardSlots(rx: number, ry: number, n: number) {
+  return Array.from({ length: n }).map((_, i) => {
+    const angle = (i / n) * Math.PI * 2 - Math.PI / 2; // start at top
+    return { x: rx * Math.cos(angle), y: ry * Math.sin(angle) };
+  });
+}
+
+const BASE = 1400;
+const RX = 500;
+const RY = 230;
+const ELLIPSE_PATH = ellipsePath(BASE / 2, BASE / 2, RX, RY);
+const SLOTS = cardSlots(RX, RY, tools.length);
+
 export default function ToolsPreview() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  // One-time resize listener — no per-frame work. Only fires when the
+  // window genuinely changes width.
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el) return;
+    const update = () => setScale(el.clientWidth / BASE);
+    update();
+    const ro = new ResizeObserver(update);
+    ro.observe(el);
+    return () => ro.disconnect();
+  }, []);
+
+  const cardElements = useMemo(
+    () =>
+      tools.map((tool, i) => {
+        const slot = SLOTS[i];
+        return (
+          <div
+            key={tool.name}
+            className="orbit-card-slot"
+            style={{
+              position: "absolute",
+              left: `calc(50% + ${slot.x}px)`,
+              top: `calc(50% + ${slot.y}px)`,
+              transform: "translate(-50%, -50%)",
+              zIndex: 10,
+            }}
+          >
+            <ToolCard tool={tool} />
+          </div>
+        );
+      }),
+    []
+  );
+
   return (
     <section
       className="relative overflow-hidden ambient-light"
       style={{ backgroundColor: "#0A0A0F", padding: "112px 0 96px" }}
     >
-      {/* Single static ambient glow — no animation */}
+      {/* Single static ambient glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[900px] h-[500px] pointer-events-none"
         style={{
@@ -276,13 +327,124 @@ export default function ToolsPreview() {
           </p>
         </ScrollReveal>
 
-        {/* Grid — desktop 3-col, tablet 2-col, mobile 1-col. Zero animation. */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5 max-w-6xl mx-auto">
-          {tools.map((tool, i) => (
-            <ScrollReveal key={tool.name} direction="up" index={i} delay={0.04}>
-              <ToolCard tool={tool} />
-            </ScrollReveal>
-          ))}
+        {/* ─── Desktop / tablet: static orbital ─── */}
+        <div
+          ref={containerRef}
+          className="hidden md:block relative mx-auto"
+          style={{ width: "100%", maxWidth: "1100px", aspectRatio: "1.65 / 1" }}
+        >
+          {/* Scale-to-fit wrapper */}
+          <div
+            className="absolute"
+            style={{
+              left: "50%",
+              top: "50%",
+              width: BASE,
+              height: BASE,
+              transform: `translate(-50%, -50%) scale(${scale})`,
+              transformOrigin: "center center",
+            }}
+          >
+            {/* Static dashed orbit ellipse */}
+            <svg
+              className="absolute inset-0 pointer-events-none"
+              viewBox={`0 0 ${BASE} ${BASE}`}
+              style={{ width: BASE, height: BASE }}
+            >
+              <path
+                d={ELLIPSE_PATH}
+                fill="none"
+                stroke="rgba(155,123,255,0.10)"
+                strokeWidth={1.5}
+                strokeDasharray="8 6"
+              />
+              {/* Faint force lines from center to each slot */}
+              {SLOTS.map((s, i) => (
+                <line
+                  key={i}
+                  x1={BASE / 2}
+                  y1={BASE / 2}
+                  x2={BASE / 2 + s.x}
+                  y2={BASE / 2 + s.y}
+                  stroke="rgba(155,123,255,0.05)"
+                  strokeWidth={1}
+                  strokeDasharray="4 8"
+                />
+              ))}
+            </svg>
+
+            {/* Central node — static gradient sphere with S monogram. No
+                spin, no wireframe meridians, no atom rings, no glow pulse.
+                Just a still ball. */}
+            <div
+              className="absolute pointer-events-none"
+              style={{
+                left: "50%",
+                top: "50%",
+                width: 200,
+                height: 200,
+                transform: "translate(-50%, -50%)",
+              }}
+            >
+              {/* Soft outer halo — static, no animation */}
+              <div
+                className="absolute"
+                style={{
+                  inset: -80,
+                  borderRadius: "50%",
+                  background:
+                    "radial-gradient(circle, rgba(91,63,216,0.28) 0%, rgba(155,123,255,0.10) 30%, transparent 60%)",
+                }}
+              />
+              {/* Sphere body */}
+              <div
+                className="absolute inset-0 rounded-full"
+                style={{
+                  background:
+                    "radial-gradient(circle at 32% 28%, rgba(155,123,255,0.22) 0%, rgba(91,63,216,0.14) 26%, rgba(10,10,15,0.9) 56%, rgba(10,10,15,0.98) 100%)",
+                  border: "1px solid rgba(155,123,255,0.25)",
+                  boxShadow:
+                    "inset 0 0 50px rgba(91,63,216,0.20), 0 0 80px rgba(91,63,216,0.16)",
+                }}
+              />
+              {/* S monogram */}
+              <svg
+                viewBox="0 0 200 200"
+                fill="none"
+                className="absolute inset-0 w-full h-full"
+              >
+                <path
+                  d="M118 70 C118 70 85 70 85 88 C85 106 125 100 125 115 C125 130 90 130 90 130"
+                  stroke="rgba(155,123,255,0.45)"
+                  strokeWidth="3"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+              </svg>
+            </div>
+
+            {/* Cards positioned around the ellipse — pre-computed, never
+                move. Hover effects still work via .tool-card CSS. */}
+            {cardElements}
+          </div>
+        </div>
+
+        {/* ─── Mobile: horizontal swipe carousel (no auto-scroll) ─── */}
+        <div className="md:hidden">
+          <div
+            className="flex gap-3 overflow-x-auto snap-x snap-mandatory pb-4 -mx-4 px-4"
+            style={{ scrollbarWidth: "none" }}
+          >
+            {tools.map((tool) => (
+              <div
+                key={tool.name}
+                className="flex-shrink-0 snap-center"
+                style={{ width: 260 }}
+              >
+                <ToolCard tool={tool} />
+              </div>
+            ))}
+          </div>
         </div>
 
         {/* CTA */}
