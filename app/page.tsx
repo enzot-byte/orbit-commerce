@@ -95,7 +95,7 @@ function CoursesPreview() {
             style={{ letterSpacing: "-0.02em" }}
           >
             Aprenda com quem{" "}
-            <span className="shimmer-text">vende de verdade</span>
+            <span className="shimmer-text-static">vende de verdade</span>
           </h2>
           <p className="mt-4 text-lg text-white/40 max-w-xl mx-auto">
             Conteúdo prático, atualizado e criado por sellers com histórico comprovado.

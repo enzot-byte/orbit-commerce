@@ -502,7 +502,7 @@ export default function PlanosHero() {
           >
             Escolha o plano ideal para o{" "}
             <span
-              className="shimmer-text"
+              className="shimmer-text-static"
               style={{
                 WebkitTextFillColor: "unset",
                 background:

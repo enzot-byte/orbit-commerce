@@ -320,7 +320,7 @@ export default function ToolsPreview() {
             style={{ letterSpacing: "-0.02em" }}
           >
             Ferramentas que{" "}
-            <span className="shimmer-text">trabalham por você</span>
+            <span className="shimmer-text-static">trabalham por você</span>
           </h2>
           <p className="text-base text-white/40 max-w-xl mx-auto">
             Automatize tarefas repetitivas e tome decisões com base em dados reais.

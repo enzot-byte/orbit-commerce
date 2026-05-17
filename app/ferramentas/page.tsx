@@ -77,7 +77,7 @@ export default function FerramentasPage() {
             >
               Ferramentas para otimizar{" "}
               <span
-                className="shimmer-text"
+                className="shimmer-text-static"
                 style={{
                   WebkitTextFillColor: "unset",
                   background:

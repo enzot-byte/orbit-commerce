@@ -8,6 +8,13 @@ export interface LogoProps {
   variant?: "full" | "icon" | "text";
   className?: string;
   tagline?: boolean;
+  /**
+   * Whether the orbital rings animate (3 CSS keyframes infinite per ring).
+   * Default true. Set to `false` for decorative/secondary placements like
+   * the Footer where 6 simultaneous infinite rotations have no UX value
+   * but cost compositor work for any user with the footer in view.
+   */
+  animated?: boolean;
 }
 
 // ─── Size config ──────────────────────────────────────────────────────────────
@@ -41,7 +48,7 @@ export const BRAND_PURPLE = "#5B3FD8";
 
 // ─── SVG Icon ─────────────────────────────────────────────────────────────────
 
-function OrbitIcon({ size }: { size: number }) {
+function OrbitIcon({ size, animated = true }: { size: number; animated?: boolean }) {
   const s = size;
   const cx = s / 2;
   const cy = s / 2;
@@ -81,15 +88,16 @@ function OrbitIcon({ size }: { size: number }) {
       </defs>
       <circle cx={cx} cy={cy} r={s * 0.32} fill="url(#sv-nuc-glow)" />
 
-      {/* Orbital rings — each rotates independently via CSS keyframes */}
+      {/* Orbital rings — each rotates independently via CSS keyframes,
+          UNLESS animated is false (e.g. Footer placement). */}
       {rings.map((r, i) => (
         <g
           key={i}
-          className={r.boost}
+          className={animated ? r.boost : undefined}
           style={{ transformOrigin: `${cx}px ${cy}px` }}
         >
           <g
-            className={r.cls}
+            className={animated ? r.cls : undefined}
             style={{ transformOrigin: `${cx}px ${cy}px` }}
           >
             <g transform={`rotate(${r.tilt}, ${cx}, ${cy})`}>
@@ -126,10 +134,11 @@ export function Logo({
   variant = "full",
   className,
   tagline = false,
+  animated = true,
 }: LogoProps) {
   const cfg = sizeConfig[size];
 
-  const iconEl = <OrbitIcon size={cfg.iconSize} />;
+  const iconEl = <OrbitIcon size={cfg.iconSize} animated={animated} />;
 
   const textEl = (
     <span className="flex flex-col leading-none">

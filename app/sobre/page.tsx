@@ -173,7 +173,7 @@ export default function SobrePage() {
               }}
             >
               Nossa missão é democratizar o{" "}
-              <span className="shimmer-text">
+              <span className="shimmer-text-static">
                 sucesso no e-commerce
               </span>
             </h1>
@@ -330,7 +330,7 @@ export default function SobrePage() {
                   letterSpacing: "-0.02em",
                 }}
               >
-                O que nos <span className="shimmer-text">move</span>
+                O que nos <span className="shimmer-text-static">move</span>
               </h2>
               <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.5)", maxWidth: "480px", margin: "0 auto" }}>
                 Princípios que guiam cada decisão que tomamos.
@@ -405,7 +405,7 @@ export default function SobrePage() {
                   letterSpacing: "-0.02em",
                 }}
               >
-                Sellerverse em <span className="shimmer-text">números</span>
+                Sellerverse em <span className="shimmer-text-static">números</span>
               </h2>
             </ScrollReveal>
 
@@ -480,7 +480,7 @@ export default function SobrePage() {
                   letterSpacing: "-0.02em",
                 }}
               >
-                Quem está por trás do <span className="shimmer-text">Sellerverse</span>
+                Quem está por trás do <span className="shimmer-text-static">Sellerverse</span>
               </h2>
               <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.5)", maxWidth: "480px", margin: "0 auto" }}>
                 Um time pequeno, experiente e completamente focado nos resultados dos nossos membros.

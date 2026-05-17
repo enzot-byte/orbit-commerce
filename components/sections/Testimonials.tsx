@@ -150,7 +150,7 @@ export default function Testimonials() {
             style={{ letterSpacing: "-0.02em" }}
           >
             O que nossos sellers{" "}
-            <span className="shimmer-text">est&atilde;o falando</span>
+            <span className="shimmer-text-static">est&atilde;o falando</span>
           </h2>
         </ScrollReveal>
 

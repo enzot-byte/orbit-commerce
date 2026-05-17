@@ -129,7 +129,7 @@ export default function Pricing() {
             style={{ letterSpacing: "-0.02em" }}
           >
             Escolha o plano{" "}
-            <span className="shimmer-text">ideal para voc&ecirc;</span>
+            <span className="shimmer-text-static">ideal para voc&ecirc;</span>
           </h2>
           <p className="mt-4 text-lg text-white/40 max-w-xl mx-auto">
             Comece gr&aacute;tis. Fa&ccedil;a upgrade quando precisar.

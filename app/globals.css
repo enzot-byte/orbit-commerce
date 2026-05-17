@@ -432,6 +432,22 @@ html {
   animation: textShimmer 4s linear infinite;
 }
 
+/* shimmer-text-static — same brand gradient on the text, NO animation.
+   Use this for accent words on section h2s where the moving shimmer was
+   adding 1 infinite keyframe per usage (12+ across the home/marketing
+   pages). The animated version stays reserved for the LCP Hero h1 only. */
+.shimmer-text-static {
+  background: linear-gradient(
+    90deg,
+    #9B7BFF 0%,
+    #C4B5FD 50%,
+    #9B7BFF 100%
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .shimmer-text {
     animation: none;

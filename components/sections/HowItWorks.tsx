@@ -308,7 +308,7 @@ export default function HowItWorks() {
             style={{ letterSpacing: "-0.02em" }}
           >
             Simples, rápido e{" "}
-            <span className="shimmer-text">eficiente</span>
+            <span className="shimmer-text-static">eficiente</span>
           </h2>
           <p className="mt-4 text-lg text-white/40 max-w-xl mx-auto">
             Três passos para transformar seu negócio de e-commerce.

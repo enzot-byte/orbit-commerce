@@ -232,7 +232,10 @@ export function Footer() {
         <div className="grid grid-cols-1 gap-10 lg:grid-cols-[1fr_2fr]">
           {/* Left: Logo + tagline + socials */}
           <div className="space-y-6">
-            <Logo size="md" variant="full" tagline />
+            {/* Static (non-animated) Logo in the footer — saves 3 infinite
+                CSS keyframe rotations that the user doesn't see most of
+                the time, and even when visible add no UX value down here. */}
+            <Logo size="md" variant="full" tagline animated={false} />
 
             <p className="text-sm text-white/40 leading-relaxed max-w-xs">
               A plataforma completa para sellers que querem escalar no e-commerce
