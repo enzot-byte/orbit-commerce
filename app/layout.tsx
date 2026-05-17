@@ -3,6 +3,7 @@ import { Plus_Jakarta_Sans, Manrope, JetBrains_Mono } from "next/font/google";
 import dynamic from "next/dynamic";
 import "./globals.css";
 import { ThemeProvider } from "@/components/providers/ThemeProvider";
+import { WebVitalsBoot } from "@/components/providers/WebVitalsBoot";
 
 // Lazy load CustomCursor — non-critical, desktop-only
 const CustomCursor = dynamic(
@@ -90,6 +91,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col" style={{ fontFamily: "var(--font-body)" }}>
         <ThemeProvider>
           <CustomCursor />
+          <WebVitalsBoot />
           {children}
         </ThemeProvider>
       </body>

@@ -151,7 +151,6 @@
   grid-template-columns: 380px 1fr;
   min-height: 380px;
   transition: border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
-  backdrop-filter: blur(10px);
 }
 .blog-slide--featured:hover {
   border-color: rgba(255,255,255,0.2);
@@ -180,7 +179,6 @@
   font-weight: 700;
   padding: 6px 14px;
   border-radius: 999px;
-  backdrop-filter: blur(8px);
   border: 1px solid rgba(255,255,255,0.15);
 }
 
@@ -349,7 +347,6 @@
   justify-content: center;
   cursor: pointer;
   transition: all 0.2s;
-  backdrop-filter: blur(6px);
 }
 .blog-slider-prev:hover,
 .blog-slider-next:hover {

@@ -69,7 +69,7 @@ export default function SocialProof() {
   return (
     <section
       ref={ref}
-      className="relative overflow-hidden"
+      className="relative overflow-hidden contain-section"
       style={{
         backgroundColor: "#1A1A2E",
         padding: "clamp(80px, 10vw, 128px) 0",

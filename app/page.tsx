@@ -77,7 +77,7 @@ function StarRating({ rating }: { rating: number }) {
 
 function CoursesPreview() {
   return (
-    <section className="relative overflow-hidden ambient-light" style={{ backgroundColor: "#0A0A0F", padding: "128px 0 160px" }}>
+    <section className="relative overflow-hidden ambient-light cv-section contain-section" style={{ backgroundColor: "#0A0A0F", padding: "128px 0 160px" }}>
       {/* Background glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] pointer-events-none"

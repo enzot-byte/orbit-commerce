@@ -127,7 +127,7 @@ export default function Testimonials() {
   return (
     <section
       ref={sectionRef}
-      className="overflow-hidden relative ambient-light"
+      className="overflow-hidden relative ambient-light cv-section contain-section"
       style={{ backgroundColor: "#12121F", padding: "128px 0 160px" }}
     >
       {/* Background glow */}

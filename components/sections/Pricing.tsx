@@ -105,7 +105,7 @@ export default function Pricing() {
 
   return (
     <section
-      className="relative overflow-hidden ambient-light"
+      className="relative overflow-hidden ambient-light cv-section contain-section"
       id="planos"
       style={{ backgroundColor: "#1A1A2E", padding: "128px 0 160px" }}
     >

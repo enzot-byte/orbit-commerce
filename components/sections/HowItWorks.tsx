@@ -282,7 +282,7 @@ function TimelineStep({
 export default function HowItWorks() {
   return (
     <section
-      className="relative overflow-hidden ambient-light"
+      className="relative overflow-hidden ambient-light cv-section contain-section"
       style={{ backgroundColor: "#0F0F1A", padding: "128px 0 160px" }}
     >
       {/* Background glow */}

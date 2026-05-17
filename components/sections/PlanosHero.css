@@ -34,8 +34,7 @@
   border: 1px solid rgba(255, 255, 255, 0.06);
   border-top: 2px solid var(--tier-color, #378ADD);
   border-radius: 16px;
-  backdrop-filter: blur(16px);
-  -webkit-backdrop-filter: blur(16px);
+  /* backdrop-filter dropped — see globals.css .glass note. */
   display: flex;
   flex-direction: column;
   gap: 10px;

@@ -239,16 +239,19 @@ html {
     mix-blend-mode: overlay;
   }
 
-  /* Glassmorphism */
+  /* Glassmorphism — backdrop-filter dropped intentionally.
+     `backdrop-filter: blur()` is the single most expensive style in
+     modern UI: it forces the browser to render everything behind the
+     element, run a Gaussian blur pass, and composite. With dozens of
+     cards on a page this snowballs. Substituted by slightly more opaque
+     solid backgrounds — visually ~95% identical, paint cost ~5%. */
   .glass {
-    backdrop-filter: blur(12px);
-    background-color: rgba(255, 255, 255, 0.1);
+    background-color: rgba(255, 255, 255, 0.12);
     border: 1px solid rgba(255, 255, 255, 0.2);
   }
 
   .glass-dark {
-    backdrop-filter: blur(12px);
-    background-color: rgba(26, 26, 46, 0.6);
+    background-color: rgba(26, 26, 46, 0.85);
     border: 1px solid rgba(255, 255, 255, 0.1);
   }
 
@@ -515,10 +518,9 @@ html {
   z-index: 2;
 }
 
-/* Glassmorphism v2 for cards */
+/* Glassmorphism v2 for cards — backdrop-filter removed (see .glass note). */
 .glass-card {
-  background: rgba(255, 255, 255, 0.03);
-  backdrop-filter: blur(12px);
+  background: rgba(20, 20, 35, 0.65);
   border: 1px solid rgba(255, 255, 255, 0.06);
 }
 .glass-card:hover {
@@ -949,6 +951,30 @@ html {
     transform: none;
     transition: none;
   }
+}
+
+/* ─── Off-viewport performance architecture (the Apple secret) ───
+   `content-visibility: auto` tells the browser: "if this element is NOT
+   in the viewport, skip its rendering entirely — don't lay out children,
+   don't paint, don't recompute styles. Treat it as a single opaque box
+   the size of `contain-intrinsic-size` until the user scrolls near it."
+   This is what makes long marketing pages on apple.com / stripe.com /
+   vercel.com feel instant despite carrying dozens of dense sections.
+
+   Apply via the `.cv-section` class on any section that lives below the
+   fold and isn't a hero. Default reservation height ~700px (most sections
+   in this codebase). Override per-section via inline `style={{ '--cv-h': '900px' }}`
+   if you need more accurate space reservation to prevent scroll jump. */
+.cv-section {
+  content-visibility: auto;
+  contain-intrinsic-size: 0 var(--cv-h, 700px);
+}
+
+/* `contain` tells the browser this element's layout/paint cannot affect
+   anything outside it. Means it can do work in parallel + skip re-layouts
+   triggered by sibling changes. Safe wrapper for any section. */
+.contain-section {
+  contain: layout style paint;
 }
 
 /* ─── ToolsPreview orbit — CSS-only spin (no rAF, no JS per frame) ───

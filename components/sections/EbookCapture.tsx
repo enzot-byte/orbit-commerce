@@ -566,7 +566,7 @@ export default function EbookCapture() {
 
   return (
     <section
-      className="relative overflow-hidden ambient-light"
+      className="relative overflow-hidden ambient-light cv-section contain-section"
       style={{
         background:
           "linear-gradient(135deg, #0F0F1A 0%, #1A1A2E 50%, #252547 100%)",

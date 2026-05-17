@@ -271,7 +271,7 @@ export default function ToolsPreview() {
 
   return (
     <section
-      className="relative overflow-hidden ambient-light"
+      className="relative overflow-hidden ambient-light cv-section contain-section"
       style={{ backgroundColor: "#0A0A0F", padding: "112px 0 96px" }}
     >
       {/* Single static ambient glow */}
