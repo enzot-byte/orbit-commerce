@@ -31,6 +31,7 @@ import {
   ArrowRight,
 } from "lucide-react";
 import ScrollReveal from "@/components/shared/ScrollReveal";
+import { Logo } from "@/components/ui/Logo";
 
 /* ─── Tool Data ──────────────────────────────────────────────────────────── */
 
@@ -342,50 +343,50 @@ export default function ToolsPreview() {
               />
             </svg>
 
-            {/* Central node — static gradient sphere with S monogram.
-                Sphere itself doesn't spin. */}
+            {/* Central node — the actual Sellerverse brand mark (atom
+                with 3 orbital rings) inside a cosmic halo. Replaces a
+                hand-drawn S monogram + wireframe meridians that read
+                "thin and crooked" in the user's words. The OrbitIcon's
+                orbital rings tie thematically to the orbit of tool cards
+                around it. The Logo component already handles the
+                animated rings — its own CSS keyframes are GPU-cheap and
+                pause on prefers-reduced-motion. */}
             <div
-              className="absolute pointer-events-none"
+              className="absolute pointer-events-none flex items-center justify-center"
               style={{
                 left: "50%",
                 top: "50%",
-                width: 200,
-                height: 200,
+                width: 280,
+                height: 280,
                 transform: "translate(-50%, -50%)",
               }}
             >
+              {/* Cosmic halo — soft radial glow framing the logo */}
               <div
                 className="absolute"
                 style={{
-                  inset: -80,
+                  inset: -40,
                   borderRadius: "50%",
                   background:
-                    "radial-gradient(circle, rgba(91,63,216,0.28) 0%, rgba(155,123,255,0.10) 30%, transparent 60%)",
+                    "radial-gradient(circle, rgba(91,63,216,0.35) 0%, rgba(155,123,255,0.12) 32%, transparent 62%)",
                 }}
               />
+              {/* Sphere body — same brand gradient as before, but no S monogram */}
               <div
-                className="absolute inset-0 rounded-full"
+                className="absolute"
                 style={{
+                  width: 220,
+                  height: 220,
+                  borderRadius: "50%",
                   background:
-                    "radial-gradient(circle at 32% 28%, rgba(155,123,255,0.22) 0%, rgba(91,63,216,0.14) 26%, rgba(10,10,15,0.9) 56%, rgba(10,10,15,0.98) 100%)",
-                  border: "1px solid rgba(155,123,255,0.25)",
+                    "radial-gradient(circle at 32% 28%, rgba(155,123,255,0.22) 0%, rgba(91,63,216,0.14) 26%, rgba(10,10,15,0.92) 56%, rgba(10,10,15,0.98) 100%)",
+                  border: "1px solid rgba(155,123,255,0.28)",
                   boxShadow:
-                    "inset 0 0 50px rgba(91,63,216,0.20), 0 0 80px rgba(91,63,216,0.16)",
+                    "inset 0 0 60px rgba(91,63,216,0.22), 0 0 90px rgba(91,63,216,0.18)",
                 }}
               />
-              <svg
-                viewBox="0 0 200 200"
-                fill="none"
-                className="absolute inset-0 w-full h-full"
-              >
-                <path
-                  d="M118 70 C118 70 85 70 85 88 C85 106 125 100 125 115 C125 130 90 130 90 130"
-                  stroke="rgba(155,123,255,0.45)"
-                  strokeWidth="3"
-                  strokeLinecap="round"
-                  fill="none"
-                />
-              </svg>
+              {/* Brand mark — Sellerverse OrbitIcon (atom with 3 rings) */}
+              <Logo size="lg" variant="icon" className="relative z-10" />
             </div>
 
             {/* Cards traveling the ellipse via CSS `offset-path` — the
