@@ -1,7 +1,16 @@
-import { createClient, type SupabaseClient } from "@supabase/supabase-js";
+import { createBrowserClient } from "@supabase/ssr";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 /**
- * Browser Supabase client (public).
+ * Browser Supabase client (public, cookie-aware).
+ *
+ * Uses `@supabase/ssr#createBrowserClient` instead of `supabase-js#createClient`
+ * because we need session cookies (not just localStorage) — the `proxy.ts`
+ * dashboard guard reads `sb-<ref>-auth-token` cookies before any client JS
+ * boots. Without cookie persistence, OAuth + email login both fail silently:
+ * login succeeds → user redirects to /dashboard → proxy sees no cookie →
+ * bounces to /login.
+ *
  * Requires NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_ANON_KEY
  * on Vercel → Settings → Environment Variables.
  *
@@ -24,11 +33,9 @@ function isValidHttpUrl(u: string | undefined): u is string {
 let client: SupabaseClient | null = null;
 if (isValidHttpUrl(rawUrl) && anonKey) {
   try {
-    client = createClient(rawUrl, anonKey, {
-      auth: { persistSession: true, autoRefreshToken: true },
-    });
+    client = createBrowserClient(rawUrl, anonKey);
   } catch (err) {
-    console.warn("[supabase] failed to init client:", err);
+    console.warn("[supabase] failed to init browser client:", err);
     client = null;
   }
 }
