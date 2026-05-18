@@ -278,18 +278,28 @@ export function Footer() {
               &copy; {year} Sellerverse. Todos os direitos reservados.
             </p>
 
-            {/* Legal links — rendered as muted text until dedicated pages
-                exist. Previously these were `href="#"` and looked clickable. */}
+            {/* Legal links — Privacidade e Termos publicados em /legal/*.
+                Cookies sem página dedicada por enquanto (coberto pela
+                Política de Privacidade). */}
             <div className="flex items-center gap-4">
-              {["Privacidade", "Termos de uso", "Cookies"].map((label) => (
-                <span
-                  key={label}
-                  className="text-xs text-white/25 cursor-default select-none"
-                  aria-disabled="true"
-                >
-                  {label}
-                </span>
-              ))}
+              <a
+                href="/legal/privacidade"
+                className="text-xs text-white/40 hover:text-[#9B7BFF] transition-colors"
+              >
+                Privacidade
+              </a>
+              <a
+                href="/legal/termos"
+                className="text-xs text-white/40 hover:text-[#9B7BFF] transition-colors"
+              >
+                Termos de uso
+              </a>
+              <span
+                className="text-xs text-white/25 cursor-default select-none"
+                aria-disabled="true"
+              >
+                Cookies
+              </span>
             </div>
 
             {/* Made in Brazil badge */}
