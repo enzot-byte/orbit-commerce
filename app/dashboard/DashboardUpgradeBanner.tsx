@@ -39,8 +39,8 @@ export function DashboardUpgradeBanner() {
           </h3>
           <p className="text-white/60 text-sm mt-1">
             {isPro
-              ? "Monitor de preços, kit de templates, suporte prioritário e muito mais."
-              : "Ferramentas avançadas, comunidade exclusiva e mais de 20 cursos."}
+              ? "Alerta de preço no WhatsApp + kit de templates + suporte prioritário."
+              : "Calculadora Multiplataforma, Sellerspy, comunidade Discord e cursos completos."}
           </p>
         </div>
         <Link href="/dashboard/plano">
