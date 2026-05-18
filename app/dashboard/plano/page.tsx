@@ -1,15 +1,12 @@
+"use client";
+
 import React from "react";
 import { Check, X, CreditCard, ExternalLink, AlertTriangle } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import ScrollReveal from "@/components/shared/ScrollReveal";
-
-const mockUser = {
-  name: "Pedro Alves",
-  email: "pedro@exemplo.com",
-  plan: "Pro" as "Grátis" | "Pro" | "Premium",
-};
+import { useAuth } from "@/lib/useAuth";
 
 const plans = [
   {
@@ -81,6 +78,9 @@ const paymentHistory = [
 ];
 
 export default function PlanoPage() {
+  const { user } = useAuth();
+  const plan = user?.plan ?? "Grátis";
+
   return (
     <div className="p-6 lg:p-8 space-y-10 max-w-5xl mx-auto">
       {/* Header */}
@@ -96,7 +96,7 @@ export default function PlanoPage() {
           </div>
           <div className="flex items-center gap-3">
             <Badge variant="accent" size="lg" dot>
-              Plano {mockUser.plan} ativo
+              Plano {plan} ativo
             </Badge>
           </div>
         </div>

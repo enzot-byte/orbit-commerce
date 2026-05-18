@@ -47,21 +47,30 @@ interface AuthContextValue {
 }
 
 function parseUser(user: User): AuthUser {
-  const meta = user.user_metadata ?? {};
+  const userMeta = user.user_metadata ?? {};
+  // app_metadata is server-side only (user can NOT write to it via SDK).
+  // We read `plan` from there for gating — Enzo edits it manually in
+  // Supabase Studio after Pix confirmation. Falls back to user_metadata
+  // only for legacy/dev convenience; production source of truth is app_metadata.
+  const appMeta = (user.app_metadata ?? {}) as Record<string, unknown>;
   let marketplaces: string[] = [];
-  if (Array.isArray(meta.marketplaces)) {
-    marketplaces = meta.marketplaces;
-  } else if (meta.marketplace) {
-    marketplaces = [meta.marketplace];
+  if (Array.isArray(userMeta.marketplaces)) {
+    marketplaces = userMeta.marketplaces;
+  } else if (userMeta.marketplace) {
+    marketplaces = [userMeta.marketplace];
   }
+  const plan =
+    (appMeta.plan as AuthUser["plan"]) ??
+    (userMeta.plan as AuthUser["plan"]) ??
+    "Grátis";
   return {
     id: user.id,
     email: user.email ?? "",
     name:
-      meta.full_name ?? meta.name ?? user.email?.split("@")[0] ?? "Usuário",
+      userMeta.full_name ?? userMeta.name ?? user.email?.split("@")[0] ?? "Usuário",
     marketplaces,
-    whatsapp: meta.whatsapp ?? "",
-    plan: (meta.plan as AuthUser["plan"]) ?? "Grátis",
+    whatsapp: userMeta.whatsapp ?? "",
+    plan,
     createdAt: user.created_at ?? "",
   };
 }

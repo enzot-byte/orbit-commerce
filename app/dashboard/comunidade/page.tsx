@@ -1,13 +1,12 @@
+"use client";
+
 import React from "react";
 import { MessageCircle, ExternalLink, Calendar, Play, Shield, Lock } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import ScrollReveal from "@/components/shared/ScrollReveal";
-
-const mockUser = {
-  plan: "Pro" as "Grátis" | "Pro" | "Premium",
-};
+import { useAuth } from "@/lib/useAuth";
 
 const upcomingLives = [
   {
@@ -72,7 +71,9 @@ const rules = [
 ];
 
 export default function ComunidadePage() {
-  const isPro = mockUser.plan === "Pro" || mockUser.plan === "Premium";
+  const { user } = useAuth();
+  const plan = user?.plan ?? "Grátis";
+  const isPro = plan === "Pro" || plan === "Premium";
 
   return (
     <div className="p-6 lg:p-8 space-y-10 max-w-5xl mx-auto">

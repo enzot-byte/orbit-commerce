@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import { Play, BookOpen, Lock, ArrowRight, Star } from "lucide-react";
@@ -5,11 +7,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import ScrollReveal from "@/components/shared/ScrollReveal";
-
-const mockUser = {
-  name: "Pedro Alves",
-  plan: "Pro" as "Grátis" | "Pro" | "Premium",
-};
+import { useAuth } from "@/lib/useAuth";
 
 const enrolledCourses = [
   {
@@ -89,7 +87,9 @@ function ProgressBar({ value }: { value: number }) {
 }
 
 export default function CursosPage() {
-  const isPro = mockUser.plan === "Pro" || mockUser.plan === "Premium";
+  const { user } = useAuth();
+  const plan = user?.plan ?? "Grátis";
+  const isPro = plan === "Pro" || plan === "Premium";
 
   return (
     <div className="p-6 lg:p-8 space-y-10 max-w-7xl mx-auto">
@@ -104,7 +104,7 @@ export default function CursosPage() {
               {enrolledCourses.length} cursos matriculados · continue de onde parou
             </p>
           </div>
-          <Badge variant="accent">Plano {mockUser.plan}</Badge>
+          <Badge variant="accent">Plano {plan}</Badge>
         </div>
       </ScrollReveal>
 

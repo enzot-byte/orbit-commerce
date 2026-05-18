@@ -1,3 +1,5 @@
+"use client";
+
 import React from "react";
 import Link from "next/link";
 import {
@@ -16,10 +18,7 @@ import { Card } from "@/components/ui/Card";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
 import ScrollReveal from "@/components/shared/ScrollReveal";
-
-const mockUser = {
-  plan: "Pro" as "Grátis" | "Pro" | "Premium",
-};
+import { useAuth } from "@/lib/useAuth";
 
 const availableTools = [
   {
@@ -104,7 +103,9 @@ const lockedTools = [
 ];
 
 export default function FerramentasPage() {
-  const isPremium = mockUser.plan === "Premium";
+  const { user } = useAuth();
+  const plan = user?.plan ?? "Grátis";
+  const isPremium = plan === "Premium";
 
   return (
     <div className="p-6 lg:p-8 space-y-10 max-w-7xl mx-auto">
@@ -119,7 +120,7 @@ export default function FerramentasPage() {
               {availableTools.length} ferramentas disponíveis no seu plano
             </p>
           </div>
-          <Badge variant="accent">Plano {mockUser.plan}</Badge>
+          <Badge variant="accent">Plano {plan}</Badge>
         </div>
       </ScrollReveal>
 
