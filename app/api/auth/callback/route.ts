@@ -7,16 +7,14 @@ import { NextResponse } from "next/server";
  * sign-in (Google, etc) with `?code=<pkce_code>` in the query string.
  *
  * We exchange the code for a session here on the server using
- * `@supabase/ssr#createServerClient`, which sets the `sb-<ref>-auth-token`
- * cookie via Next's `cookies()` API. That cookie is what `proxy.ts` reads
- * to gate /dashboard/* — without this exchange, the dashboard guard sees
- * no cookie and bounces the user back to /login.
+ * `@supabase/ssr#createServerClient`. CRUCIAL: in Next 16 Route Handlers,
+ * `cookies().set(...)` does NOT propagate to the returned Response. Instead
+ * we must attach Set-Cookie on a `NextResponse` instance and return it.
+ * That's why `setAll` writes to `response.cookies` (not to `cookieStore`).
  *
- * Why this route (and not the client-side hash-token path):
- *   Default Supabase OAuth flow is PKCE (since 2024). With PKCE the code
- *   comes via query string and must be exchanged server-side. The legacy
- *   "implicit" flow returned a hash token that the client picked up on
- *   load — that's gone.
+ * Without this pattern: exchangeCodeForSession appears to succeed (no error),
+ * but no cookies are emitted → proxy.ts sees no session → /dashboard bounces
+ * back to /login. Silent failure mode.
  */
 export async function GET(req: Request) {
   const url = new URL(req.url);
@@ -28,8 +26,6 @@ export async function GET(req: Request) {
     rawNext.startsWith("/") && !rawNext.startsWith("//") ? rawNext : "/dashboard";
 
   if (!code) {
-    // Nothing to exchange — most likely the user hit /api/auth/callback
-    // directly or the provider returned an error.
     return NextResponse.redirect(new URL("/login?error=missing_code", url.origin));
   }
 
@@ -42,22 +38,24 @@ export async function GET(req: Request) {
     );
   }
 
+  // Build the success-path response up-front so we can pin Set-Cookie headers
+  // on it inside `setAll`. The redirect target may flip to /login below if
+  // the exchange fails, but the cookies will already be attached and that's
+  // fine — they're just unused if we redirect to /login.
+  const response = NextResponse.redirect(new URL(next, url.origin));
   const cookieStore = await cookies();
+
   const supabase = createServerClient(supabaseUrl, supabaseAnonKey, {
     cookies: {
       getAll() {
         return cookieStore.getAll();
       },
       setAll(cookiesToSet) {
-        try {
-          cookiesToSet.forEach(({ name, value, options }) => {
-            cookieStore.set(name, value, options);
-          });
-        } catch {
-          // cookies().set() may throw in route handlers during streamed
-          // responses — safe to ignore; the redirect below carries the
-          // Set-Cookie headers already attached.
-        }
+        // Attach Set-Cookie headers to the outgoing redirect Response.
+        // (Writing to `cookieStore` here would be a no-op in route handlers.)
+        cookiesToSet.forEach(({ name, value, options }) => {
+          response.cookies.set(name, value, options);
+        });
       },
     },
   });
@@ -67,9 +65,12 @@ export async function GET(req: Request) {
   if (error) {
     console.warn("[auth/callback] exchangeCodeForSession failed:", error.message);
     return NextResponse.redirect(
-      new URL(`/login?error=exchange_failed&next=${encodeURIComponent(next)}`, url.origin)
+      new URL(
+        `/login?error=exchange_failed&detail=${encodeURIComponent(error.message)}&next=${encodeURIComponent(next)}`,
+        url.origin
+      )
     );
   }
 
-  return NextResponse.redirect(new URL(next, url.origin));
+  return response;
 }
