@@ -96,37 +96,23 @@ export default function CursosPage() {
               Conteúdo criado por sellers com histórico comprovado. Sem teoria vaga — só o que funciona de verdade nos marketplaces brasileiros.
             </p>
 
-            {/* Quick stats */}
+            {/* Honest status — stats reais são "0 publicados, 2 gravando".
+                Em vez de números inflados, contamos a fase do projeto. */}
             <div
               style={{
-                display: "flex",
-                justifyContent: "center",
-                gap: "48px",
-                flexWrap: "wrap",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "10px",
+                padding: "10px 20px",
+                borderRadius: "999px",
+                backgroundColor: "rgba(167,139,250,0.10)",
+                border: "1px solid rgba(167,139,250,0.25)",
               }}
             >
-              {[
-                { label: "Cursos disponíveis", value: "10+" },
-                { label: "Horas de conteúdo", value: "45h+" },
-                { label: "Alunos satisfeitos", value: "4.200+" },
-              ].map((stat) => (
-                <div key={stat.label} style={{ textAlign: "center" }}>
-                  <div
-                    style={{
-                      fontFamily: "var(--font-display)",
-                      fontSize: "2rem",
-                      fontWeight: 800,
-                      color: "white",
-                      lineHeight: 1,
-                    }}
-                  >
-                    {stat.value}
-                  </div>
-                  <div style={{ fontSize: "13px", color: "rgba(255,255,255,0.4)", marginTop: "4px" }}>
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
+              <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#a78bfa" }} />
+              <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.85)", fontWeight: 500 }}>
+                Cursos em produção · acesso garantido aos assinantes Pro conforme forem ao ar
+              </span>
             </div>
           </div>
         </section>

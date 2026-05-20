@@ -41,15 +41,17 @@ function useShouldRenderGalaxy() {
   return enabled;
 }
 
+// Pills do hero — só o que existe DE VERDADE hoje. Quando algo novo for
+// pra produção, adiciona aqui. Items "em breve" ficam visíveis na página
+// /ferramentas (onde tem ETA explícita), não no hero da landing.
 const featurePills = [
-  "Calculadora de Lucro",
-  "Gerador de Títulos SEO",
-  "Simulador de Frete",
-  "Cursos Exclusivos",
-  "Comunidade Ativa",
-  "Mentoria Individual",
-  "Templates Pro",
-  "Dashboard de Métricas",
+  "Calculadora Multiplataforma",
+  "Sellerspy (ML + Amazon)",
+  "Comunidade WhatsApp",
+  "Discord exclusivo Pro",
+  "Cursos chegando",
+  "Sellertrack Shopee — em breve",
+  "Sellertrack Magalu — em breve",
 ];
 
 export default function Hero() {
@@ -115,7 +117,7 @@ export default function Hero() {
         <div className="hero-fade-up mb-8" style={{ animationDelay: "0ms" }}>
           <span className="inline-flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium bg-white/[0.06] border border-white/[0.1] text-white/80 backdrop-blur-md">
             <span className="w-2 h-2 rounded-full bg-accent-400 animate-pulse-slow" />
-            <span>+2.500 sellers já fazem parte</span>
+            <span>MVP aberto · primeiros sellers entrando</span>
           </span>
         </div>
 

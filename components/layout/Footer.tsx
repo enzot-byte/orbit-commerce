@@ -212,8 +212,13 @@ export function Footer() {
       >
         <div className="container-orbit py-4">
           <div className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            {/* Antes dizia "Integra com" — falso, o Sellerverse não tem
+                integração técnica direta com marketplace nenhum (isso é
+                responsabilidade do Sellerdata, produto irmão). O que o
+                Sellerverse faz é ENSINAR e dar ferramentas pra vender
+                nesses canais. */}
             <span className="text-xs text-white/25 uppercase tracking-widest font-medium shrink-0">
-              Integra com
+              Aprenda a vender em
             </span>
             {MARKETPLACES.map((name) => (
               <span

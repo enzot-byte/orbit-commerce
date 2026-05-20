@@ -101,30 +101,26 @@ export default function FerramentasPage() {
                 lineHeight: 1.7,
               }}
             >
-              15+ ferramentas desenvolvidas especialmente para sellers
-              brasileiros. Algumas gr&aacute;tis para sempre, outras
-              dispon&iacute;veis nos planos Pro e Premium.
+              Ferramentas pr&aacute;ticas pra sellers brasileiros. Come&ccedil;amos com
+              2 j&aacute; no ar e outras 3 chegando at&eacute; setembro.
             </p>
 
-            {/* Quick stats */}
-            <div className="flex justify-center gap-10 flex-wrap">
-              {[
-                { label: "Ferramentas dispon\u00edveis", value: "15+" },
-                { label: "Sempre gr\u00e1tis", value: "4" },
-                { label: "Usu\u00e1rios ativos", value: "2.5k+" },
-              ].map((stat) => (
-                <div key={stat.label} className="text-center">
-                  <div
-                    className="font-display font-extrabold text-white leading-none"
-                    style={{ fontSize: "2rem" }}
-                  >
-                    {stat.value}
-                  </div>
-                  <div className="text-[13px] text-white/40 mt-1">
-                    {stat.label}
-                  </div>
-                </div>
-              ))}
+            {/* Honest status badge \u2014 em vez de stats inflados. */}
+            <div
+              style={{
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "10px",
+                padding: "10px 20px",
+                borderRadius: "999px",
+                backgroundColor: "rgba(239,159,39,0.10)",
+                border: "1px solid rgba(239,159,39,0.25)",
+              }}
+            >
+              <span style={{ width: "8px", height: "8px", borderRadius: "50%", backgroundColor: "#EF9F27" }} />
+              <span style={{ fontSize: "13px", color: "rgba(255,255,255,0.85)", fontWeight: 500 }}>
+                2 ferramentas live agora \u00b7 4 no roadmap at\u00e9 setembro 2026
+              </span>
             </div>
           </div>
 

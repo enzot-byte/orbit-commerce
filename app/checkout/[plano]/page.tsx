@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import { CheckCircle, Shield, Lock } from "lucide-react";
+import { Mail, MessageCircle } from "lucide-react";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import CheckoutForm from "./CheckoutForm";
 
 // ─── Plan data ─────────────────────────────────────────────────────────────────
 
@@ -11,49 +11,20 @@ const PLANS = {
   pro: {
     name: "Pro",
     monthlyPrice: 97,
-    annualPrice: 930,
     description: "Para sellers que querem crescer com ferramentas profissionais.",
-    features: [
-      "Todas as ferramentas (12+)",
-      "Todos os cursos completos",
-      "Dashboard de métricas avançado",
-      "Suporte prioritário",
-      "Grupo exclusivo de mentoria",
-      "Relatórios mensais personalizados",
-    ],
-    badge: "Mais popular",
-    badgeColor: "#EF9F27",
   },
   premium: {
     name: "Premium",
     monthlyPrice: 197,
-    annualPrice: 1880,
-    description: "Para sellers sérios que querem acelerar e ter suporte especializado.",
-    features: [
-      "Tudo do plano Pro",
-      "Monitor de preços da concorrência",
-      "Canal direto com especialistas",
-      "SLA de resposta em 2h",
-      "Acesso antecipado a novos cursos",
-      "Mentoria 1:1 mensal",
-      "Diagnóstico e auditoria de negócio",
-    ],
-    badge: "Exclusivo",
-    badgeColor: "#185FA5",
+    description: "Para sellers sérios com suporte e mentoria direta.",
   },
 } as const;
 
 type PlanSlug = keyof typeof PLANS;
 
-// Declare the known plan slugs. The route is server-rendered on demand
-// because it reads `searchParams.period`, so we can't statically prerender
-// — but listing the params still helps Next.js prefetch + bound the
-// expected URLs, and `notFound()` below guards anything not in PLANS.
 export async function generateStaticParams() {
   return Object.keys(PLANS).map((plano) => ({ plano }));
 }
-
-// ─── Metadata ─────────────────────────────────────────────────────────────────
 
 export async function generateMetadata({
   params,
@@ -64,27 +35,41 @@ export async function generateMetadata({
   const plan = PLANS[plano as PlanSlug];
   if (!plan) return { title: "Plano não encontrado" };
   return {
-    title: `Checkout — Plano ${plan.name} | Sellerverse`,
+    title: `Assinar ${plan.name} | Sellerverse`,
     description: plan.description,
+    robots: { index: false, follow: false },
   };
 }
 
 // ─── Page ─────────────────────────────────────────────────────────────────────
 
+/**
+ * Checkout DESATIVADO temporariamente.
+ *
+ * Antes essa rota mostrava um form completo de cartão de crédito com badges
+ * "SSL 256-bit · Stripe Secure · Certificado PCI" — mas o Stripe NÃO está
+ * plugado. O form era 100% mock: usuário preenchia cartão, recebia
+ * SuccessState falso, nenhum dinheiro saía. Risco ético + legal grave
+ * (coleta de dados sensíveis sem processador autorizado).
+ *
+ * Substituído por esta página de "Como assinar" que explica a fase atual
+ * (Pix manual com Enzo) até o Stripe entrar de verdade no Sprint 1.
+ *
+ * Pra reativar o checkout automatizado:
+ * 1. Stripe wired (envs STRIPE_SECRET_KEY + STRIPE_WEBHOOK_SECRET)
+ * 2. /api/checkout/route.ts cria Checkout Session
+ * 3. /api/webhook/stripe/route.ts processa events
+ * 4. Esta page volta a renderizar o CheckoutForm
+ * Ver ROADMAP.md Sprint 1.
+ */
 export default async function CheckoutPage({
   params,
-  searchParams,
 }: {
   params: Promise<{ plano: string }>;
-  searchParams: Promise<{ period?: string }>;
 }) {
   const { plano } = await params;
-  const { period } = await searchParams;
-
   const plan = PLANS[plano as PlanSlug];
   if (!plan) notFound();
-
-  const initialPeriod = period === "annual" ? "annual" : "monthly";
 
   return (
     <>
@@ -93,25 +78,39 @@ export default async function CheckoutPage({
         style={{
           background: "linear-gradient(160deg, #042C53 0%, #1A1A2E 40%, #0A0A0F 100%)",
           minHeight: "100vh",
-          paddingTop: "100px",
-          paddingBottom: "80px",
+          paddingTop: "120px",
+          paddingBottom: "120px",
         }}
       >
         <div className="container-orbit">
-          {/* Page header */}
-          <div className="text-center mb-12">
-            <p
+          <div
+            style={{
+              maxWidth: "640px",
+              margin: "0 auto",
+              padding: "48px",
+              borderRadius: "24px",
+              backgroundColor: "rgba(26,26,46,0.7)",
+              backdropFilter: "blur(12px)",
+              border: "1px solid rgba(255,255,255,0.1)",
+            }}
+          >
+            <div
               style={{
-                fontSize: "12px",
-                fontWeight: 700,
-                letterSpacing: "0.12em",
-                textTransform: "uppercase",
-                color: "#378ADD",
-                marginBottom: "12px",
+                display: "inline-flex",
+                alignItems: "center",
+                gap: "8px",
+                padding: "4px 12px",
+                borderRadius: "999px",
+                backgroundColor: "rgba(239,159,39,0.12)",
+                border: "1px solid rgba(239,159,39,0.3)",
+                marginBottom: "20px",
               }}
             >
-              Finalizar assinatura
-            </p>
+              <span style={{ fontSize: "11px", fontWeight: 700, color: "#EF9F27" }}>
+                MVP · cobrança manual via Pix
+              </span>
+            </div>
+
             <h1
               style={{
                 fontFamily: "var(--font-display)",
@@ -119,10 +118,11 @@ export default async function CheckoutPage({
                 fontWeight: 800,
                 color: "white",
                 lineHeight: 1.1,
+                marginBottom: "16px",
                 letterSpacing: "-0.02em",
               }}
             >
-              Plano{" "}
+              Assinar Plano{" "}
               <span
                 style={{
                   background: "linear-gradient(135deg, #EF9F27 0%, #FAC775 100%)",
@@ -132,121 +132,118 @@ export default async function CheckoutPage({
                 }}
               >
                 {plan.name}
-              </span>
+              </span>{" "}
+              — R$ {plan.monthlyPrice}/mês
             </h1>
-          </div>
 
-          {/* Two-column layout */}
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 max-w-5xl mx-auto">
-            {/* Left: Order summary */}
-            <div>
-              {/* Plan card */}
-              <div
-                className="rounded-2xl border border-white/10 p-6 mb-6"
-                style={{ backgroundColor: "rgba(26,26,46,0.7)", backdropFilter: "blur(12px)" }}
+            <p style={{ fontSize: "16px", color: "rgba(255,255,255,0.65)", lineHeight: 1.7, marginBottom: "32px" }}>
+              Estamos na fase inicial do Sellerverse. Pra entregar com qualidade pros primeiros
+              assinantes, a cobrança ainda é processada manualmente via Pix —{" "}
+              <strong className="text-white">não com cartão de crédito automatizado</strong> (Stripe
+              entra no próximo sprint).
+            </p>
+
+            <div
+              style={{
+                padding: "20px",
+                borderRadius: "14px",
+                backgroundColor: "rgba(16,185,129,0.06)",
+                border: "1px solid rgba(16,185,129,0.20)",
+                marginBottom: "32px",
+              }}
+            >
+              <h2
+                style={{
+                  fontFamily: "var(--font-display)",
+                  fontSize: "16px",
+                  fontWeight: 700,
+                  color: "white",
+                  marginBottom: "12px",
+                }}
               >
-                {/* Plan header */}
-                <div className="flex items-start justify-between mb-5">
-                  <div>
-                    <span
-                      className="inline-block text-xs font-bold px-2.5 py-1 rounded-full mb-2 font-body"
-                      style={{
-                        backgroundColor: `${plan.badgeColor}20`,
-                        color: plan.badgeColor,
-                        border: `1px solid ${plan.badgeColor}40`,
-                      }}
-                    >
-                      {plan.badge}
-                    </span>
-                    <h2
-                      className="text-xl font-bold text-white font-display"
-                      style={{ fontFamily: "var(--font-display)" }}
-                    >
-                      Sellerverse {plan.name}
-                    </h2>
-                    <p className="text-sm text-white/50 font-body mt-1">{plan.description}</p>
-                  </div>
-                </div>
-
-                {/* Pricing */}
-                <div className="rounded-xl bg-white/5 border border-white/8 p-4 mb-5">
-                  <div className="flex items-end gap-2 mb-1">
-                    <span
-                      className="text-3xl font-bold font-display"
-                      style={{
-                        fontFamily: "var(--font-display)",
-                        background: "linear-gradient(135deg, #EF9F27 0%, #FAC775 100%)",
-                        WebkitBackgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        backgroundClip: "text",
-                      }}
-                    >
-                      R$ {plan.monthlyPrice}
-                    </span>
-                    <span className="text-white/40 font-body text-sm mb-1">/mês</span>
-                  </div>
-                  <p className="text-xs text-white/40 font-body">
-                    Ou R$ {plan.annualPrice}/ano (economize 20%)
-                  </p>
-                </div>
-
-                {/* Features */}
-                <div>
-                  <p className="text-xs text-white/40 uppercase tracking-wider font-medium font-body mb-3">
-                    Incluso no plano
-                  </p>
-                  <ul className="space-y-2.5">
-                    {plan.features.map((feature) => (
-                      <li key={feature} className="flex items-center gap-3">
-                        <CheckCircle className="w-4 h-4 text-emerald-400 shrink-0" />
-                        <span className="text-sm text-white/70 font-body">{feature}</span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              </div>
-
-              {/* Security badges */}
-              <div
-                className="rounded-2xl border border-white/10 p-5"
-                style={{ backgroundColor: "rgba(26,26,46,0.5)" }}
+                Como funciona
+              </h2>
+              <ol
+                style={{
+                  fontSize: "14px",
+                  color: "rgba(255,255,255,0.7)",
+                  lineHeight: 1.8,
+                  paddingLeft: "20px",
+                  marginBottom: 0,
+                }}
               >
-                <div className="flex items-center gap-2 mb-4">
-                  <Shield className="w-4 h-4 text-orbit-400" />
-                  <span className="text-sm font-semibold text-white font-body">
-                    Sua compra está protegida
-                  </span>
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  {[
-                    { icon: Lock, title: "SSL 256-bit", desc: "Dados criptografados" },
-                    { icon: Shield, title: "Stripe Secure", desc: "Pagamento certificado PCI" },
-                    { icon: CheckCircle, title: "Garantia 7 dias", desc: "Reembolso total sem perguntas" },
-                    { icon: Shield, title: "Privacidade", desc: "Seus dados nunca são compartilhados" },
-                  ].map(({ icon: Icon, title, desc }) => (
-                    <div key={title} className="flex items-start gap-2.5">
-                      <div className="w-8 h-8 rounded-lg bg-orbit-900/60 flex items-center justify-center shrink-0 mt-0.5">
-                        <Icon className="w-4 h-4 text-orbit-400" />
-                      </div>
-                      <div>
-                        <p className="text-xs font-semibold text-white/80 font-body">{title}</p>
-                        <p className="text-xs text-white/35 font-body">{desc}</p>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
+                <li>
+                  Você manda mensagem no WhatsApp ou e-mail com seu nome + e-mail de cadastro
+                </li>
+                <li>
+                  A gente confirma seus dados e te passa a chave Pix do plano {plan.name} (R$ {plan.monthlyPrice}/mês)
+                </li>
+                <li>
+                  Você paga e manda comprovante. Em até 12h úteis seu acesso Pro fica liberado
+                </li>
+                <li>
+                  Garantia de 7 dias — qualquer motivo, devolvemos 100%
+                </li>
+              </ol>
             </div>
 
-            {/* Right: Checkout form */}
-            <div>
-              <CheckoutForm
-                planName={plan.name}
-                monthlyPrice={plan.monthlyPrice}
-                annualPrice={plan.annualPrice}
-                initialPeriod={initialPeriod}
-              />
+            <div style={{ display: "flex", flexDirection: "column", gap: "12px", marginBottom: "24px" }}>
+              <a
+                href="https://wa.me/5500000000000?text=Olá! Quero assinar o Plano Pro do Sellerverse"
+                /* TODO: substituir 5500000000000 pelo WhatsApp real do Enzo */
+                target="_blank"
+                rel="noopener noreferrer"
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px",
+                  padding: "14px 24px",
+                  borderRadius: "12px",
+                  background: "linear-gradient(135deg, #10b981 0%, #059669 100%)",
+                  color: "white",
+                  fontWeight: 700,
+                  fontSize: "15px",
+                  textDecoration: "none",
+                }}
+              >
+                <MessageCircle size={18} />
+                Chamar no WhatsApp
+              </a>
+              <a
+                href={`mailto:suporte@sellerverse.com.br?subject=Quero assinar Plano ${plan.name}&body=Olá!%0A%0AQuero assinar o Plano ${plan.name} (R$ ${plan.monthlyPrice}/mês) do Sellerverse.%0A%0AMeu email de cadastro:%0AMeu nome:%0A`}
+                style={{
+                  display: "inline-flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  gap: "10px",
+                  padding: "14px 24px",
+                  borderRadius: "12px",
+                  border: "1px solid rgba(255,255,255,0.2)",
+                  color: "white",
+                  fontWeight: 600,
+                  fontSize: "15px",
+                  textDecoration: "none",
+                }}
+              >
+                <Mail size={18} />
+                Mandar por e-mail
+              </a>
             </div>
+
+            <p
+              style={{
+                fontSize: "12px",
+                color: "rgba(255,255,255,0.4)",
+                textAlign: "center",
+                marginBottom: "0",
+              }}
+            >
+              Cobrança automatizada via cartão (Stripe) chega no Sprint 1 do roadmap.{" "}
+              <Link href="/planos" style={{ color: "#9B7BFF", textDecoration: "none" }}>
+                Voltar pra planos
+              </Link>
+            </p>
           </div>
         </div>
       </main>

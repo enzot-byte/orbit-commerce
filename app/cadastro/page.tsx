@@ -9,10 +9,10 @@ export const metadata: Metadata = {
 };
 
 const benefits = [
-  { icon: "🛠️", text: "Acesso imediato a 4 ferramentas gratuitas" },
-  { icon: "📚", text: "Conteúdo de cursos para iniciantes" },
-  { icon: "💬", text: "Comunidade ativa de sellers" },
-  { icon: "📩", text: "Newsletter semanal com tendências" },
+  { icon: "🧮", text: "Calculadora multiplataforma (Shopee, ML, Amazon, Magalu)" },
+  { icon: "💬", text: "Comunidade gratuita no WhatsApp" },
+  { icon: "🗺️", text: "Acesso ao roadmap de cursos e ferramentas que tá chegando" },
+  { icon: "📩", text: "Newsletter quando tiver conteúdo novo" },
 ];
 
 export default function CadastroPage() {
@@ -212,7 +212,9 @@ export default function CadastroPage() {
           </div>
         </div>
 
-        {/* Bottom social proof */}
+        {/* Honest founder card — substituiu o bloco de "social proof" com
+            depoimentos e contagem inventados. Quando tivermos pagantes
+            reais com permissão, reintroduzir testimonial verdadeiro aqui. */}
         <div
           style={{
             padding: "20px 24px",
@@ -223,46 +225,16 @@ export default function CadastroPage() {
             zIndex: 1,
           }}
         >
-          <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "10px" }}>
-            {/* Avatar stack */}
-            <div style={{ display: "flex" }}>
-              {["RM", "CV", "LF", "AS"].map((initials, i) => (
-                <div
-                  key={initials}
-                  style={{
-                    width: "30px",
-                    height: "30px",
-                    borderRadius: "50%",
-                    background: `hsl(${200 + i * 40}, 60%, 45%)`,
-                    border: "2px solid rgba(30,30,60,0.8)",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "10px",
-                    fontWeight: 700,
-                    color: "white",
-                    marginLeft: i > 0 ? "-8px" : 0,
-                    zIndex: 4 - i,
-                    position: "relative",
-                  }}
-                >
-                  {initials}
-                </div>
-              ))}
-            </div>
-            <div>
-              <div style={{ fontSize: "13px", fontWeight: 700, color: "white" }}>
-                +2.500 sellers
-              </div>
-              <div style={{ fontSize: "11px", color: "rgba(255,255,255,0.45)" }}>
-                já fazem parte do Sellerverse
-              </div>
-            </div>
+          <div style={{ fontSize: "13px", fontWeight: 700, color: "white", marginBottom: "6px" }}>
+            Construído por seller, pra sellers
           </div>
-          <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.55)", lineHeight: 1.6, fontStyle: "italic" }}>
-            "Em 60 dias usando o Sellerverse, meu faturamento no Mercado Livre cresceu 340%."
+          <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.6)", lineHeight: 1.6 }}>
+            Sellerverse é o ecossistema que nasceu dentro da operação real da Nexus Importadora.
+            As ferramentas e cursos que você vê aqui são os mesmos que a gente usa todo dia.
           </p>
-          <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.3)", marginTop: "6px" }}>— Ana Silva, seller desde 2022</p>
+          <p style={{ fontSize: "11px", color: "rgba(255,255,255,0.4)", marginTop: "8px" }}>
+            — Enzo, fundador
+          </p>
         </div>
       </div>
     </div>

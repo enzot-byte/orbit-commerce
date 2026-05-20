@@ -417,9 +417,9 @@ export default function SignupForm() {
           />
           <span style={{ fontSize: "13px", color: "#6B7280", lineHeight: 1.5 }}>
             Ao criar uma conta, concordo com os{" "}
-            <Link href="/termos" style={{ color: "#185FA5", fontWeight: 600 }}>Termos de Uso</Link>{" "}
+            <Link href="/legal/termos" style={{ color: "#185FA5", fontWeight: 600 }}>Termos de Uso</Link>{" "}
             e a{" "}
-            <Link href="/privacidade" style={{ color: "#185FA5", fontWeight: 600 }}>Política de Privacidade</Link>.
+            <Link href="/legal/privacidade" style={{ color: "#185FA5", fontWeight: 600 }}>Política de Privacidade</Link>.
           </span>
         </label>
 

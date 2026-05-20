@@ -5,80 +5,59 @@ import SocialProof from "@/components/sections/SocialProof";
 import Link from "next/link";
 import { HomeBelowFold } from "@/components/sections/HomeBelowFold";
 
-// ─── Courses Data ─────────────────────────────────────────────────────────────
+// ─── Roadmap preview ─────────────────────────────────────────────────────────
+//
+// Substitui o bloco "Cursos" que mostrava 4 cursos inventados com instrutores
+// fictícios e ratings de 800+ reviews fakes. Em vez disso, mostramos a fase
+// real do produto: 2 cursos em produção + 2 no roadmap, sem inventar autor
+// nem inflar números.
 
-const courses = [
+const roadmapItems = [
   {
     id: 1,
-    title: "Do Zero ao Primeiro Pedido no Mercado Livre",
-    instructor: "Rafael Mendes",
-    duration: "8h",
-    level: "Iniciante",
-    rating: 4.9,
-    reviews: 847,
-    gradient: "linear-gradient(135deg, #0C447C 0%, #185FA5 100%)",
-    levelColor: "#10b981",
-    levelBg: "rgba(16,185,129,0.15)",
+    title: "Precificação que sobra",
+    tagline: "Margem real em 5 marketplaces",
+    status: "Em produção",
+    statusColor: "#EF9F27",
+    statusBg: "rgba(239,159,39,0.12)",
+    gradient: "linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%)",
+    emoji: "💹",
   },
   {
     id: 2,
-    title: "Shopee: Dominando o Algoritmo",
-    instructor: "Carla Vasconcelos",
-    duration: "6h",
-    level: "Intermediário",
-    rating: 4.8,
-    reviews: 512,
-    gradient: "linear-gradient(135deg, #7c2d12 0%, #c2410c 100%)",
-    levelColor: "#fbbf24",
-    levelBg: "rgba(251,191,36,0.15)",
+    title: "Sellerspy do zero",
+    tagline: "Ache fornecedor ganhador no ML em 15min",
+    status: "Em produção",
+    statusColor: "#EF9F27",
+    statusBg: "rgba(239,159,39,0.12)",
+    gradient: "linear-gradient(135deg, #0C447C 0%, #185FA5 100%)",
+    emoji: "🔍",
   },
   {
     id: 3,
-    title: "Precificação Estratégica para Lucrar Mais",
-    instructor: "Lucas Ferreira",
-    duration: "4h",
-    level: "Intermediário",
-    rating: 4.7,
-    reviews: 393,
-    gradient: "linear-gradient(135deg, #4c1d95 0%, #7c3aed 100%)",
-    levelColor: "#fbbf24",
-    levelBg: "rgba(251,191,36,0.15)",
+    title: "Anatomia de anúncio campeão",
+    tagline: "UX e SEO de listing pra ML, Shopee, Amazon",
+    status: "No roadmap",
+    statusColor: "#a78bfa",
+    statusBg: "rgba(167,139,250,0.12)",
+    gradient: "linear-gradient(135deg, #7c2d12 0%, #c2410c 100%)",
+    emoji: "🎯",
   },
   {
     id: 4,
-    title: "Amazon FBA Brasil: Guia Completo",
-    instructor: "Amanda Costa",
-    duration: "12h",
-    level: "Avançado",
-    rating: 4.9,
-    reviews: 261,
-    gradient: "linear-gradient(135deg, #7f1d1d 0%, #b91c1c 100%)",
-    levelColor: "#f87171",
-    levelBg: "rgba(248,113,113,0.15)",
+    title: "DRE pra seller",
+    tagline: "Saiba se você tá lucrando de verdade",
+    status: "Sob demanda",
+    statusColor: "#a78bfa",
+    statusBg: "rgba(167,139,250,0.12)",
+    gradient: "linear-gradient(135deg, #134e4a 0%, #0d9488 100%)",
+    emoji: "📊",
   },
 ];
-
-function StarRating({ rating }: { rating: number }) {
-  return (
-    <span className="flex items-center gap-0.5">
-      {[1, 2, 3, 4, 5].map((star) => (
-        <svg
-          key={star}
-          className="w-3.5 h-3.5"
-          fill={star <= Math.round(rating) ? "#EF9F27" : "rgba(255,255,255,0.15)"}
-          viewBox="0 0 20 20"
-        >
-          <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
-        </svg>
-      ))}
-    </span>
-  );
-}
 
 function CoursesPreview() {
   return (
     <section className="relative overflow-hidden ambient-light cv-section contain-section" style={{ backgroundColor: "#0A0A0F", padding: "128px 0 160px" }}>
-      {/* Background glow */}
       <div
         className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[700px] h-[500px] pointer-events-none"
         style={{ background: "radial-gradient(ellipse at center, rgba(239,159,39,0.04) 0%, transparent 70%)" }}
@@ -86,133 +65,94 @@ function CoursesPreview() {
 
       <div className="container-orbit relative z-10">
         {/* Header */}
-        <div className="text-center mb-14">
+        <div className="text-center mb-10">
           <p className="text-sm font-semibold tracking-widest uppercase text-orbit-400 mb-3">
-            Cursos
+            Cursos · Em construção
           </p>
           <h2
             className="text-3xl md:text-4xl lg:text-5xl font-display font-bold text-white leading-tight"
             style={{ letterSpacing: "-0.02em" }}
           >
-            Aprenda com quem{" "}
-            <span className="shimmer-text-static">vende de verdade</span>
+            Honestidade radical sobre{" "}
+            <span className="shimmer-text-static">o que tá no ar</span>
           </h2>
-          <p className="mt-4 text-lg text-white/40 max-w-xl mx-auto">
-            Conteúdo prático, atualizado e criado por sellers com histórico comprovado.
+          <p className="mt-4 text-lg text-white/40 max-w-2xl mx-auto">
+            Estamos gravando os 2 primeiros cursos agora. Quando publicar, qualquer Pro tem acesso
+            imediato. Sem instrutor inventado, sem rating inflado — só o que existe e o que tá vindo.
           </p>
         </div>
 
-        {/* Course grid */}
+        {/* Roadmap grid */}
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-10">
-          {courses.map((course) => (
+          {roadmapItems.map((item) => (
             <div
-              key={course.id}
-              style={{
-                borderRadius: "16px",
-                overflow: "hidden",
-                transition: "all 0.3s ease",
-              }}
-              className="group glass-card gradient-border hover:-translate-y-1 hover:shadow-[0_16px_48px_rgba(91,63,216,0.12)]"
+              key={item.id}
+              style={{ borderRadius: "16px", overflow: "hidden" }}
+              className="group glass-card gradient-border hover:-translate-y-1 transition-transform duration-300"
             >
-              {/* Thumbnail */}
               <div
                 style={{
-                  background: course.gradient,
-                  height: "160px",
+                  background: item.gradient,
+                  height: "140px",
                   display: "flex",
-                  alignItems: "flex-end",
-                  padding: "16px",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  fontSize: "40px",
                   position: "relative",
                 }}
               >
+                {item.emoji}
                 <span
-                  style={{
-                    fontSize: "11px",
-                    fontWeight: 600,
-                    padding: "4px 10px",
-                    borderRadius: "999px",
-                    color: course.levelColor,
-                    backgroundColor: course.levelBg,
-                    backdropFilter: "blur(8px)",
-                  }}
-                >
-                  {course.level}
-                </span>
-                <div
                   style={{
                     position: "absolute",
                     top: "12px",
-                    right: "12px",
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "4px",
-                    backgroundColor: "rgba(0,0,0,0.4)",
-                    backdropFilter: "blur(8px)",
+                    left: "12px",
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    padding: "4px 10px",
                     borderRadius: "999px",
-                    padding: "4px 8px",
+                    color: item.statusColor,
+                    backgroundColor: item.statusBg,
+                    backdropFilter: "blur(8px)",
                   }}
                 >
-                  <svg
-                    style={{ width: "12px", height: "12px", color: "rgba(255,255,255,0.6)" }}
-                    fill="none"
-                    stroke="currentColor"
-                    viewBox="0 0 24 24"
-                  >
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                  </svg>
-                  <span style={{ fontSize: "11px", color: "rgba(255,255,255,0.7)" }}>{course.duration}</span>
-                </div>
+                  {item.status}
+                </span>
               </div>
-
-              {/* Content */}
               <div style={{ padding: "20px" }}>
                 <h3
                   style={{
                     fontFamily: "var(--font-display)",
-                    fontWeight: 600,
+                    fontWeight: 700,
                     color: "white",
-                    fontSize: "13px",
-                    lineHeight: "1.4",
-                    marginBottom: "8px",
-                    display: "-webkit-box",
-                    WebkitLineClamp: 2,
-                    WebkitBoxOrient: "vertical",
-                    overflow: "hidden",
+                    fontSize: "14px",
+                    lineHeight: 1.35,
+                    marginBottom: "6px",
                   }}
                 >
-                  {course.title}
+                  {item.title}
                 </h3>
-                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.4)", marginBottom: "12px" }}>
-                  {course.instructor}
+                <p style={{ fontSize: "12px", color: "rgba(255,255,255,0.5)", lineHeight: 1.55 }}>
+                  {item.tagline}
                 </p>
-                <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-                  <StarRating rating={course.rating} />
-                  <span style={{ fontSize: "12px", fontWeight: 700, color: "#EF9F27" }}>
-                    {course.rating}
-                  </span>
-                  <span style={{ fontSize: "12px", color: "rgba(255,255,255,0.3)" }}>
-                    ({course.reviews})
-                  </span>
-                </div>
               </div>
             </div>
           ))}
         </div>
 
-        {/* CTA link */}
+        {/* CTA */}
         <div className="text-center">
           <Link
             href="/cursos"
             className="inline-flex items-center gap-2 font-semibold transition-colors duration-200 group"
             style={{ color: "#9B7BFF" }}
           >
-            Ver todos os cursos
+            Ver roadmap completo
             <span className="group-hover:translate-x-1 transition-transform duration-200">→</span>
           </Link>
         </div>
       </div>
 
-      {/* Section fade */}
       <div
         className="absolute bottom-0 left-0 right-0 h-32 pointer-events-none"
         style={{ background: "linear-gradient(to bottom, transparent, #12121F)" }}

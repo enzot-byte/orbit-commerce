@@ -8,11 +8,10 @@ export const metadata: Metadata = {
   description: "Acesse sua conta no Sellerverse.",
 };
 
-const testimonialChips = [
-  { text: '"Dobrei minhas vendas em 3 meses"', name: "R. Mendes" },
-  { text: '"Melhor investimento para meu negócio"', name: "C. Vasconcelos" },
-  { text: '"As ferramentas são incríveis"', name: "L. Ferreira" },
-];
+// Testimonial chips: vazio até termos depoimentos reais de pagantes.
+// Quando primeiros assinantes Pro derem feedback público, popular aqui
+// com nome + frase + permissão. Nunca colocar testimonial inventado.
+const testimonialChips: Array<{ text: string; name: string }> = [];
 
 export default function LoginPage() {
   return (
@@ -116,7 +115,7 @@ export default function LoginPage() {
             }}
           >
             <span style={{ fontSize: "12px", color: "#EF9F27", fontWeight: 600 }}>
-              +2.500 sellers confiam no Sellerverse
+              MVP aberto · construído por seller, pra sellers
             </span>
           </div>
           <h2
